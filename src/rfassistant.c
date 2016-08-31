@@ -847,7 +847,7 @@ void ImpedanceMatch( void )
 	sgets( buffer , sizeof buffer );
 	QCoil = atof( buffer );
 	
-	printf( "Enter Phase Shift Angle (Deg): " );
+	printf( "Enter Phase Shift Angle (90 - 180 Deg): " );
 	sgets( buffer , sizeof buffer );
 	r = atof( buffer );
 	
@@ -1237,7 +1237,7 @@ void Resistors( void )
 		printf( "Enter [S]eries , [P]arallel or [E]xit: " );
 		sgets(buffer1 , sizeof buffer1);
 		
-		if ( tolower( buffer[0] ) == 'e' )
+		if ( tolower( buffer1[0] ) == 'e' )
 		{
 			printf( "\nTotal Resistance = %3.3f\n" , tresistance);
 			break;
@@ -1247,12 +1247,12 @@ void Resistors( void )
 		sgets( buffer , sizeof buffer );
 		nresistance = atof( buffer );
 
-		if ( tolower( buffer[0] ) == 's' )
+		if ( tolower( buffer1[0] ) == 's' )
 		{
 			tresistance += nresistance;
 		}	
 
-		if ( tolower( buffer[0] ) == 'p' )
+		if ( tolower( buffer1[0] ) == 'p' )
 		{
 			if ( nresistance > 0 ) tresistance = 1.0 / (1.0 / tresistance + 1.0 / nresistance);
 		}
@@ -1274,7 +1274,7 @@ void Inductors( void )
 		printf( "Enter [S]eries , [P]arallel or [E]xit: " );
 		sgets(buffer1 , sizeof buffer1);
 		
-		if ( tolower( buffer[0] ) == 'e')
+		if ( tolower( buffer1[0] ) == 'e')
 		{
 			printf( "\nTotal Inductance = %3.3f\n" , tinductance );
 			break;
@@ -1284,12 +1284,12 @@ void Inductors( void )
 		sgets( buffer , sizeof buffer );
 		ninductance = atof( buffer );
 
-		if ( tolower( buffer[0] ) == 's')
+		if ( tolower( buffer1[0] ) == 's')
 		{
 			tinductance += ninductance;
 		}	
 
-		if ( tolower( buffer[0] ) == 'p')
+		if ( tolower( buffer1[0] ) == 'p')
 		{
 			if ( ninductance > 0 ) tinductance = 1.0 / (1.0 / tinductance + 1.0 / ninductance );
 		}
@@ -1311,7 +1311,7 @@ void Capacitors( void )
 		printf( "Enter [S]eries , [P]arallel or [E]xit: " );
 		sgets(buffer1 , sizeof buffer1 );
 		
-		if ( tolower( buffer[0] ) == 'e')
+		if ( tolower( buffer1[0] ) == 'e')
 		{
 			printf( "\nTotal Capacitance = %3.3f\n" , tcapacitance );
 			break;
@@ -1321,12 +1321,12 @@ void Capacitors( void )
 		sgets( buffer , sizeof buffer );
 		ncapacitance = atof( buffer );
 
-		if ( tolower( buffer[0] ) == 'p' )
+		if ( tolower( buffer1[0] ) == 'p' )
 		{
 			tcapacitance += ncapacitance;
 		}	
 
-		if ( tolower( buffer[0] ) == 's' )
+		if ( tolower( buffer1[0] ) == 's' )
 		{
 			if ( ncapacitance > 0) tcapacitance = 1.0 / (1.0 / tcapacitance + 1.0 / ncapacitance);
 		}
@@ -1517,19 +1517,19 @@ void ChebyshevFilter()
 				if ( indcap[x] == 'C' )
 				{
 					c = ctable.ctable[component][filterorder];
-					printf( "%c%d -> %3.1f pF\n" , indcap[x] , component , (c / ( 2 * PI * fcl * r)) * 1e12 );
+					printf( "\n%c%d -> %3.1f pF\n" , indcap[x] , component , (c / ( 2 * PI * fcl * r)) * 1e12 );
 				}
 
 				if ( indcap[x] == 'L' )
 				{
 					l = ctable.ctable[component][filterorder];
-					printf( "%c%d -> %3.3f uH\n" , indcap[x] , component , ((l * r)/(2 * PI * fcl)) * 1e6 );
+					printf( "\n%c%d -> %3.3f uH\n" , indcap[x] , component , ((l * r)/(2 * PI * fcl)) * 1e6 );
 				}
 
 				x = 1 - x;
 			}
 
-			printf( "R(output) -> %3.1f\n" , r / ctable.ctable[10][filterorder] );
+			printf( "\nR(output) -> %3.1f\n" , r / ctable.ctable[10][filterorder] );
 
 			break;
 		
@@ -1543,19 +1543,19 @@ void ChebyshevFilter()
 				if ( indcap[x] == 'C' )
 				{
 					l = ctable.ctable[component][filterorder];
-					printf( "%c%d -> %3.1f pF\n" , indcap[x] , component , (1 / (2 * PI * fch * r * l)) * 1e12 );
+					printf( "\n%c%d -> %3.1f pF\n" , indcap[x] , component , (1 / (2 * PI * fch * r * l)) * 1e12 );
 				}
 
 				if ( indcap[x] == 'L' )
 				{
 					c = ctable.ctable[component][filterorder];
-					printf( "%c%d -> %3.3f uH\n" , indcap[x] , component , (r / (2 * PI * fch * c)) * 1e6 );
+					printf( "\n%c%d -> %3.3f uH\n" , indcap[x] , component , (r / (2 * PI * fch * c)) * 1e6 );
 				}
 
 				x = 1 - x;
 			}
 
-			printf( "R(output) -> %3.1f\n" , r / ctable.ctable[10][filterorder] );
+			printf( "\nR(output) -> %3.1f\n" , r / ctable.ctable[10][filterorder] );
 
 			break;	
 
@@ -1570,23 +1570,23 @@ void ChebyshevFilter()
 				{
 					l = ctable.ctable[component][filterorder];
 					c = ctable.ctable[component][filterorder];
-					printf( "%c%d -> %3.1f uH\n" , indcap[1-x] , component , ((r * l) / (2 * PI * (fch - fcl))) * 1e6 );
-					printf( "%c%d -> %3.1f pF\n" , indcap[x] , component , ((fch - fcl)/(2 * PI * fch * fcl * r * l)) * 1e12 );
+					printf( "\n%c%d -> %3.1f uH\n" , indcap[1-x] , component , ((r * l) / (2 * PI * (fch - fcl))) * 1e6 );
+					printf( "\n%c%d -> %3.1f pF\n" , indcap[x] , component , ((fch - fcl)/(2 * PI * fch * fcl * r * l)) * 1e12 );
 				}
 
 				if ( indcap[x] == 'L' )
 				{
 					c = ctable.ctable[component][filterorder];
 					l = ctable.ctable[component][filterorder];
-					printf( "%c%d -> %3.1f pF\n" , indcap[1-x] , component , (c/(2 * PI * (fch -fcl) * r )) * 1e12 );
-					printf( "%c%d -> %3.3f uH\n" , indcap[x] , component , (((fch - fcl) * r)/(2 * PI * fch * fcl * c)) * 1e6 );
+					printf( "\n%c%d -> %3.1f pF\n" , indcap[1-x] , component , (c/(2 * PI * (fch -fcl) * r )) * 1e12 );
+					printf( "\n%c%d -> %3.3f uH\n" , indcap[x] , component , (((fch - fcl) * r)/(2 * PI * fch * fcl * c)) * 1e6 );
 					
 				}
 
 				x = 1 - x;
 			}
 
-			printf( "R(output) -> %3.1f\n" , r / ctable.ctable[10][filterorder] );
+			printf( "\nR(output) -> %3.1f\n" , r / ctable.ctable[10][filterorder] );
 
 			break;	
 
@@ -1601,22 +1601,22 @@ void ChebyshevFilter()
 				{
 					l = ctable.ctable[component][filterorder];
 					c = ctable.ctable[component][filterorder];
-					printf( "%c%d -> %3.1f uH\n" , indcap[1-x] , component , (((fch - fcl) * r * l)/(2 * PI * fch * fcl)) * 1e6 );
-					printf( "%c%d -> %3.1f pF\n" , indcap[x] , component , (1/(2 * PI * (fch - fcl) * r * l)) * 1e12 );
+					printf( "\n%c%d -> %3.1f uH\n" , indcap[1-x] , component , (((fch - fcl) * r * l)/(2 * PI * fch * fcl)) * 1e6 );
+					printf( "\n%c%d -> %3.1f pF\n" , indcap[x] , component , (1/(2 * PI * (fch - fcl) * r * l)) * 1e12 );
 				}
 
 				if ( indcap[x] == 'L' )
 				{
 					c = ctable.ctable[component][filterorder];
 					l = ctable.ctable[component][filterorder];
-					printf( "%c%d -> %3.1f pF\n" , indcap[1-x] , component , (((fch - fcl) * c) / (2 * PI * fch * fcl * r)) * 1e12 );
-					printf( "%c%d -> %3.3f uH\n" , indcap[x] , component , (r/(2 * PI * (fch - fcl) * c)) * 1e6 );
+					printf( "\n%c%d -> %3.1f pF\n" , indcap[1-x] , component , (((fch - fcl) * c) / (2 * PI * fch * fcl * r)) * 1e12 );
+					printf( "\n%c%d -> %3.3f uH\n" , indcap[x] , component , (r/(2 * PI * (fch - fcl) * c)) * 1e6 );
 				}
 
 				x = 1 - x;
 			}
 
-			printf( "R(output) -> %3.1f\n" , r / ctable.ctable[10][filterorder] );
+			printf( "\nR(output) -> %3.1f\n" , r / ctable.ctable[10][filterorder] );
 
 			break;	
 		
