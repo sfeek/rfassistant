@@ -1390,16 +1390,9 @@ void RCI( void )
 
 void ChebyshevFilter()
 {
-	char buffer[80];
-	int filterorder;
-	int filterrippledb;
-	char inputtype;
-	int filtertype;
-	double fcl , fch;
-	int x , component;
-	struct chebyshevtable ctable;
-	char indcap[2] = { 'C' , 'L' };
-	double c , l , r;
+	char buffer[80] , inputtype , indcap[2] = { 'C' , 'L' };
+	int filterorder , filtertype ,x , component , n , k;
+	double fcl , fch , filterrippledb , c , l , r , a , b , *nelements , *aelements , *belements;
 
 	printf( "Enter Filter Type (1 = Low Pass , 2 = High Pass , 3 = Band Pass , 4 = Band Stop) : " );
 	sgets( buffer , sizeof buffer );
@@ -1457,127 +1450,180 @@ void ChebyshevFilter()
 	fcl = fcl * 1e6;
 	fch = fch * 1e6;
 	
-	printf( "Enter Filter Order (2-9) : " );
+	printf( "Enter Filter Order (Number of elements) : " );
 	sgets( buffer , sizeof buffer );
 	filterorder = atoi( buffer );
 	
-	if ( filterorder < 2 || filterorder > 9 )
+	if ( filterorder < 1 )
 	{
-		printf( "\nFilter Order must be 2-9\n" );
+		printf( "\nFilter Order must be > 1\n" );
 		return;
 	}
 
-	printf( "Enter Input Type [C]apacitor or [I]nductor : " );
+	nelements = malloc ( filterorder * sizeof ( double ) );
+	aelements = malloc ( filterorder * sizeof ( double ) );
+	belements = malloc ( filterorder * sizeof ( double ) );
+
+	if ( nelements == NULL || aelements == NULL || belements == NULL)
+	{
+		printf( "\nCould not allocate memory\n" );
+		return;
+	}
+
+	printf( "Enter Input Type [T]ee or [P]i : " );
 	sgets( buffer , sizeof buffer );
 	
-	if ( tolower(buffer[0]) == 'c' ) inputtype = 'c';
-	if ( tolower(buffer[0]) == 'i' ) inputtype = 'i';
-	if ( inputtype != 'c' && inputtype != 'i' ) 
+	inputtype = tolower( buffer[0] );
+	if ( inputtype != 't' && inputtype != 'p' ) 
 	{
-		printf( "\nFilter Input Type must be I or C\n" );
+		printf( "\nFilter Input Type must be Tee or Pi\n" );
 		return;
 	}
 
-	printf( "Enter Filter Ripple dB (1 = 0.01 , 2 = 0.1 , 3 = 0.2 , 4 = 0.5) : " );
+	printf( "Enter Filter Ripple dB : " );
 	sgets( buffer , sizeof buffer );
-	filterrippledb = atoi( buffer );
+	filterrippledb = atof( buffer );
 
-	switch( filterrippledb )
+	if ( filterrippledb < 0.01 )
 	{
-		case 1:
-			ctable = table01();
-			break;
-		
-		case 2:
-			ctable = table1();
-			break;
-
-		case 3:
-			ctable = table2();
-			break;
-
-		case 4:
-			ctable = table5();
-			break;
+		printf( "\nFilter Ripple db must be > 0.01\n" );
+		return;
 	}
 
 	printf( "Enter Filter Impedance : " );
 	sgets( buffer , sizeof buffer );
 	r = atof( buffer );
 
+	if ( r < 0.01 )
+	{
+		printf( "\nFilter Impedance must be > 0.01\n" );
+		return;
+	}
+
+	b = log(1/tanh(filterrippledb/17.37));
+
+	for ( n = 1 ; n <= filterorder ; n++ )
+	{
+		aelements[n] = sin((2*n-1)*PI/2/filterorder);
+	}
+
+	for ( n = 0 ; n <= filterorder ; n++ )
+	{	
+		if ( n == 0)
+		{
+				belements[n] = sinh(b/2/filterorder);
+		}
+		else
+		{
+				belements[n] = pow(belements[0],2)+pow(sin(n*PI/filterorder),2);
+		} 
+	}
+
+	for ( n = 1 ; n <= filterorder + 1 ; n++ )
+	{
+		if ( n == filterorder + 1)
+		{
+				if ( filterorder % 2 == 0 )
+				{
+					if (inputtype == 't')
+					{
+						nelements[n] = pow (tanh(b/4),2);
+					}
+					else
+					{
+						nelements[n] = 1 / pow (tanh(b/4),2);
+					}
+				} 
+				else
+				{
+						nelements[n] = 1.0;
+				}
+				break;
+		}
+
+		if ( n == 1)
+		{
+			nelements[n] = 2 * aelements[n] / belements[n-1];
+		}
+		else
+		{
+			nelements[n] = 4 * aelements[n-1] * aelements[n] / belements[n-1] / nelements[n-1];
+		}
+	}
+
 	switch( filtertype )
 	{
 		case 1:
 			printf( "\nR(input) -> %3.1f\n" , r );
 
-			if ( inputtype == 'c' ) x = 0; else x = 1;
+			if ( inputtype == 'p' ) x = 0; else x = 1;
 
 			for ( component = 1 ; component <= filterorder ; component++ )
 			{
 				if ( indcap[x] == 'C' )
 				{
-					c = ctable.ctable[component][filterorder];
+					c = nelements[component];
 					printf( "\n%c%d -> %3.1f pF\n" , indcap[x] , component , (c / ( 2 * PI * fcl * r)) * 1e12 );
 				}
 
 				if ( indcap[x] == 'L' )
 				{
-					l = ctable.ctable[component][filterorder];
+					l = nelements[component];
 					printf( "\n%c%d -> %3.3f uH\n" , indcap[x] , component , ((l * r)/(2 * PI * fcl)) * 1e6 );
 				}
 
 				x = 1 - x;
 			}
 
-			printf( "\nR(output) -> %3.1f\n" , r / ctable.ctable[10][filterorder] );
+			printf( "\nR(output) -> %3.1f\n" , r / nelements[component] );
 
 			break;
 		
 		case 2:
 			printf( "\nR(input) -> %3.1f\n" , r );
 
-			if ( inputtype == 'c' ) x = 0; else x = 1;
+			if ( inputtype == 't' ) x = 0; else x = 1;
 
 			for ( component = 1 ; component <= filterorder ; component++ )
 			{
 				if ( indcap[x] == 'C' )
 				{
-					l = ctable.ctable[component][filterorder];
+					l = nelements[component];
 					printf( "\n%c%d -> %3.1f pF\n" , indcap[x] , component , (1 / (2 * PI * fch * r * l)) * 1e12 );
 				}
 
 				if ( indcap[x] == 'L' )
 				{
-					c = ctable.ctable[component][filterorder];
+					c = nelements[component];
 					printf( "\n%c%d -> %3.3f uH\n" , indcap[x] , component , (r / (2 * PI * fch * c)) * 1e6 );
 				}
 
 				x = 1 - x;
 			}
 
-			printf( "\nR(output) -> %3.1f\n" , r / ctable.ctable[10][filterorder] );
+			printf( "\nR(output) -> %3.1f\n" , r / nelements[component] );
 
 			break;	
 
 		case 3:
 			printf( "\nR(input) -> %3.1f\n" , r );
 
-			if ( inputtype == 'c' ) x = 0; else x = 1;
+			if ( inputtype == 't' ) x = 0; else x = 1;
 
 			for ( component = 1 ; component <= filterorder ; component++ )
 			{
 				if ( indcap[x] == 'C' )
 				{
-					l = ctable.ctable[component][filterorder];
-					c = ctable.ctable[component][filterorder];
+					l = nelements[component];
+					c = nelements[component];
 					printf( "\n%c%d -> %3.1f uH\n" , indcap[1-x] , component , ((r * l) / (2 * PI * (fch - fcl))) * 1e6 );
 					printf( "\n%c%d -> %3.1f pF\n" , indcap[x] , component , ((fch - fcl)/(2 * PI * fch * fcl * r * l)) * 1e12 );
 				}
 
 				if ( indcap[x] == 'L' )
 				{
-					c = ctable.ctable[component][filterorder];
-					l = ctable.ctable[component][filterorder];
+					c = nelements[component];
+					l = nelements[component];
 					printf( "\n%c%d -> %3.1f pF\n" , indcap[1-x] , component , (c/(2 * PI * (fch -fcl) * r )) * 1e12 );
 					printf( "\n%c%d -> %3.3f uH\n" , indcap[x] , component , (((fch - fcl) * r)/(2 * PI * fch * fcl * c)) * 1e6 );
 					
@@ -1586,29 +1632,29 @@ void ChebyshevFilter()
 				x = 1 - x;
 			}
 
-			printf( "\nR(output) -> %3.1f\n" , r / ctable.ctable[10][filterorder] );
+			printf( "\nR(output) -> %3.1f\n" , r / nelements[component] );
 
 			break;	
 
 		case 4:
 			printf( "\nR(input) -> %3.1f\n" , r );
 
-			if ( inputtype == 'c' ) x = 0; else x = 1;
+			if ( inputtype == 't' ) x = 0; else x = 1;
 
 			for ( component = 1 ; component <= filterorder ; component++ )
 			{
 				if ( indcap[x] == 'C' )
 				{
-					l = ctable.ctable[component][filterorder];
-					c = ctable.ctable[component][filterorder];
+					l = nelements[component];
+					c = nelements[component];
 					printf( "\n%c%d -> %3.1f uH\n" , indcap[1-x] , component , (((fch - fcl) * r * l)/(2 * PI * fch * fcl)) * 1e6 );
 					printf( "\n%c%d -> %3.1f pF\n" , indcap[x] , component , (1/(2 * PI * (fch - fcl) * r * l)) * 1e12 );
 				}
 
 				if ( indcap[x] == 'L' )
 				{
-					c = ctable.ctable[component][filterorder];
-					l = ctable.ctable[component][filterorder];
+					c = nelements[component];
+					l = nelements[component];
 					printf( "\n%c%d -> %3.1f pF\n" , indcap[1-x] , component , (((fch - fcl) * c) / (2 * PI * fch * fcl * r)) * 1e12 );
 					printf( "\n%c%d -> %3.3f uH\n" , indcap[x] , component , (r/(2 * PI * (fch - fcl) * c)) * 1e6 );
 				}
@@ -1616,13 +1662,62 @@ void ChebyshevFilter()
 				x = 1 - x;
 			}
 
-			printf( "\nR(output) -> %3.1f\n" , r / ctable.ctable[10][filterorder] );
+			printf( "\nR(output) -> %3.1f\n" , r / nelements[component] );
 
 			break;	
-		
 	}
 
+	free( nelements );
+	free( aelements );
+	free( belements );
+
 	return;
+}
+
+void Powers10(void)
+{
+	double number, number1;
+	char buffer[80];
+	char unitlabels[][6] = {"yotta","zetta","exa","peta","tera","giga","mega","kilo","unit","milli","micro","nano","pico","femto","atto","zepto","yotto"};
+	double unitvalues[] = {1e24,1e21,1e18,1e15,1e12,1e9,1e6,1e3,1,1e-3,1e-6,1e-9,1e-12,1e-15,1e-18,1e-21,1e-24};
+	int x , unit , s , e;
+
+	printf( "\nEnter value : " );
+	sgets( buffer , sizeof buffer );
+	number = atof( buffer );
+	number1 = number;
+	
+	for ( x=1 ; x <= 17 ; x++ )
+	{
+		printf( "%d. %s\n" , x , unitlabels[x-1]);
+	}
+
+	printf ( "\nChoose Unit : \n");
+	sgets( buffer , sizeof buffer );
+	unit = atoi( buffer );	
+
+	if ( unit < 1 || unit > 17 )
+	{
+		printf( "\nUnit must be 1-17\n" );
+		return;
+	}
+
+	number = number * unitvalues[unit - 1];	
+
+	s = unit - 3;
+	e = unit + 3;
+
+	if ( s < 1 ) s = 1;
+	if ( e > 17 ) e = 17;
+
+	printf( "\n%9.9g %s = \n" , number1 , unitlabels[unit-1] );
+
+	for ( x=s ; x <= e ; x++)
+	{
+		printf( "\n   %9.9g %s" , number / unitvalues[x-1] , unitlabels[x-1] );
+	}
+
+	printf( "\n" );
 }
 
 
@@ -1652,6 +1747,7 @@ int main ( void )
 		printf( "15. Resistors , Inductors , Capacitors - Series & Parallel\n" );
 		printf( "16. Torroid Al Value from Inductance and Turns\n" );
 		printf( "17. Chebyshev Filters\n" );
+		printf( "18. Nearby Powers of 10 Conversion\n" );
 		printf( "\n 99. Exit\n\n" );
 		printf( "Enter Selection: " );
 		
@@ -1742,6 +1838,11 @@ int main ( void )
 
 			case 17:
 				ChebyshevFilter();
+				PauseForEnterKey();
+				break;
+
+			case 18:
+				Powers10();
 				PauseForEnterKey();
 				break;
 				
