@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <math.h>
 
 #define PI 3.14159265
@@ -1305,7 +1306,7 @@ void RCI( void )
 	}
 }
 
-void ChebyshevFilter()
+void ChebyshevFilter( void )
 {
 	char buffer[80] , inputtype , indcap[2] = { 'C' , 'L' };
 	int filterorder , filtertype ,x , component , n , k;
@@ -1591,7 +1592,234 @@ void ChebyshevFilter()
 	return;
 }
 
-void Powers10(void)
+void ButterworthFilter( void )
+{
+	char buffer[80] , inputtype , indcap[2] = { 'C' , 'L' };
+	int filterorder , filtertype ,x , component , n , k;
+	double fcl , fch , c , l , r , *nelements = NULL;
+
+	printf( "Enter Filter Type (1 = Low Pass , 2 = High Pass , 3 = Band Pass , 4 = Band Stop) : " );
+	sgets( buffer , sizeof buffer );
+	filtertype = atoi( buffer );
+	
+	if ( filtertype < 1 || filtertype > 4 )
+	{
+		printf( "\nFilter Type must be 1 , 2 , 3 or 4\n" );
+		return;
+	}
+
+	switch ( filtertype )
+	{
+		case 1:
+			printf( "Enter Lowpass Cut-off Frequency (MHz): " );
+			sgets( buffer , sizeof buffer );
+			fcl = atof( buffer );
+			break;
+
+		case 2:
+			printf( "Enter Highpass Cut-off Frequency (MHz): " );
+			sgets( buffer , sizeof buffer );
+			fch = atof( buffer );
+			break;
+
+		case 3:
+			printf( "Enter Bandpass Lower Cut-off Frequency (MHz): " );
+			sgets( buffer , sizeof buffer );
+			fcl = atof( buffer );
+			printf( "Enter Bandpass Upper Cut-off Frequency (MHz): " );
+			sgets( buffer , sizeof buffer );
+			fch = atof( buffer );
+			if ( fch <= fcl )
+			{
+				printf( "\nHigher Cut-off frequency must be larger than Lower Cut-off frequency\n" );
+				return;
+			}
+			break;
+
+		case 4:
+			printf( "Enter Bandstop Lower Cut-off Frequency (MHz): " );
+			sgets( buffer , sizeof buffer );
+			fcl = atof( buffer );
+			printf( "Enter Bandstop Upper Cut-off Frequency (MHz): " );
+			sgets( buffer , sizeof buffer );
+			fch = atof( buffer );
+			if ( fch <= fcl )
+			{
+				printf( "\nHigher Cut-off frequency must be larger than Lower Cut-off frequency\n" );
+				return;
+			}
+			break;
+	}
+
+	fcl = fcl * 1e6;
+	fch = fch * 1e6;
+	
+	printf( "Enter Filter Order (Number of elements) : " );
+	sgets( buffer , sizeof buffer );
+	filterorder = atoi( buffer );
+	
+	if ( filterorder < 1 )
+	{
+		printf( "\nFilter Order must be > 1\n" );
+		return;
+	}
+
+	nelements = malloc ( (filterorder + 2) * sizeof ( double ) );
+	
+	if ( nelements == NULL )
+	{
+		printf( "\nCould not allocate memory\n" );
+		return;
+	}
+
+	printf( "Enter Input Type [T]ee or [P]i : " );
+	sgets( buffer , sizeof buffer );
+	
+	inputtype = tolower( buffer[0] );
+	if ( inputtype != 't' && inputtype != 'p' ) 
+	{
+		printf( "\nFilter Input Type must be Tee or Pi\n" );
+		return;
+	}
+
+	printf( "Enter Filter Impedance : " );
+	sgets( buffer , sizeof buffer );
+	r = atof( buffer );
+
+	if ( r < 0.01 )
+	{
+		printf( "\nFilter Impedance must be > 0.01\n" );
+		return;
+	}
+
+	for ( n = 1 ; n <= filterorder ; n++ )
+	{
+		nelements[n] = 2 * sin((2*n-1)*PI/2/filterorder);
+	}
+	nelements[n] = 1.0;
+
+	switch( filtertype )
+	{
+		case 1:
+			printf( "\nR(input) -> %3.1f\n" , r );
+
+			if ( inputtype == 'p' ) x = 0; else x = 1;
+
+			for ( component = 1 ; component <= filterorder ; component++ )
+			{
+				if ( indcap[x] == 'C' )
+				{
+					c = nelements[component];
+					printf( "\n%c%d -> %3.1f pF\n" , indcap[x] , component , (c / ( 2 * PI * fcl * r)) * 1e12 );
+				}
+
+				if ( indcap[x] == 'L' )
+				{
+					l = nelements[component];
+					printf( "\n%c%d -> %3.3f uH\n" , indcap[x] , component , ((l * r)/(2 * PI * fcl)) * 1e6 );
+				}
+
+				x = 1 - x;
+			}
+
+			printf( "\nR(output) -> %3.1f\n" , r / nelements[component] );
+
+			break;
+		
+		case 2:
+			printf( "\nR(input) -> %3.1f\n" , r );
+
+			if ( inputtype == 't' ) x = 0; else x = 1;
+
+			for ( component = 1 ; component <= filterorder ; component++ )
+			{
+				if ( indcap[x] == 'C' )
+				{
+					l = nelements[component];
+					printf( "\n%c%d -> %3.1f pF\n" , indcap[x] , component , (1 / (2 * PI * fch * r * l)) * 1e12 );
+				}
+
+				if ( indcap[x] == 'L' )
+				{
+					c = nelements[component];
+					printf( "\n%c%d -> %3.3f uH\n" , indcap[x] , component , (r / (2 * PI * fch * c)) * 1e6 );
+				}
+
+				x = 1 - x;
+			}
+
+			printf( "\nR(output) -> %3.1f\n" , r / nelements[component] );
+
+			break;	
+
+		case 3:
+			printf( "\nR(input) -> %3.1f\n" , r );
+
+			if ( inputtype == 't' ) x = 0; else x = 1;
+
+			for ( component = 1 ; component <= filterorder ; component++ )
+			{
+				if ( indcap[x] == 'C' )
+				{
+					l = nelements[component];
+					c = nelements[component];
+					printf( "\n%c%d -> %3.1f uH\n" , indcap[1-x] , component , ((r * l) / (2 * PI * (fch - fcl))) * 1e6 );
+					printf( "\n%c%d -> %3.1f pF\n" , indcap[x] , component , ((fch - fcl)/(2 * PI * fch * fcl * r * l)) * 1e12 );
+				}
+
+				if ( indcap[x] == 'L' )
+				{
+					c = nelements[component];
+					l = nelements[component];
+					printf( "\n%c%d -> %3.1f pF\n" , indcap[1-x] , component , (c/(2 * PI * (fch -fcl) * r )) * 1e12 );
+					printf( "\n%c%d -> %3.3f uH\n" , indcap[x] , component , (((fch - fcl) * r)/(2 * PI * fch * fcl * c)) * 1e6 );
+					
+				}
+
+				x = 1 - x;
+			}
+
+			printf( "\nR(output) -> %3.1f\n" , r / nelements[component] );
+
+			break;	
+
+		case 4:
+			printf( "\nR(input) -> %3.1f\n" , r );
+
+			if ( inputtype == 't' ) x = 0; else x = 1;
+
+			for ( component = 1 ; component <= filterorder ; component++ )
+			{
+				if ( indcap[x] == 'C' )
+				{
+					l = nelements[component];
+					c = nelements[component];
+					printf( "\n%c%d -> %3.1f uH\n" , indcap[1-x] , component , (((fch - fcl) * r * l)/(2 * PI * fch * fcl)) * 1e6 );
+					printf( "\n%c%d -> %3.1f pF\n" , indcap[x] , component , (1/(2 * PI * (fch - fcl) * r * l)) * 1e12 );
+				}
+
+				if ( indcap[x] == 'L' )
+				{
+					c = nelements[component];
+					l = nelements[component];
+					printf( "\n%c%d -> %3.1f pF\n" , indcap[1-x] , component , (((fch - fcl) * c) / (2 * PI * fch * fcl * r)) * 1e12 );
+					printf( "\n%c%d -> %3.3f uH\n" , indcap[x] , component , (r/(2 * PI * (fch - fcl) * c)) * 1e6 );
+				}
+
+				x = 1 - x;
+			}
+
+			printf( "\nR(output) -> %3.1f\n" , r / nelements[component] );
+
+			break;	
+	}
+
+	if ( nelements != NULL) free( nelements );
+
+	return;
+}
+
+void Powers10( void )
 {
 	double number, number1;
 	char buffer[80];
@@ -1637,6 +1865,287 @@ void Powers10(void)
 	printf( "\n" );
 }
 
+void LineOfSight(void)
+{
+	char units , buffer[80] , ustringi[10] , ustringo[10];
+	double ah1 , ah2 , d1 , d2 , dr1 , dr2 , ag1 , ag2 , fspl , f , td;
+
+	printf( "\nEnter [M]etric or [E]nglish Units : " );
+	sgets( buffer , sizeof buffer );
+
+	units = tolower( buffer[0] );
+	if ( units != 'm' && units != 'e' ) 
+	{
+		printf( "\nUnits must be [M]etric or [E]nglish\n" );
+		return;
+	}
+
+	if ( units == 'm' ) 
+	{
+		strcpy( ustringi , "meters" );
+		strcpy( ustringo , "kilometers" );
+	}
+	else
+	{
+		strcpy( ustringi , "feet" );
+		strcpy( ustringo , "miles" );
+	}
+
+	printf( "\nEnter Antenna 1 Height (%s) : " , ustringi );
+	sgets( buffer , sizeof buffer );
+	ah1 = atof( buffer );
+	if ( ah1 <= 0 )
+	{
+		printf ( "\nHeight must be greater than 0\n");
+		return;
+	}
+
+	printf( "\nEnter Antenna 1 Gain (db) : ");
+	sgets( buffer , sizeof buffer );
+	ag1 = atof( buffer );
+
+	if ( ag1 < 0 )
+	{
+		printf ( "\nGain must be >= 0\n");
+		return;
+	}
+
+	printf( "\nEnter Antenna 2 Height (%s) : " , ustringi );
+	sgets( buffer , sizeof buffer );
+	ah2 = atof( buffer );
+	if ( ah2 <= 0 )
+	{
+		printf ( "\nHeight must be greater than 0\n");
+		return;
+	}
+
+	printf( "\nEnter Antenna 2 Gain (db) : ");
+	sgets( buffer , sizeof buffer );
+	ag2 = atof( buffer );
+	if ( ag2 <= 0 )
+	{
+		printf ( "\nGain must be >= 0\n");
+		return;
+	}
+
+	printf( "\nEnter Frequency (MHz) : ");
+	sgets( buffer , sizeof buffer );
+	f = atof( buffer );
+
+	if ( units == 'm' )
+	{
+		d1 = 3.57 * sqrt(ah1);
+		d2 = 3.57 * sqrt(ah2);
+		dr1 = 4.12 * sqrt(ah1);
+		dr2 = 4.12 * sqrt(ah2);
+		td = ((d1 + d2) + (dr1 + dr2))/2;
+		fspl = 20*log10(td) + 20*log10(f) + 32.45 - ag2 - ag1;
+	} 
+	else
+	{
+		d1 = 1.23 * sqrt(ah1);
+		d2 = 1.23 * sqrt(ah2);
+		dr1 = 1.41 * sqrt(ah1);
+		dr2 = 1.41 * sqrt(ah2);
+		td = ((d1 + d2) + (dr1 + dr2))/2;
+		fspl = 20*log10(td/0.621371) + 20*log10(f) + 32.45 - ag2 - ag1;
+	}
+
+	printf ( "\n\nDistance to physical horizon for Antenna 1 : %3.1f %s\n" , d1 , ustringo );
+	printf ( "Distance to physical horizon for Antenna 2 : %3.1f %s\n" , d2 , ustringo );
+	printf ( "\nDistance to radio horizon for Antenna 1 : %3.1f %s\n" , dr1 , ustringo);
+	printf ( "Distance to radio horizon for Antenna 2 : %3.1f %s\n" , dr2 , ustringo);
+	printf ( "\nTypical communication distance  : %3.1f %s\n" , td , ustringo);
+	printf ( "\nFree Space Path Loss %3.1f dB\n" , fspl);
+}
+
+void ResistorAttenuator( void )
+{
+	char buffer[80], type;
+	double attn , z , r1 , r2;
+
+	printf( "\nEnter Attenuation (dB) : " );
+	sgets( buffer , sizeof buffer );
+	attn = atof( buffer );
+
+	if ( attn <= 0 )
+	{
+		printf ( "\nAttenuation must be greater than 0\n");
+		return;
+	}
+
+	printf( "\nEnter Impedance (Ohms) : " );
+	sgets( buffer , sizeof buffer );
+	z = atof( buffer );
+
+	if ( z <= 0 )
+	{
+		printf ( "\nImpedance must be greater than 0\n");
+		return;
+	}
+
+	printf( "\nEnter [P]i or [T]ee : " );
+	sgets( buffer , sizeof buffer );
+
+	type = tolower( buffer[0] );
+	if ( type != 'p' && type != 't' ) 
+	{
+		printf( "\nUnits must be [P]i or [T]ee\n" );
+		return;
+	}
+
+	if ( type == 'p' )
+	{
+		r1 = z*((pow(10,attn/20)+1)/(pow(10,attn/20)-1));
+		r2 = (z/2)*((pow(10,attn/10)-1)/pow(10,attn/20));
+	}
+	else
+	{
+		r1 = z*((pow(10,attn/20)-1)/(pow(10,attn/20)+1));
+		r2 = 2*z*((pow(10,attn/20)/(pow(10,attn/10)-1)));
+	}
+
+	printf ("\nR1 -> %3.2f\n", r1 );
+	printf ("\nR2 -> %3.2f\n", r2 );
+}
+
+void CoaxLoss( void )
+{
+	double k1[] = {0.26293,0.16925,0.12050,0.26904,0.11287,0.16925,0.34190,0.35364,0.38823,0.45322,0.29629,0.32074,0.26247,0.37381,0.76172,0.18993,0.14044,0.70501,0.32062,0.24271,0.12013,0.07563,0.05190,0.12102,0.14044,0.41009,0.45876,0.13757,0.31217,0.36305,0.28692,0.06432,0.03482,0.02397,0.04960,0.05100,0.06210,0.04140,0.05654,0.05557,0.07291,0.03083,0.10181,0.02713,0.01897,0.00000,0.00000};
+	double k2[] = {0.00159,0.00204,0.00066,0.00572,0.00160,0.00313,0.00377,0.00526,0.00566,0.00836,0.00147,0.00174,0.00039,0.00159,0.00955,0.00216,0.00032,0.00183,0.00034,0.00032,0.00031,0.00026,0.00015,0.00066,0.00032,0.00360,0.00837,0.00366,0.00313,0.00438,0.00060,0.00019,0.00015,0.00014,0.00120,
+	0.00100,0.00090,0.00170,0.07176,0.06182,0.05510,0.07756,0.00068,0.00024,0.00010,0.00000,0.00000};
+
+	char types[][30] = {"Belden 8215 (RG-6A)","Belden 8237 (RG-8)","Belden 9913 (RG-8)","Belden 9258 (RG-8X)","Belden 8213 (RG-11)","Belden 8261 (RG-11A)","Belden 8240 (RG-58)","Belden 9201 (RG-58)","Belden 8219 (RG-58A)","Belden 8259 (RG-58C)","Belden 8212 (RG-59)","Belden 8263 (RG-59B)","Belden 9269 (RG-62A)","Belden 83241 (RG-141A)","Belden 8216 (RG-174)","Belden 8267 (RG-213)","Davis RF Bury-Flex","TMS LMR-100A","TMS LMR-200","TMS LMR-240","TMS LMR-400","TMS LMR-600","TMS LMR-900","Wireman CQ102 (RG-8)","Wireman CQ106 (RG-8)","Wireman CQ125 (RG-58)","Wireman CQ127 (RG-58C)","Wireman CQ110 (RG-213)","Tandy Cable RG-8X","Tandy Cable RG-58","Tandy Cable RG-59","Andrew Heliax LDF4-50A","Andrew Heliax LDF5-50A","Andrew Heliax LDF6-50A","Wireman 551 Ladder Line","Wireman 552 Ladder Line","Wireman 553 Ladder Line","Wireman 554 Ladder Line","Wireman 551 (wet)","Wireman 552 (wet)","Wireman 553 (wet)","Wireman 554 (wet)","Generic 300 ohm Tubular","Generic 450 ohm Window","Generic 600 ohm Open","Ideal (lossless) 50 ohm","Ideal (lossless) 75 ohm"};
+
+	int x , i , c;
+	double freq , swr , len , pwrin , mldb , rho , alpha , totdb , swrdb , pwrout;
+	char buffer[80] , units;
+
+	printf( "\n" );
+	c = sizeof (types) / 30;
+
+	for ( x=0 ; x < c ; x++)
+	{
+		printf( "\n%d. %s" , x + 1 ,types[x]);
+	}
+
+	printf( "\n\nEnter Coax Selection : ");
+	sgets( buffer , sizeof buffer );
+	i = atoi( buffer ) - 1;
+
+	if ( i < 0 || i > c )
+	{
+		printf( "\nSelection must be 1-%d\n" , c);
+		return;
+	}
+
+	printf( "\nEnter [M]etric or [E]nglish : " );
+	sgets( buffer , sizeof buffer );
+
+	units = tolower( buffer[0] );
+	if ( units != 'm' && units != 'e' ) 
+	{
+		printf( "\nUnits must be [M]etric or [E]nglish\n" );
+		return;
+	}
+
+	if ( units == 'm' ) 
+	{
+		printf( "\nEnter Line Length (Meters) : " );
+	}
+	else
+	{
+		printf( "\nEnter Line Length (Feet) : " );
+	}
+
+	sgets( buffer , sizeof buffer );
+	len = atof( buffer );
+
+	if ( len < 0 )
+	{
+		printf( "\nLength must be > 0\n" );
+		return;
+	}
+
+	printf( "\nEnter Frequency (MHz) : " );
+	sgets( buffer , sizeof buffer );
+	freq = atof( buffer );
+
+	if ( freq < 0 )
+	{
+		printf( "\nFrequency must be > 0\n" );
+		return;
+	}
+
+	printf( "\nEnter SWR (x:1) : " );
+	sgets( buffer , sizeof buffer );
+	swr = atof( buffer );
+
+	if ( swr < 1 )
+	{
+		printf( "\nSWR must be >= 1\n" );
+		return;
+	}
+
+	printf( "\nEnter Power Input (W) : " );
+	sgets( buffer , sizeof buffer );
+	pwrin = atof( buffer );
+
+	if ( pwrin <= 0 )
+	{
+		printf( "\nPower Input must be > 0\n" );
+		return;
+	}
+
+	mldb = (k1[i] * sqrt(freq) + k2[i] * freq) / 100 * len;
+	if ( units == 'm' ) mldb = mldb / 0.3048;
+
+	rho = (swr - 1) / (swr + 1);
+	alpha = pow(10,mldb / 10);
+	totdb = 10 * (log((pow(alpha,2) - pow(rho,2)) / (alpha * (1 - pow(rho,2)))) / 2.302585092994046);
+	swrdb  = totdb - mldb;
+	pwrout = pwrin * pow(10,(-totdb / 10));
+
+	printf ( "\n\nMatched Loss %3.2f dB\n" , mldb );
+	printf ( "\nSWR Loss %3.2f dB\n" , swrdb );
+	printf ( "\nTotal Loss %3.2f dB\n" , totdb);
+	printf ( "\nPower Output %3.1f W\n" , pwrout);
+}
+
+void WireAntennaLength( void )
+{
+	char buffer[80] , units;
+	double f , l;
+
+	printf( "\nEnter [M]etric or [E]nglish : " );
+	sgets( buffer , sizeof buffer );
+
+	units = tolower( buffer[0] );
+	if ( units != 'm' && units != 'e' ) 
+	{
+		printf( "\nUnits must be [M]etric or [E]nglish\n" );
+		return;
+	}
+
+	printf( "\nEnter Frequency (MHz) : " );
+	sgets( buffer , sizeof buffer );
+	f = atof( buffer );
+
+	if ( units == 'm' )
+	{
+		printf ( "\nHalf Wave %3.2f Meters" , (468/f) * 0.3048 );
+		printf ( "\nHalf Wave %3.2f Centimeters\n", (468/f) * 30.48 );
+		printf ( "\nQuarter Wave %3.2f Meters" , (468/f) * 0.3048 / 2 );
+		printf ( "\nQuarter Wave %3.2f Centimeters\n" , (468/f) * 30.48 / 2 );
+	}
+	else
+	{
+		printf ( "\nHalf Wave %3.2f Feet" , 468/f );
+		printf ( "\nHalf Wave %3.2f Inches\n", (468/f) * 12 );
+		printf ( "\nQuarter Wave %3.2f Feet" , (468/f) / 2 );
+		printf ( "\nQuarter Wave %3.2f Inches\n" , (468/f) / 2 * 12 );
+	}
+}
 
 int main ( void )
 {
@@ -1664,7 +2173,12 @@ int main ( void )
 		printf( "15. Resistors , Inductors , Capacitors - Series & Parallel\n" );
 		printf( "16. Torroid Al Value from Inductance and Turns\n" );
 		printf( "17. Chebyshev Filters\n" );
-		printf( "18. Nearby Powers of 10 Conversion\n" );
+		printf( "18. Butterworth Filters\n" );
+		printf( "19. Nearby Powers of 10 Conversion\n" );
+		printf( "20. Line of Sight Distance / Free Space Path Loss\n" );
+		printf( "21. Resistor Attenuators\n" );
+		printf( "22. Coax Loss\n" );
+		printf( "23. Wire Antenna Length\n" );
 		printf( "\n 99. Exit\n\n" );
 		printf( "Enter Selection: " );
 		
@@ -1679,67 +2193,67 @@ int main ( void )
 				TurnsToInductanceToroid();
 				PauseForEnterKey();
 				break;
-				
+
 			case 2:
 				TurnsToInductanceAirCore();
 				PauseForEnterKey();
 				break;
-				
+
 			case 3:
 				CapacitanceFrequency();
 				PauseForEnterKey();
 				break;
-				
+
 			case 4:
 				InductanceFrequency();
 				PauseForEnterKey();
 				break;	
-				
+
 			case 5:
 				ReactanceCapacitance();
 				PauseForEnterKey();
 				break;
-				
+
 			case 6:
 				ReactanceInductance();
 				PauseForEnterKey();
 				break;
-				
+
 			case 7:
 				SWRioZ();
 				PauseForEnterKey();
 				break;
-			
+
 			case 8:
 				SWRf();
 				PauseForEnterKey();
 				break;
-				
+
 			case 9:
 				SWRfr();
 				PauseForEnterKey();
 				break;
-				
+
 			case 10:
 				VarCapScaling();
 				PauseForEnterKey();
 				break;
-				
+
 			case 11:
 				CoaxStub();
 				PauseForEnterKey();
 				break;
-				
+
 			case 12:
 				TXOutputMatch();
 				PauseForEnterKey();
 				break;
-				
+
 			case 13:
 				ImpedanceMatch();
 				PauseForEnterKey();
 				break;
-				
+
 			case 14:
 				DecibelConversions();
 				break;
@@ -1759,14 +2273,39 @@ int main ( void )
 				break;
 
 			case 18:
+				ButterworthFilter();
+				PauseForEnterKey();
+				break;
+
+			case 19:
 				Powers10();
 				PauseForEnterKey();
 				break;
-				
+
+			case 20:
+				LineOfSight();
+				PauseForEnterKey();
+				break;
+
+			case 21:
+				ResistorAttenuator();
+				PauseForEnterKey();
+				break;
+
+			case 22:
+				CoaxLoss();
+				PauseForEnterKey();
+				break;
+
+			case 23:
+				WireAntennaLength();
+				PauseForEnterKey();
+				break;
+
 			case 99:
 				done = 1;
 				break;
-				
+
 			default:
 				printf( "Invalid Entry\n" );
 				break;
