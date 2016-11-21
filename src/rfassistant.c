@@ -2,8 +2,11 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
+#include <ctype.h>
 
 #define PI 3.14159265
+
+
 
 /*Safe function to get values from the user*/
 void sgets( char *line , size_t size )
@@ -93,7 +96,7 @@ void IndToAlToroid( void )
 {
 	char buffer[80];
 	double al , l;
-	int turns , i;
+	int turns;
 	
 	printf(  "Enter Toroid Inductance (uH): " );
 	sgets( buffer , sizeof buffer );
@@ -1152,10 +1155,10 @@ void Resistors( void )
 	
 	while(1)
 	{
-		printf( "Enter [S]eries , [P]arallel or [E]xit: " );
+		printf( "Enter [S]eries , [P]arallel or [D]one: " );
 		sgets(buffer1 , sizeof buffer1);
 		
-		if ( tolower( buffer1[0] ) == 'e' )
+		if ( tolower( buffer1[0] ) == 'd' )
 		{
 			printf( "\nTotal Resistance = %3.3f\n" , tresistance);
 			break;
@@ -1189,10 +1192,10 @@ void Inductors( void )
 	
 	while(1)
 	{
-		printf( "Enter [S]eries , [P]arallel or [E]xit: " );
+		printf( "Enter [S]eries , [P]arallel or [D]one: " );
 		sgets(buffer1 , sizeof buffer1);
 		
-		if ( tolower( buffer1[0] ) == 'e')
+		if ( tolower( buffer1[0] ) == 'd')
 		{
 			printf( "\nTotal Inductance = %3.3f\n" , tinductance );
 			break;
@@ -1226,10 +1229,10 @@ void Capacitors( void )
 	
 	while(1)
 	{
-		printf( "Enter [S]eries , [P]arallel or [E]xit: " );
+		printf( "Enter [S]eries , [P]arallel or [D]one: " );
 		sgets(buffer1 , sizeof buffer1 );
 		
-		if ( tolower( buffer1[0] ) == 'e')
+		if ( tolower( buffer1[0] ) == 'd')
 		{
 			printf( "\nTotal Capacitance = %3.3f\n" , tcapacitance );
 			break;
@@ -1309,8 +1312,8 @@ void RCI( void )
 void ChebyshevFilter( void )
 {
 	char buffer[80] , inputtype , indcap[2] = { 'C' , 'L' };
-	int filterorder , filtertype ,x , component , n , k;
-	double fcl , fch , filterrippledb , c , l , r , a , b , *nelements = NULL , *aelements = NULL, *belements = NULL;
+	int filterorder , filtertype ,x , component , n;
+	double fcl=0.0 , fch=0.0 , filterrippledb , c , l , r , b , *nelements = NULL , *aelements = NULL, *belements = NULL;
 
 	printf( "Enter Filter Type (1 = Low Pass , 2 = High Pass , 3 = Band Pass , 4 = Band Stop) : " );
 	sgets( buffer , sizeof buffer );
@@ -1365,8 +1368,8 @@ void ChebyshevFilter( void )
 			break;
 	}
 
-	fcl = fcl * 1e6;
-	fch = fch * 1e6;
+	fcl *= 1e6;
+	fch *= 1e6;
 	
 	printf( "Enter Filter Order (Number of elements) : " );
 	sgets( buffer , sizeof buffer );
@@ -1595,8 +1598,8 @@ void ChebyshevFilter( void )
 void ButterworthFilter( void )
 {
 	char buffer[80] , inputtype , indcap[2] = { 'C' , 'L' };
-	int filterorder , filtertype ,x , component , n , k;
-	double fcl , fch , c , l , r , *nelements = NULL;
+	int filterorder , filtertype ,x , component , n;
+	double fcl=0.0 , fch=0.0 , c , l , r , *nelements = NULL;
 
 	printf( "Enter Filter Type (1 = Low Pass , 2 = High Pass , 3 = Band Pass , 4 = Band Stop) : " );
 	sgets( buffer , sizeof buffer );
@@ -1651,8 +1654,8 @@ void ButterworthFilter( void )
 			break;
 	}
 
-	fcl = fcl * 1e6;
-	fch = fch * 1e6;
+	fcl *= 1e6;
+	fch *= 1e6;
 	
 	printf( "Enter Filter Order (Number of elements) : " );
 	sgets( buffer , sizeof buffer );
@@ -1867,7 +1870,7 @@ void Powers10( void )
 
 void LineOfSight(void)
 {
-	char units , buffer[80] , ustringi[10] , ustringo[10];
+	char units , buffer[80] , ustringi[10] , ustringo[12];
 	double ah1 , ah2 , d1 , d2 , dr1 , dr2 , ag1 , ag2 , fspl , f , td;
 
 	printf( "\nEnter [M]etric or [E]nglish Units : " );
@@ -2115,7 +2118,7 @@ void CoaxLoss( void )
 void WireAntennaLength( void )
 {
 	char buffer[80] , units;
-	double f , l;
+	double f;
 
 	printf( "\nEnter [M]etric or [E]nglish : " );
 	sgets( buffer , sizeof buffer );
