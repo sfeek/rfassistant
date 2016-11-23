@@ -63,7 +63,7 @@ $(MAIN): $(OBJS)
 	$(CC) $(CFLAGS) $(INCLUDES) -c $<  -o $@
 
 clean:
-	$(RM) *.o *~ $(MAIN)
+	rm `find ./ -name '*.o'` -rf
 
 depend: $(SRCS)
 	makedepend $(INCLUDES) $^
