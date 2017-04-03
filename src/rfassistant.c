@@ -6,8 +6,6 @@
 
 #define PI 3.14159265
 
-
-
 /*Safe function to get values from the user*/
 void sgets( char *line , size_t size )
 {
@@ -2150,6 +2148,29 @@ void WireAntennaLength( void )
 	}
 }
 
+void ImageFrequency( void )
+{
+	char buffer[80];
+	double rf, intf, im1,im2,lo1,lo2;
+	
+
+	printf ( "\nEnter Reception Frequency : " );
+	sgets( buffer , sizeof buffer );
+	rf = atof ( buffer );
+
+	printf ( "\nEnter Intermediate Frequency : " );
+	sgets( buffer , sizeof buffer );
+	intf = atof ( buffer );
+
+	im1 = fabs(intf * 2 - rf);
+	im2 = fabs(intf * 2 + rf);
+	lo1 = fabs(intf - rf);
+	lo2 = fabs(intf + rf);
+
+	printf ( "\nImage Frequencies: %3.3f & %3.3f",im1,im2);
+	printf ( "\nLocal Oscillator Frequencies: %3.3f & %3.3f\n", lo1, lo2);
+}
+
 int main ( void )
 {
 	char buffer[4];
@@ -2182,6 +2203,7 @@ int main ( void )
 		printf( "21. Resistor Attenuators\n" );
 		printf( "22. Coax Loss\n" );
 		printf( "23. Wire Antenna Length\n" );
+		printf( "24. Image Frequency and Local Oscillator\n");
 		printf( "\n 99. Exit\n\n" );
 		printf( "Enter Selection: " );
 		
@@ -2302,6 +2324,11 @@ int main ( void )
 
 			case 23:
 				WireAntennaLength();
+				PauseForEnterKey();
+				break;
+
+			case 24:
+				ImageFrequency();
 				PauseForEnterKey();
 				break;
 
