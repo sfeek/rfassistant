@@ -2153,7 +2153,6 @@ void ImageFrequency( void )
 	char buffer[80];
 	double rf, intf, im1,im2,lo1,lo2;
 	
-
 	printf ( "\nEnter Reception Frequency : " );
 	sgets( buffer , sizeof buffer );
 	rf = atof ( buffer );
@@ -2167,7 +2166,7 @@ void ImageFrequency( void )
 	lo1 = fabs(intf - rf);
 	lo2 = fabs(intf + rf);
 
-	printf ( "\nImage Frequencies: %3.3f & %3.3f",im1,im2);
+	printf ( "\nImage Frequencies: %3.3f & %3.3f", im1, im2);
 	printf ( "\nLocal Oscillator Frequencies: %3.3f & %3.3f\n", lo1, lo2);
 }
 
