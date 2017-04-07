@@ -106,7 +106,7 @@ void IndToAlToroid( void )
 	
 	if (  l < 0 ) 
 	{
-		printf ("\nInductance Cannot Be Negative!\n" );
+		printf ( "\nInductance Cannot Be Negative!\n" );
 		return;
 	}
 	
@@ -1428,7 +1428,7 @@ void ChebyshevFilter( void )
 
 	for ( n = 0 ; n <= filterorder ; n++ )
 	{	
-		if ( n == 0)
+		if ( n == 0 )
 		{
 				belements[n] = sinh(b/2/filterorder);
 		}
@@ -1460,7 +1460,7 @@ void ChebyshevFilter( void )
 				break;
 		}
 
-		if ( n == 1)
+		if ( n == 1 )
 		{
 			nelements[n] = 2 * aelements[n] / belements[n-1];
 		}
@@ -1482,13 +1482,23 @@ void ChebyshevFilter( void )
 				if ( indcap[x] == 'C' )
 				{
 					c = nelements[component];
-					printf( "\n%c%d -> %3.1f pF\n" , indcap[x] , component , (c / ( 2 * PI * fcl * r)) * 1e12 );
+					printf( "\nC -> %3.1f pF" , (c / ( 2 * PI * fcl * r)) * 1e12 );
 				}
 
 				if ( indcap[x] == 'L' )
 				{
 					l = nelements[component];
-					printf( "\n%c%d -> %3.3f uH\n" , indcap[x] , component , ((l * r)/(2 * PI * fcl)) * 1e6 );
+					printf( "\nL -> %3.3f uH" , ((l * r)/(2 * PI * fcl)) * 1e6 );
+				}
+
+				if ( inputtype == 'p' ) 
+				{
+					if ( x == 0 ) printf ( " Shunt\n" ); else printf ( " Series \n" );
+				}
+
+				if ( inputtype == 't' ) 
+				{
+					if ( x == 0 ) printf ( " Shunt\n" ); else printf ( " Series \n" );
 				}
 
 				x = 1 - x;
@@ -1508,13 +1518,23 @@ void ChebyshevFilter( void )
 				if ( indcap[x] == 'C' )
 				{
 					l = nelements[component];
-					printf( "\n%c%d -> %3.1f pF\n" , indcap[x] , component , (1 / (2 * PI * fch * r * l)) * 1e12 );
+					printf( "\nC -> %3.1f pF" , (1 / (2 * PI * fch * r * l)) * 1e12 );
 				}
 
 				if ( indcap[x] == 'L' )
 				{
 					c = nelements[component];
-					printf( "\n%c%d -> %3.3f uH\n" , indcap[x] , component , (r / (2 * PI * fch * c)) * 1e6 );
+					printf( "\nL -> %3.3f uH" , (r / (2 * PI * fch * c)) * 1e6 );
+				}
+
+				if ( inputtype == 'p' ) 
+				{
+					if ( x == 1 ) printf ( " Shunt\n" ); else printf ( " Series \n" );
+				}
+
+				if ( inputtype == 't' ) 
+				{
+					if ( x == 1 ) printf ( " Shunt\n" ); else printf ( " Series \n" );
 				}
 
 				x = 1 - x;
@@ -1535,17 +1555,27 @@ void ChebyshevFilter( void )
 				{
 					l = nelements[component];
 					c = nelements[component];
-					printf( "\n%c%d -> %3.1f uH\n" , indcap[1-x] , component , ((r * l) / (2 * PI * (fch - fcl))) * 1e6 );
-					printf( "\n%c%d -> %3.1f pF\n" , indcap[x] , component , ((fch - fcl)/(2 * PI * fch * fcl * r * l)) * 1e12 );
+					printf( "\n%c -> %3.3f uH" , indcap[1-x] , ((r * l) / (2 * PI * (fch - fcl))) * 1e6 );
+					printf( "\n%c -> %3.1f pF" , indcap[x] , ((fch - fcl)/(2 * PI * fch * fcl * r * l)) * 1e12 );
 				}
 
 				if ( indcap[x] == 'L' )
 				{
 					c = nelements[component];
 					l = nelements[component];
-					printf( "\n%c%d -> %3.1f pF\n" , indcap[1-x] , component , (c/(2 * PI * (fch -fcl) * r )) * 1e12 );
-					printf( "\n%c%d -> %3.3f uH\n" , indcap[x] , component , (((fch - fcl) * r)/(2 * PI * fch * fcl * c)) * 1e6 );
+					printf( "\n%c -> %3.1f pF" , indcap[1-x] , (c/(2 * PI * (fch -fcl) * r )) * 1e12 );
+					printf( "\n%c -> %3.3f uH" , indcap[x] , (((fch - fcl) * r)/(2 * PI * fch * fcl * c)) * 1e6 );
 					
+				}
+
+				if ( inputtype == 'p' ) 
+				{
+					if ( x == 1 ) printf ( "\n Components Shunt\n" ); else printf ( "\n Components Series \n" );
+				}
+
+				if ( inputtype == 't' ) 
+				{
+					if ( x == 1 ) printf ( "\n Components Shunt\n" ); else printf ( "\n Components Series \n" );
 				}
 
 				x = 1 - x;
@@ -1566,16 +1596,26 @@ void ChebyshevFilter( void )
 				{
 					l = nelements[component];
 					c = nelements[component];
-					printf( "\n%c%d -> %3.1f uH\n" , indcap[1-x] , component , (((fch - fcl) * r * l)/(2 * PI * fch * fcl)) * 1e6 );
-					printf( "\n%c%d -> %3.1f pF\n" , indcap[x] , component , (1/(2 * PI * (fch - fcl) * r * l)) * 1e12 );
+					printf( "\n%c -> %3.3f uH" , indcap[1-x] , (((fch - fcl) * r * l)/(2 * PI * fch * fcl)) * 1e6 );
+					printf( "\n%c -> %3.1f pF" , indcap[x] , (1/(2 * PI * (fch - fcl) * r * l)) * 1e12 );
 				}
 
 				if ( indcap[x] == 'L' )
 				{
 					c = nelements[component];
 					l = nelements[component];
-					printf( "\n%c%d -> %3.1f pF\n" , indcap[1-x] , component , (((fch - fcl) * c) / (2 * PI * fch * fcl * r)) * 1e12 );
-					printf( "\n%c%d -> %3.3f uH\n" , indcap[x] , component , (r/(2 * PI * (fch - fcl) * c)) * 1e6 );
+					printf( "\n%c -> %3.1f pF" , indcap[1-x] , (((fch - fcl) * c) / (2 * PI * fch * fcl * r)) * 1e12 );
+					printf( "\n%c -> %3.3f uH" , indcap[x] , (r/(2 * PI * (fch - fcl) * c)) * 1e6 );
+				}
+
+				if ( inputtype == 'p' ) 
+				{
+					if ( x == 1 ) printf ( "\n Components in Series - Shunt\n" ); else printf ( "\n Components in Parallel - Series \n" );
+				}
+
+				if ( inputtype == 't' ) 
+				{
+					if ( x == 1 ) printf ( "\n Components in Series - Shunt\n" ); else printf ( "\n Components in Parallel - Series \n" );
 				}
 
 				x = 1 - x;
@@ -1711,13 +1751,23 @@ void ButterworthFilter( void )
 				if ( indcap[x] == 'C' )
 				{
 					c = nelements[component];
-					printf( "\n%c%d -> %3.1f pF\n" , indcap[x] , component , (c / ( 2 * PI * fcl * r)) * 1e12 );
+					printf( "\nC-> %3.1f pF" , (c / ( 2 * PI * fcl * r)) * 1e12 );
 				}
 
 				if ( indcap[x] == 'L' )
 				{
 					l = nelements[component];
-					printf( "\n%c%d -> %3.3f uH\n" , indcap[x] , component , ((l * r)/(2 * PI * fcl)) * 1e6 );
+					printf( "\nL -> %3.3f uH" , ((l * r)/(2 * PI * fcl)) * 1e6 );
+				}
+
+				if ( inputtype == 'p' ) 
+				{
+					if ( x == 0 ) printf ( " Shunt\n" ); else printf ( " Series \n" );
+				}
+
+				if ( inputtype == 't' ) 
+				{
+					if ( x == 0 ) printf ( " Shunt\n" ); else printf ( " Series \n" );
 				}
 
 				x = 1 - x;
@@ -1737,13 +1787,23 @@ void ButterworthFilter( void )
 				if ( indcap[x] == 'C' )
 				{
 					l = nelements[component];
-					printf( "\n%c%d -> %3.1f pF\n" , indcap[x] , component , (1 / (2 * PI * fch * r * l)) * 1e12 );
+					printf( "\nC -> %3.1f pF" , (1 / (2 * PI * fch * r * l)) * 1e12 );
 				}
 
 				if ( indcap[x] == 'L' )
 				{
 					c = nelements[component];
-					printf( "\n%c%d -> %3.3f uH\n" , indcap[x] , component , (r / (2 * PI * fch * c)) * 1e6 );
+					printf( "\nC -> %3.3f uH" , (r / (2 * PI * fch * c)) * 1e6 );
+				}
+
+				if ( inputtype == 'p' ) 
+				{
+					if ( x == 1 ) printf ( " Shunt\n" ); else printf ( " Series \n" );
+				}
+
+				if ( inputtype == 't' ) 
+				{
+					if ( x == 1 ) printf ( " Shunt\n" ); else printf ( " Series \n" );
 				}
 
 				x = 1 - x;
@@ -1764,17 +1824,27 @@ void ButterworthFilter( void )
 				{
 					l = nelements[component];
 					c = nelements[component];
-					printf( "\n%c%d -> %3.1f uH\n" , indcap[1-x] , component , ((r * l) / (2 * PI * (fch - fcl))) * 1e6 );
-					printf( "\n%c%d -> %3.1f pF\n" , indcap[x] , component , ((fch - fcl)/(2 * PI * fch * fcl * r * l)) * 1e12 );
+					printf( "\n%c -> %3.3f uH" , indcap[1-x] , ((r * l) / (2 * PI * (fch - fcl))) * 1e6 );
+					printf( "\n%c -> %3.1f pF" , indcap[x] , ((fch - fcl)/(2 * PI * fch * fcl * r * l)) * 1e12 );
 				}
 
 				if ( indcap[x] == 'L' )
 				{
 					c = nelements[component];
 					l = nelements[component];
-					printf( "\n%c%d -> %3.1f pF\n" , indcap[1-x] , component , (c/(2 * PI * (fch -fcl) * r )) * 1e12 );
-					printf( "\n%c%d -> %3.3f uH\n" , indcap[x] , component , (((fch - fcl) * r)/(2 * PI * fch * fcl * c)) * 1e6 );
+					printf( "\n%c%d -> %3.1f pF" , indcap[1-x] , component , (c/(2 * PI * (fch -fcl) * r )) * 1e12 );
+					printf( "\n%c%d -> %3.3f uH" , indcap[x] , component , (((fch - fcl) * r)/(2 * PI * fch * fcl * c)) * 1e6 );
 					
+				}
+
+				if ( inputtype == 'p' ) 
+				{
+					if ( x == 1 ) printf ( "\n Components Shunt\n" ); else printf ( "\n Components Series \n" );
+				}
+
+				if ( inputtype == 't' ) 
+				{
+					if ( x == 1 ) printf ( "\n Components Shunt\n" ); else printf ( "\n Components Series \n" );
 				}
 
 				x = 1 - x;
@@ -1795,16 +1865,26 @@ void ButterworthFilter( void )
 				{
 					l = nelements[component];
 					c = nelements[component];
-					printf( "\n%c%d -> %3.1f uH\n" , indcap[1-x] , component , (((fch - fcl) * r * l)/(2 * PI * fch * fcl)) * 1e6 );
-					printf( "\n%c%d -> %3.1f pF\n" , indcap[x] , component , (1/(2 * PI * (fch - fcl) * r * l)) * 1e12 );
+					printf( "\n%c -> %3.3f uH" , indcap[1-x] , (((fch - fcl) * r * l)/(2 * PI * fch * fcl)) * 1e6 );
+					printf( "\n%c -> %3.1f pF" , indcap[x] , (1/(2 * PI * (fch - fcl) * r * l)) * 1e12 );
 				}
 
 				if ( indcap[x] == 'L' )
 				{
 					c = nelements[component];
 					l = nelements[component];
-					printf( "\n%c%d -> %3.1f pF\n" , indcap[1-x] , component , (((fch - fcl) * c) / (2 * PI * fch * fcl * r)) * 1e12 );
-					printf( "\n%c%d -> %3.3f uH\n" , indcap[x] , component , (r/(2 * PI * (fch - fcl) * c)) * 1e6 );
+					printf( "\n%c -> %3.1f pF" , indcap[1-x] , (((fch - fcl) * c) / (2 * PI * fch * fcl * r)) * 1e12 );
+					printf( "\n%c -> %3.3f uH" , indcap[x] , (r/(2 * PI * (fch - fcl) * c)) * 1e6 );
+				}
+
+				if ( inputtype == 'p' ) 
+				{
+					if ( x == 1 ) printf ( "\n Components in Series - Shunt\n" ); else printf ( "\n Components in Parallel - Series \n" );
+				}
+
+				if ( inputtype == 't' ) 
+				{
+					if ( x == 1 ) printf ( "\n Components in Series - Shunt\n" ); else printf ( "\n Components in Parallel - Series \n" );
 				}
 
 				x = 1 - x;
@@ -1838,7 +1918,7 @@ void Powers10( void )
 		printf( "%d. %s\n" , x , unitlabels[x-1]);
 	}
 
-	printf ( "\nChoose Unit : \n");
+	printf ( "\nChoose Unit : \n" );
 	sgets( buffer , sizeof buffer );
 	unit = atoi( buffer );	
 
@@ -1897,17 +1977,17 @@ void LineOfSight(void)
 	ah1 = atof( buffer );
 	if ( ah1 <= 0 )
 	{
-		printf ( "\nHeight must be greater than 0\n");
+		printf ( "\nHeight must be greater than 0\n" );
 		return;
 	}
 
-	printf( "\nEnter Antenna 1 Gain (db) : ");
+	printf( "\nEnter Antenna 1 Gain (db) : " );
 	sgets( buffer , sizeof buffer );
 	ag1 = atof( buffer );
 
 	if ( ag1 < 0 )
 	{
-		printf ( "\nGain must be >= 0\n");
+		printf ( "\nGain must be >= 0\n" );
 		return;
 	}
 
@@ -1916,20 +1996,20 @@ void LineOfSight(void)
 	ah2 = atof( buffer );
 	if ( ah2 <= 0 )
 	{
-		printf ( "\nHeight must be greater than 0\n");
+		printf ( "\nHeight must be greater than 0\n" );
 		return;
 	}
 
-	printf( "\nEnter Antenna 2 Gain (db) : ");
+	printf( "\nEnter Antenna 2 Gain (db) : " );
 	sgets( buffer , sizeof buffer );
 	ag2 = atof( buffer );
 	if ( ag2 <= 0 )
 	{
-		printf ( "\nGain must be >= 0\n");
+		printf ( "\nGain must be >= 0\n" );
 		return;
 	}
 
-	printf( "\nEnter Frequency (MHz) : ");
+	printf( "\nEnter Frequency (MHz) : " );
 	sgets( buffer , sizeof buffer );
 	f = atof( buffer );
 
@@ -1971,7 +2051,7 @@ void ResistorAttenuator( void )
 
 	if ( attn <= 0 )
 	{
-		printf ( "\nAttenuation must be greater than 0\n");
+		printf ( "\nAttenuation must be greater than 0\n" );
 		return;
 	}
 
@@ -1981,7 +2061,7 @@ void ResistorAttenuator( void )
 
 	if ( z <= 0 )
 	{
-		printf ( "\nImpedance must be greater than 0\n");
+		printf ( "\nImpedance must be greater than 0\n" );
 		return;
 	}
 
@@ -2006,8 +2086,8 @@ void ResistorAttenuator( void )
 		r2 = 2*z*((pow(10,attn/20)/(pow(10,attn/10)-1)));
 	}
 
-	printf ("\nR1 -> %3.2f\n", r1 );
-	printf ("\nR2 -> %3.2f\n", r2 );
+	printf ( "\nR1 -> %3.2f\n", r1 );
+	printf ( "\nR2 -> %3.2f\n", r2 );
 }
 
 void CoaxLoss( void )
@@ -2030,7 +2110,7 @@ void CoaxLoss( void )
 		printf( "\n%d. %s" , x + 1 ,types[x]);
 	}
 
-	printf( "\n\nEnter Coax Selection : ");
+	printf( "\n\nEnter Coax Selection : " );
 	sgets( buffer , sizeof buffer );
 	i = atoi( buffer ) - 1;
 
@@ -2202,7 +2282,7 @@ int main ( void )
 		printf( "21. Resistor Attenuators\n" );
 		printf( "22. Coax Loss\n" );
 		printf( "23. Wire Antenna Length\n" );
-		printf( "24. Image Frequency and Local Oscillator\n");
+		printf( "24. Image Frequency and Local Oscillator\n" );
 		printf( "\n 99. Exit\n\n" );
 		printf( "Enter Selection: " );
 		
