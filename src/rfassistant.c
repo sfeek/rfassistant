@@ -2003,7 +2003,7 @@ void LineOfSight(void)
 	printf( "\nEnter Antenna 2 Gain (db) : " );
 	sgets( buffer , sizeof buffer );
 	ag2 = atof( buffer );
-	if ( ag2 <= 0 )
+	if ( ag2 < 0 )
 	{
 		printf ( "\nGain must be >= 0\n" );
 		return;
