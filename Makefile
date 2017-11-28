@@ -26,7 +26,7 @@ LFLAGS = -L../lib
 LIBS = -lm
 
 # define the C source files
-SRCS = src/rfassistant.c 
+SRCS = src/rfassistant.c src/iolibrary.c
 
 # define the C object files 
 #

@@ -3,321 +3,131 @@
 #include <string.h>
 #include <math.h>
 #include <ctype.h>
+#include "../include/iolibrary.h"
 
 #define PI 3.14159265
 
-/*Safe function to get values from the user*/
-void sgets( char *line , size_t size )
+/* Used with FOR loops to properly handle fractional step values */
+int floatlessthan ( double f1 , double f2 , double step )
 {
-	size_t i;
-	
-	fflush( stdin );
-		
-	for ( i = 0 ; i < size-1 ; ++i )
-	{
-		int ch = fgetc( stdin );
-		if (  ch == '\n' || ch == EOF )
-		{
-			break;
-		}
-		line[i] = ch;
-	}
-
-	line[i] = '\0';
-}
-
-
-/*Used with FOR loops to properly handle fractional step values*/
-int floatlessthan( double f1 , double f2 , double step )
-{
-	if ( (f2 + step)-f1 > 1e-4)
+	if ( ( f2 + step ) - f1 > 1e-4 )
 		return 1;
 	else
 		return 0;
 }
 
-
-/* Wait for the user to Press ENTER */
-void PauseForEnterKey( void )
+void TurnsToInductanceToroid ( void )
 {
-	char ch;
-
-	printf(  "\n*** Press [ENTER] For Main Menu ***\n" );
-
-	while (1)
-	{
-		ch=fgetc( stdin );
-		if ( ch == '\n') break;
-	}
-
-	return;
-}
-
-
-void TurnsToInductanceToroid( void )
-{
-	char buffer[80];
 	double al , l;
 	int turns , i;
 	
-	printf(  "Enter Al Value (uH/100 Turns): " );
-	sgets( buffer , sizeof buffer );
-	al = atof( buffer );
-	
-	printf(  "Enter Number of Turns: " );
-	sgets( buffer , sizeof buffer );
-	turns = atoi( buffer );
-	
-	if ( al < 0) 
+	al = getdouble ( "Enter Al Value (uH/100 Turns): " );
+
+	turns = getint ( "Enter Number of Turns: " );
+
+	if ( al < 0 ) 
 	{
-		printf(  "\nAl Cannot Be Negative!\n" );
+		printf ( "\nAl Cannot Be Negative!\n" );
 		return;
 	}
 	
-	if ( turns < 1)
+	if ( turns < 1 )
 	{
-		printf(  "\nNumber of Turns must be > 0!\n" );
+		printf ( "\nNumber of Turns must be > 0!\n" );
 		return;
 	}
 	
-	printf(  "\n" );
+	printf ( "\n" );
 
 	for ( i = 1 ; i < turns + 1 ; i++ ) 
 	{
-		l = (al * i * i) / 10000.0;
+		l = ( al * i * i ) / 10000.0;
 		
-		printf(  "%d -> %3.3f uH\n" , i  , l );
+		printf ( "%d -> %3.3f uH\n" , i  , l );
 	}
 }
 
-void IndToAlToroid( void )
+void IndToAlToroid ( void )
 {
-	char buffer[80];
 	double al , l;
 	int turns;
 	
-	printf(  "Enter Toroid Inductance (uH): " );
-	sgets( buffer , sizeof buffer );
-	l = atof( buffer );
-	
-	printf(  "Enter Number of Turns: " );
-	sgets( buffer , sizeof buffer );
-	turns = atoi( buffer );
-	
-	if (  l < 0 ) 
+	l = getdouble ( "Enter Toroid Inductance (uH): " );
+
+	turns = getint ( "Enter Number of Turns: " );
+
+	if ( l < 0 ) 
 	{
 		printf ( "\nInductance Cannot Be Negative!\n" );
 		return;
 	}
 	
-	if (  turns < 1 )
+	if ( turns < 1 )
 	{
-		printf(  "\nNumber of Turns must be > 0!\n" );
+		printf ( "\nNumber of Turns must be > 0!\n" );
 		return;
 	}
 	
-	printf(  "\n" );
-	al = (l * 10000.0) / (turns * turns);
+	printf ( "\n" );
+	al = ( l * 10000.0 ) / ( turns * turns );
 		
-	printf(  " Al = %3.1f uH/100\n" , al );
+	printf ( "Al = %3.1f uH/100\n" , al );
 }
 
-
-void TurnsToInductanceAirCore( void )
+void TurnsToInductanceAirCore ( void )
 {
-	char buffer[80];
 	int turns , i;
 	double cd , ww , l;
 	
-	printf(  "Enter Coil Diameter (mm): " );
-	sgets( buffer , sizeof buffer );
-	cd = atof( buffer );
-	
-	printf(  "Enter Wire Width (mm): " );
-	sgets( buffer , sizeof buffer );
-	ww = atof( buffer );
-	
-	printf(  "Enter Number of Turns: " );
-	sgets( buffer , sizeof buffer );
-	turns = atoi( buffer );
-	
-	if (  cd <= 0.0 || cd < (ww * 2) )
-	{
-		printf(  "\nCoil Diameter must be > 2x Wire Width!\n" );
-		return;
-	}
-	
-	if (  turns < 2 )
-	{                 
-		printf(  "\nNumber of Turns must be > 2!\n" );
-		return;
-	}
-	
-	if (  ww <=0.0 )
-	{
-		printf(  "\nWire Width must be > 0!\n" );
-		return;
-	}
-	
-	printf(  "\n" );
+	cd = getdouble ( "Enter Coil Diameter (mm): " );
 
-	for ( i=1 ; i < turns+1 ; i++ )
+	ww = getdouble ( "Enter Wire Width (mm): " );	
+
+	turns = getint ( "Enter Number of Turns: " );
+	
+	if ( cd <= 0.0 || cd < ( ww * 2 ) )
+	{
+		printf ( "\nCoil Diameter must be > 2x Wire Width!\n" );
+		return;
+	}
+	
+	if ( turns < 2 )
+	{                 
+		printf ( "\nNumber of Turns must be > 2!\n" );
+		return;
+	}
+	
+	if ( ww <=0.0 )
+	{
+		printf ( "\nWire Width must be > 0!\n" );
+		return;
+	}
+	
+	printf ( "\n" );
+
+	for ( i = 1 ; i < turns+1 ; i++ )
 	{
 		l = (0.2 * pow(cd/25.4 , 2) * pow(i , 2)) / (3 * (cd/25.4) + 9 * ((i*ww)/25.4));
 		
-		printf(  "%d -> %3.3f uH   Coil Length = %3.1f mm\n" , i , l , i*ww);
+		printf ( "%d -> %3.3f uH   Coil Length = %3.1f mm\n" , i , l , i*ww );
 	}
 }
 
-
-void CapacitanceFrequency( void )
+void CapacitanceFrequency ( void )
 {
-	char buffer[80];
 	double ind , scap , ecap , icap , c , f;
 	
-	printf(  "Enter Inductance (uH): " );
-	sgets( buffer , sizeof buffer );
-	ind = atof( buffer );
+	ind = getdouble ( "Enter Inductance (uH): " );
 	
-	printf(  "Enter Start Capacitance (pF): " );
-	sgets( buffer , sizeof buffer );
-	scap = atof( buffer );
-	
-	printf(  "Enter End Capacitance (pF): " );
-	sgets( buffer , sizeof buffer );
-	ecap = atof( buffer );
-	
-	printf(  "Enter Capacitance Step (pF): " );
-	sgets( buffer , sizeof buffer );
-	icap = atof( buffer );
-	
-	if (  ind < 0.0 )
-	{
-		printf(  "\nInductance must be Non-Zero!\n" );
-		return;
-	}
-	
-	if (  icap == 0 || ecap < scap )
-	{
-		icap = 1;
-		ecap = scap;
-	}
-	
-	if (  scap < 0 || scap > ecap )
-	{
-		printf(  "\nStart Value must be Non-Zero and smaller than End Value!\n" );
-		return;
-	}
-	
-	if (  ecap < 0 || ecap < scap )
-	{
-		printf(  "\nEnd Value must be Non-Zero and larger than Start Value!\n" );
-		return;
-	}
-	
-	if (  icap < 0 ) 
-	{
-		printf(  "\nStep Value must be Non-Zero!\n" );
-		return;
-	}
-	
-	printf(  "\n" );
+	scap = getdouble ( "Enter Start Capacitance (pF): " );
 
-	for ( c = scap ; floatlessthan( c , ecap , icap ); c += icap )
-	{
-		f = (1 / ( 2 * PI * (sqrt(ind * 1e-6 * c * 1e-12)))) / 1e6;
+	ecap = getdouble ( "Enter End Capacitance (pF): " );
 
-		printf(  "%3.2f pF -> %3.3f MHz\n" , c , f );
-	}
-}
-
-
-void InductanceFrequency( void )
-{
-	char buffer[80];
-	double cap , sind , eind , iind , i , f;
+	icap = getdouble ( "Enter Capacitance Step (pF): " );	
 	
-	printf(  "Enter Capacitance (pF): " );
-	sgets( buffer , sizeof buffer );
-	cap = atof( buffer );
-	
-	printf(  "Enter Start Inductance (uH): " );
-	sgets( buffer , sizeof buffer );
-	sind = atof( buffer );
-	
-	printf(  "Enter End Inductance (uH): " );
-	sgets( buffer , sizeof buffer );
-	eind = atof( buffer );
-	
-	printf(  "Enter Inductance Step (uH): " );
-	sgets( buffer , sizeof buffer );
-	iind = atof( buffer );
-	
-	if (  cap < 0.0 )
+	if ( ind < 0.0 )
 	{
-		printf(  "\nCapacitance must be Non-Zero!\n" );
-		return;
-	}
-	
-	if (  iind == 0 || eind < sind )
-	{
-		iind = 1;
-		eind = sind;
-	}
-	
-	if (  sind < 0 || sind > eind )
-	{
-		printf(  "\nStart Value must be Non-Zero and smaller than End Value!\n" );
-		return;
-	}
-	
-	if (  eind < 0 || eind < sind )
-	{
-		printf(  "\nEnd Value must be Non-Zero and larger than Start Value!\n" );
-		return;
-	}
-	
-	if (  iind < 0 ) 
-	{
-		printf(  "\nStep Value must be Non-Zero!\n" );
-		return;
-	}
-	
-	printf(  "\n" );
-
-	for (i = sind ; floatlessthan( i , eind , iind ); i += iind )
-	{
-		f = (1 / ( 2 * PI * (sqrt(i * 1e-6 * cap * 1e-12)))) / 1e6;
-
-		printf(  "%3.3f uH -> %3.3f MHz\n" , i , f );
-	}
-}
-
-
-void ReactanceCapacitance( void )
-{
-	char buffer[80];
-	double r , scap , ecap , icap , i , f;
-	
-	printf( "Enter Frequency (MHz): " );
-	sgets( buffer , sizeof buffer );
-	f = atof( buffer );
-	
-	printf( "Enter Start Capacitance (pF): " );
-	sgets( buffer , sizeof buffer );
-	scap = atof( buffer );
-	
-	printf( "Enter End Capacitance (pF): " );
-	sgets( buffer , sizeof buffer );
-	ecap = atof( buffer );
-	
-	printf( "Enter Capacitance Step (pF): " );
-	sgets( buffer , sizeof buffer );
-	icap = atof( buffer );
-	
-	if ( f < 0.0 )
-	{
-		printf( "\nFrequency must be Non-Zero!\n" );
+		printf ( "\nInductance must be Non-Zero!\n" );
 		return;
 	}
 	
@@ -329,57 +139,47 @@ void ReactanceCapacitance( void )
 	
 	if ( scap < 0 || scap > ecap )
 	{
-		printf( "\nStart Value must be Non-Zero and smaller than End Value!\n" );
+		printf ( "\nStart Value must be Non-Zero and smaller than End Value!\n" );
 		return;
 	}
 	
 	if ( ecap < 0 || ecap < scap )
 	{
-		printf( "\nEnd Value must be Non-Zero and larger than Start Value!\n" );
+		printf ( "\nEnd Value must be Non-Zero and larger than Start Value!\n" );
 		return;
 	}
 	
 	if ( icap < 0 ) 
 	{
-		printf( "\nStep Value must be Non-Zero!\n" );
+		printf ( "\nStep Value must be Non-Zero!\n" );
 		return;
 	}
 	
-	printf( "\n" );
+	printf ( "\n" );
 
-	for ( i = scap ; floatlessthan(i , ecap , icap) ; i += icap )
+	for ( c = scap ; floatlessthan( c , ecap , icap ); c += icap )
 	{
-		r = 1 / (2 * PI * (f * 1e6) * (i * 1e-12));
+		f = (1 / ( 2 * PI * (sqrt(ind * 1e-6 * c * 1e-12)))) / 1e6;
 
-		printf( "%3.2f pF -> %3.1f Ohms\n" , i , r );
+		printf ( "%3.2f pF -> %3.3f MHz\n" , c , f );
 	}
 }
 
-
-void ReactanceInductance( void )
+void InductanceFrequency ( void )
 {
-	char buffer[80];
-	double r , sind , eind , iind , l , f;
+	double cap , sind , eind , iind , i , f;
 	
-	printf( "Enter Frequency (MHz): " );
-	sgets( buffer , sizeof buffer );
-	f = atof( buffer );
+	cap = getdouble ( "Enter Capacitance (pF): " );
+
+	sind = getdouble ( "Enter Start Inductance (uH): " );
+
+	eind = getdouble ( "Enter End Inductance (uH): " );
+
+	iind = getdouble ( "Enter Inductance Step (uH): " );
 	
-	printf( "Enter Start Inductance (uH): " );
-	sgets( buffer , sizeof buffer );
-	sind = atof( buffer );
-	
-	printf( "Enter End Inductance (uH): " );
-	sgets( buffer , sizeof buffer );
-	eind = atof( buffer );
-	
-	printf( "Enter Inductance Step (uH): " );
-	sgets( buffer , sizeof buffer );
-	iind = atof( buffer );
-	
-	if ( f < 0.0 )
+	if ( cap < 0.0 )
 	{
-		printf( "\nFrequency must be Non-Zero!\n" );
+		printf ( "\nCapacitance must be Non-Zero!\n" );
 		return;
 	}
 	
@@ -391,54 +191,152 @@ void ReactanceInductance( void )
 	
 	if ( sind < 0 || sind > eind )
 	{
-		printf( "\nStart Value must be Non-Zero and smaller than End Value!\n" );
+		printf ( "\nStart Value must be Non-Zero and smaller than End Value!\n" );
 		return;
 	}
 	
 	if ( eind < 0 || eind < sind )
 	{
-		printf( "\nEnd Value must be Non-Zero and larger than Start Value!\n" );
+		printf ( "\nEnd Value must be Non-Zero and larger than Start Value!\n" );
 		return;
 	}
 	
 	if ( iind < 0 ) 
 	{
-		printf( "\nStep Value must be Non-Zero!\n" );
+		printf ( "\nStep Value must be Non-Zero!\n" );
 		return;
 	}
 	
-	printf( "\n" );
+	printf ( "\n" );
+
+	for (i = sind ; floatlessthan( i , eind , iind ); i += iind )
+	{
+		f = (1 / ( 2 * PI * (sqrt(i * 1e-6 * cap * 1e-12)))) / 1e6;
+
+		printf ( "%3.3f uH -> %3.3f MHz\n" , i , f );
+	}
+}
+
+void ReactanceCapacitance ( void )
+{
+	double r , scap , ecap , icap , i , f;
+	
+	f = getdouble ( "Enter Frequency (MHz): " );
+	
+	scap = getdouble ( "Enter Start Capacitance (pF): " );
+
+	ecap = getdouble ( "Enter End Capacitance (pF): " );
+
+	icap = getdouble ( "Enter Capacitance Step (pF): " );
+	
+	if ( f < 0.0 )
+	{
+		printf ( "\nFrequency must be Non-Zero!\n" );
+		return;
+	}
+	
+	if ( icap == 0 || ecap < scap )
+	{
+		icap = 1;
+		ecap = scap;
+	}
+	
+	if ( scap < 0 || scap > ecap )
+	{
+		printf ( "\nStart Value must be Non-Zero and smaller than End Value!\n" );
+		return;
+	}
+	
+	if ( ecap < 0 || ecap < scap )
+	{
+		printf ( "\nEnd Value must be Non-Zero and larger than Start Value!\n" );
+		return;
+	}
+	
+	if ( icap < 0 ) 
+	{
+		printf ( "\nStep Value must be Non-Zero!\n" );
+		return;
+	}
+	
+	printf ( "\n" );
+
+	for ( i = scap ; floatlessthan(i , ecap , icap) ; i += icap )
+	{
+		r = 1 / (2 * PI * (f * 1e6) * (i * 1e-12));
+
+		printf ( "%3.2f pF -> %3.1f Ohms\n" , i , r );
+	}
+}
+
+void ReactanceInductance ( void )
+{
+	double r , sind , eind , iind , l , f;
+	
+	f = getdouble ( "Enter Frequency (MHz): " );
+
+	sind = getdouble ( "Enter Start Inductance (uH): " );
+
+	eind = getdouble ( "Enter End Inductance (uH): " );	
+
+	iind = getdouble ( "Enter Inductance Step (uH): " );
+	
+	if ( f < 0.0 )
+	{
+		printf ( "\nFrequency must be Non-Zero!\n" );
+		return;
+	}
+	
+	if ( iind == 0 || eind < sind )
+	{
+		iind = 1;
+		eind = sind;
+	}
+	
+	if ( sind < 0 || sind > eind )
+	{
+		printf ( "\nStart Value must be Non-Zero and smaller than End Value!\n" );
+		return;
+	}
+	
+	if ( eind < 0 || eind < sind )
+	{
+		printf ( "\nEnd Value must be Non-Zero and larger than Start Value!\n" );
+		return;
+	}
+	
+	if ( iind < 0 ) 
+	{
+		printf ( "\nStep Value must be Non-Zero!\n" );
+		return;
+	}
+	
+	printf ( "\n" );
 	for (l = sind ; floatlessthan( l , eind , iind ) ; l += iind )
 	{
 		r = 2 * PI * (f * 1e6) * (l * 1e-6);
 
-		printf( "%3.3f uH -> %3.1f Ohms\n" , l , r );
+		printf ( "%3.3f uH -> %3.1f Ohms\n" , l , r );
 	}
 }
 
-
-void SWRioZ( void )
+void SWRioZ ( void )
 {
-	char buffer[80];
 	double z0 , z1 , SWR , t;
 	
-	printf( "Enter Input Z (Ohms): " );
-	sgets( buffer , sizeof buffer );
-	z0 = atof( buffer );
-	
-	printf( "Enter Output Z (Ohms): " );
-	sgets( buffer , sizeof buffer );
-	z1 = atof( buffer );
+	z0 = getdouble ( "Enter Input Z (Ohms): " );
+
+	z1 = getdouble ( "Enter Output Z (Ohms): " );
 	
 	if ( z0 <= 0 )
 	{
-		printf( "\nInput Z must be > 0!\n" );
+		printf ( "\nInput Z must be > 0!\n" );
 		return;
 	}
 	
 	if ( z1 <= 0 )
 	{
-		printf( "\nOutput Z must be > 0!\n" );
+		printf ( "\nOutput Z must be > 0!\n" );
 		return;
 	}
 	
@@ -451,261 +349,240 @@ void SWRioZ( void )
 
 	SWR = (1 + (z1 - z0) / (z1 + z0)) / (1 - (z1 - z0) / (z1 + z0));
 
-	printf( "\nSWR -> %3.1f\n" , SWR );
+	printf ( "\nSWR -> %3.1f\n" , SWR );
 	
 	return;
 }
 
-
-void SWRf( void )
+void SWRf ( void )
 {
-	char buffer[80];
 	double SWR , tx , pr;
 	
-	printf( "Enter TX Power (W): " );
-	sgets( buffer , sizeof buffer );
-	tx = atof( buffer );
-	
-	printf( "Enter SWR: " );
-	sgets( buffer , sizeof buffer );
-	SWR = atof( buffer );
+	tx = getdouble ( "Enter TX Power (W): " );
+
+	SWR = getdouble ( "Enter SWR: " );
 	
 	if ( tx <=0 )
 	{
-		printf( "\nTX Power must be >0!\n" );
+		printf ( "\nTX Power must be >0!\n" );
 		return;
 	}
 	
 	if ( SWR < 1 )
 	{
-		printf( "\nSWR must be >= 1!\n" );
+		printf ( "\nSWR must be >= 1!\n" );
 		return;
 	}
 	
 	pr = tx * pow(SWR-1 , 2) / pow(SWR+1 , 2);
 	
-	printf( "\nPower Radiated -> %3.2f W" , tx-pr );
-	printf( "\nPower Reflected -> %3.2f W" , pr ); 
-	printf( "\nPower Lost -> %3.1f %%\n" , pr / tx * 100.0 );
+	printf ( "\nPower Radiated -> %3.2f W" , tx-pr );
+	printf ( "\nPower Reflected -> %3.2f W" , pr ); 
+	printf ( "\nPower Lost -> %3.1f %%\n" , pr / tx * 100.0 );
 	
 	return;
 }
 
-
-void SWRfr( void )
+void SWRfr ( void )
 {
-	char buffer[80];
 	double SWR , pf , pr;
 	
-	printf( "Enter Forward Power (W): " );
-	sgets( buffer , sizeof buffer );
-	pf = atof( buffer );
-	
-	printf( "Enter Reflected Power (W): " );
-	sgets( buffer , sizeof buffer );
-	pr = atof( buffer );
+	pf = getdouble ( "Enter Forward Power (W): " );
+
+	pr = getdouble ( "Enter Reflected Power (W): ");
 	
 	if ( pf <=0 ) 
 	{
-		printf( "\nForward Power must be >0!\n" );
+		printf ( "\nForward Power must be >0!\n" );
 		return;
 	}
 	
 	if ( pr <=0 ) 
 	{
-		printf( "\nReflected Power must be >0!\n" );
+		printf ( "\nReflected Power must be >0!\n" );
 		return;
 	}
 	
 	if ( pr > pf )
 	{
-		printf( "\nReflected Power must be less than Forward Power!" );
+		printf ( "\nReflected Power must be less than Forward Power!" );
 		return;
 	}
 	
 	SWR = (sqrt(pf) + sqrt(pr)) / (sqrt(pf) - sqrt(pr));
 	
-	printf( "\nSWR -> %3.2f\n" , SWR );
+	printf ( "\nSWR -> %3.2f\n" , SWR );
 }
 
-
-void VarCapScaling( void )
+void VarCapScaling ( void )
 {
-	char buffer[80];
 	double I , X , Y , A , B;
 	
-	printf( "Enter Start Capacitance (pF): " );
-	sgets( buffer , sizeof buffer );
-	A = atof( buffer );
+	A = getdouble ( "Enter Start Capacitance (pF): " );
 	
-	printf( "Enter End Capacitance (pF): " );
-	sgets( buffer , sizeof buffer );
-	B = atof( buffer );
-	
-	printf( "Enter Variable Capacitor Start (pF): " );
-	sgets( buffer , sizeof buffer );
-	X = atof( buffer );
-	
-	printf( "Enter Variable Capacitor End (pF): " );
-	sgets( buffer , sizeof buffer );
-	Y = atof( buffer );
+	B = getdouble ( "Enter End Capacitance (pF): " );
+
+	X = getdouble ( "Enter Variable Capacitor Start (pF): " );
+
+	Y = getdouble ( "Enter Variable Capacitor End (pF): " );
 	
 	if ( A >= B)
 	{
-		printf( "\nStart Capacitance must be less than End Capacitance!\n" );
+		printf ( "\nStart Capacitance must be less than End Capacitance!\n" );
 		return;
 	}
 	
 	if ( Y <= X + A)
 	{
-		printf( "\nVariable Capacitor End Too Small!\n" );
+		printf ( "\nVariable Capacitor End Too Small!\n" );
 		return;
 	}
 	
 	if ( X >= (1.0 / (1.0 / Y + 1.0 / B)))
 	{
-		printf( "\nVariable Capacitor Start Too Large!\n" );
+		printf ( "\nVariable Capacitor Start Too Large!\n" );
 		return;
 	}
 	
 	if ( X >= Y)
 	{
-		printf( "\nVariable Capacitor Start must be less than Variable Capacitor End!\n" );
+		printf ( "\nVariable Capacitor Start must be less than Variable Capacitor End!\n" );
 		return;
 	}
 	
 	if ( A <= 0)
 	{
-		printf( "\nStart Capacitance must be >0!\n" );
+		printf ( "\nStart Capacitance must be >0!\n" );
 		return;
 	}
 	
 	if ( B <= 0)
 	{
-		printf( "\nEnd Capacitance must be >0!\n" );
+		printf ( "\nEnd Capacitance must be >0!\n" );
 		return;
 	}
 	
 	if ( X <= 0)
 	{
-		printf( "\nVariable Capacitor Start must be >0!\n" );
+		printf ( "\nVariable Capacitor Start must be >0!\n" );
 		return;
 	}
 	
 	if ( Y <= 0)
 	{
-		printf( "\nVariable Capacitor End must be >0!\n" );
+		printf ( "\nVariable Capacitor End must be >0!\n" );
 		return;
 	}
 	
 	if ( (Y - X) <= (B - A))
 	{
-		printf( "\nVariable Capacitor Capacitance Span too small!\n" );
+		printf ( "\nVariable Capacitor Capacitance Span too small!\n" );
 		return;
 	}
 	
 	I = -0.5 * ((-B * Y - B * X + A * Y + A * X - sqrt((-Y + X) * (X * B * B + X * A * A - 2 * X * A * B - 4 * B * Y * X + 4 * A * Y * X - B * B * Y + 2 * B * Y * A - A * A * Y))) / (-B + A + Y - X));	
 	
-	
-	printf( "\nSeries Capacitor -> %3.2f pF\n" , I);
-	printf( "\nParallel Capacitor -> %3.2f pF\n" , fabs(A - (X * I) / (X + I)));
+	printf ( "\nSeries Capacitor -> %3.2f pF\n" , I);
+	printf ( "\nParallel Capacitor -> %3.2f pF\n" , fabs(A - (X * I) / (X + I)));
 }
 
-
-void CoaxStub( void )
+void CoaxStub ( void )
 {
-	char buffer[80];
+	char *str;
+	char units;
 	double f , vf , o;
 	
-	printf( "Enter Frequency (MHz): " );
-	sgets( buffer , sizeof buffer );
-	f = atof( buffer );
-	
-	printf( "Enter Velocity Factor : " );
-	sgets( buffer , sizeof buffer );
-	vf = atof( buffer );
-	
+	f = getdouble ( "Enter Frequency (MHz): " );
+
+	vf = getdouble ( "Enter Velocity Factor : " );
+
 	if ( f <= 0 )
 	{
-		printf( "\nFrequency must be >0!\n" );
+		printf ( "\nFrequency must be >0!\n" );
 		return;
 	}
 	
 	if ( vf <= 0 || vf >= 1 )
 	{
-		printf( "\nVelocity Factor must be >0 and <1!\n" );
+		printf ( "\nVelocity Factor must be >0 and <1!\n" );
 		return;
 	}
+
+	str = getstring ( "\nEnter [M]etric or [E]nglish : ", 1 );
 	
+	units = tolower( str[0] );
+
+	if ( str ) free ( str );
+
+	if ( units != 'm' && units != 'e' ) 
+	{
+		printf ( "\nUnits must be [M]etric or [E]nglish\n" );
+		return;
+	}
+
 	o = (74.9481 * vf / f) * 100;
 	
-	printf( "\nOpen End Stub = Notch Filter - Shorted Stub = Pass Filter\n" );
-	printf( "\nCoax Stub Length -> %3.1f cm\n" , o);
+	printf ( "\nOpen End Stub = Notch Filter - Shorted Stub = Pass Filter\n" );
+
+	if ( units == 'm' ) 
+	{
+		printf ( "\nCoax Stub Length -> %3.1f cm\n" , o);
+	}
+	else
+	{
+		printf ( "\nCoax Stub Length -> %3.1f in\n" , o / 2.54);
+	}
 }
 
-
-void TXOutputMatch( void )
+void TXOutputMatch ( void )
 {
-	char buffer[80];
 	double DTOR , P , V , R1 , R2 , F , RA , Z1 , ZC1 , Z2 , ZC2 , Z3 , ZL1 , r , Qn , BW , Qn1 , Eff , Pd , QCoil;
 	
-	printf( "Enter TX Output Power (W): " );
-	sgets( buffer , sizeof buffer );
-	P = atof( buffer );
+	P = getdouble ( "Enter TX Output Power (W): " );
+
+	V = getdouble ( "Enter Collector or Plate Voltage Swing (V): " );
 	
-	printf( "Enter Collector or Plate Voltage Swing (V): " );
-	sgets( buffer , sizeof buffer );
-	V = atof( buffer );
+	R2 = getdouble ( "Enter TX Output Resistance (Ohms): " );
 	
-	printf( "Enter TX Output Resistance (Ohms): " );
-	sgets( buffer , sizeof buffer );
-	R2 = atof( buffer );
-	
-	printf( "Enter TX Center Frequency (MHz): " );
-	sgets( buffer , sizeof buffer );
-	F = atof( buffer );
-	
-	printf( "Enter Unloaded Q of Coil : " );
-	sgets( buffer , sizeof buffer );
-	QCoil = atof( buffer );
-	
-	printf( "Enter Phase Shift Angle (Deg): " );
-	sgets( buffer , sizeof buffer );
-	r = atof( buffer );
+	F = getdouble ( "Enter TX Center Frequency (MHz): " );
+
+	QCoil = getdouble ( "Enter Unloaded Q of Coil : " );
+
+	r = getdouble ( "Enter Phase Shift Angle (Deg): " );
 	
 	if ( P <= 0 )
 	{
-		printf( "\nTX Output Power must be >0!\n" );
+		printf ( "\nTX Output Power must be >0!\n" );
 		return;
 	}
 	
 	if ( V <= 0 )
 	{
-		printf( "\nTX Collector or Plate Voltage Swing must be >0!\n" );
+		printf ( "\nTX Collector or Plate Voltage Swing must be >0!\n" );
 		return;
 	}
 	
 	if ( R2 <= 0 )
 	{
-		printf( "\nTX Output Resistance must be >0!\n" );
+		printf ( "\nTX Output Resistance must be >0!\n" );
 		return;
 	}
 	
 	if ( F < 0.1 || F > 2500 )
 	{
-		printf( "\nTX Center Frequency must be >0.1 and <2500!\n" );
+		printf ( "\nTX Center Frequency must be >0.1 and <2500!\n" );
 		return;
 	}
 	
 	if ( QCoil < 0.1 )
 	{
-		printf( "\nUnloaded Q of Coil must be >0.1!\n" );
+		printf ( "\nUnloaded Q of Coil must be >0.1!\n" );
 		return;
 	}
 	
 	if ( r < 90 || r > 180 )
 	{
-		printf( "\nPhase Shift Angle must be >=90 and <=180!\n" );
+		printf ( "\nPhase Shift Angle must be >=90 and <=180!\n" );
 		return;
 	}
 	
@@ -730,73 +607,61 @@ void TXOutputMatch( void )
 	Eff = (Z3 / Qn) / (Z3 / Qn1) * 100;
 	Pd = P - P * (Eff / 100);
 	
-	printf( "\nLoad Resistance -> %3.2f Ohms\n" , R2 );
-	printf( "\nSource Resistance -> %3.2f Ohms\n" , R1 );
-	printf( "\nSource Side Parallel Capacitor -> %3.1f pF\n" , ZC1 );
-	printf( "\nLoad Side Parallel Capacitor -> %3.1f pF\n" , ZC2 );
-	printf( "\nSeries Inductor -> %3.3f uH\n" , ZL1 );
-	printf( "\nLoaded Q of Coil -> %3.1f\n" , Qn1 );
-	printf( "\nCircuit Efficiency -> %3.1f %%\n" , Eff );
-	printf( "\nSource Side Parallel Capacitor Reactance -> %3.1f Ohms\n" , Z1 );
-	printf( "\nLoad Side Parallel Capacitor Reactance -> %3.1f Ohms\n" , Z2 );
-	printf( "\nSeries Inductor Reactance -> %3.1f Ohms\n" , Z3 );
-	printf( "\nBandwidth -> %3.1f MHz\n" , BW );
-	printf( "\nPower Lost in Inductor -> %3.1f W\n" , Pd );
+	printf ( "\nLoad Resistance -> %3.2f Ohms\n" , R2 );
+	printf ( "\nSource Resistance -> %3.2f Ohms\n" , R1 );
+	printf ( "\nSource Side Parallel Capacitor -> %3.1f pF\n" , ZC1 );
+	printf ( "\nLoad Side Parallel Capacitor -> %3.1f pF\n" , ZC2 );
+	printf ( "\nSeries Inductor -> %3.3f uH\n" , ZL1 );
+	printf ( "\nLoaded Q of Coil -> %3.1f\n" , Qn1 );
+	printf ( "\nCircuit Efficiency -> %3.1f %%\n" , Eff );
+	printf ( "\nSource Side Parallel Capacitor Reactance -> %3.1f Ohms\n" , Z1 );
+	printf ( "\nLoad Side Parallel Capacitor Reactance -> %3.1f Ohms\n" , Z2 );
+	printf ( "\nSeries Inductor Reactance -> %3.1f Ohms\n" , Z3 );
+	printf ( "\nBandwidth -> %3.1f MHz\n" , BW );
+	printf ( "\nPower Lost in Inductor -> %3.1f W\n" , Pd );
 }
 
-
-void ImpedanceMatch( void )
+void ImpedanceMatch ( void )
 {
-	char buffer[80];
 	double DTOR , R1 , R2 , F , RA , Z1 , ZC1 , Z2 , ZC2 , Z3 , ZL1 , r , Qn , BW , Qn1 , Eff , QCoil;
 	
-	printf( "Source Resistance (Ohms): " );
-	sgets( buffer , sizeof buffer );
-	R1 = atof( buffer );
+	R1 = getdouble ( "Source Resistance (Ohms): " );
+
+	R2 = getdouble ( "Load Resistance (Ohms): " );
 	
-	printf( "Load Resistance (Ohms): " );
-	sgets( buffer , sizeof buffer );
-	R2 = atof( buffer );
-	
-	printf( "Enter TX Center Frequency (MHz): " );
-	sgets( buffer , sizeof buffer );
-	F = atof( buffer );
-	
-	printf( "Enter Unloaded Q of Coil : " );
-	sgets( buffer , sizeof buffer );
-	QCoil = atof( buffer );
-	
-	printf( "Enter Phase Shift Angle (90 - 180 Deg): " );
-	sgets( buffer , sizeof buffer );
-	r = atof( buffer );
+	F = getdouble ( "Enter TX Center Frequency (MHz): " );
+
+	QCoil = getdouble ( "Enter Unloaded Q of Coil : " );
+
+	r = getdouble ( "Enter Phase Shift Angle (90 - 180 Deg): " );
 	
 	if ( R1 <= 0 )
 	{
-		printf( "\nSource Resistance must be >0!\n" );
+		printf ( "\nSource Resistance must be >0!\n" );
 		return;
 	}
 	
 	if ( R2 <= 0 )
 	{
-		printf( "\nLoad Resistance must be >0!\n" );
+		printf ( "\nLoad Resistance must be >0!\n" );
 		return;
 	}
 	
 	if ( F < 0.1 || F > 2500 )
 	{
-		printf( "\nCenter Frequency must be >0.1 and <2500!\n" );
+		printf ( "\nCenter Frequency must be >0.1 and <2500!\n" );
 		return;
 	}
 	
 	if ( QCoil < 0.1 )
 	{
-		printf( "\nUnloaded Q of Coil must be >0.1!\n" );
+		printf ( "\nUnloaded Q of Coil must be >0.1!\n" );
 		return;
 	}
 	
 	if ( r < 90 || r > 180 )
 	{
-		printf( "\nPhase Shift Angle must be >=90 and <=180!\n" );
+		printf ( "\nPhase Shift Angle must be >=90 and <=180!\n" );
 		return;
 	}
 	
@@ -804,133 +669,112 @@ void ImpedanceMatch( void )
 
 	RA = r * DTOR;
 
-	Z1 = (R1 * R2 * sin(RA)) / (R2 * cos(RA) - sqrt(R1 * R2));
-	ZC1 = fabs(1000000 / (2 * PI * F * Z1));
+	Z1 = (R1 * R2 * sin (RA)) / (R2 * cos (RA) - sqrt (R1 * R2));
+	ZC1 = fabs (1000000 / (2 * PI * F * Z1));
 
-	Z2 = (R1 * R2 * sin(RA)) / (R1 * cos(RA) - sqrt(R1 * R2));
-	ZC2 = fabs(1000000 / (2 * PI * F * Z2));
+	Z2 = (R1 * R2 * sin (RA)) / (R1 * cos (RA) - sqrt (R1 * R2));
+	ZC2 = fabs (1000000 / (2 * PI * F * Z2));
 
-	Z3 = sqrt(R1 * R2) * sin(RA);
+	Z3 = sqrt (R1 * R2) * sin (RA);
 	ZL1 = Z3 / (2 * PI * F);
 
-	Qn = fabs(R1 / Z1 + R2 / Z2);
+	Qn = fabs (R1 / Z1 + R2 / Z2);
 	Qn1 = (Qn * QCoil) / (Qn + QCoil);
 
 	BW = F / Qn;
 	Eff = (Z3 / Qn) / (Z3 / Qn1) * 100;
 	
-	printf( "\nLoad Resistance -> %3.2f Ohms\n" , R2 );
-	printf( "\nSource Resistance -> %3.2f Ohms\n" , R1 );
-	printf( "\nSource Side Parallel Capacitor -> %3.1f pF\n" , ZC1 );
-	printf( "\nLoad Side Parallel Capacitor -> %3.1f pF\n" , ZC2 );
-	printf( "\nSeries Inductor -> %3.3f uH\n" , ZL1 );
-	printf( "\nLoaded Q of Coil -> %3.1f\n" , Qn1 );
-	printf( "\nCircuit Efficiency -> %3.1f %%\n" , Eff );
-	printf( "\nSource Side Parallel Capacitor Reactance -> %3.1f Ohms\n" , Z1 );
-	printf( "\nLoad Side Parallel Capacitor Reactance -> %3.1f Ohms\n" , Z2 );
-	printf( "\nSeries Inductor Reactance -> %3.1f Ohms\n" , Z3 );
-	printf( "\nBandwidth -> %3.1f MHz\n" , BW );
+	printf ( "\nLoad Resistance -> %3.2f Ohms\n" , R2 );
+	printf ( "\nSource Resistance -> %3.2f Ohms\n" , R1 );
+	printf ( "\nSource Side Parallel Capacitor -> %3.1f pF\n" , ZC1 );
+	printf ( "\nLoad Side Parallel Capacitor -> %3.1f pF\n" , ZC2 );
+	printf ( "\nSeries Inductor -> %3.3f uH\n" , ZL1 );
+	printf ( "\nLoaded Q of Coil -> %3.1f\n" , Qn1 );
+	printf ( "\nCircuit Efficiency -> %3.1f %%\n" , Eff );
+	printf ( "\nSource Side Parallel Capacitor Reactance -> %3.1f Ohms\n" , Z1 );
+	printf ( "\nLoad Side Parallel Capacitor Reactance -> %3.1f Ohms\n" , Z2 );
+	printf ( "\nSeries Inductor Reactance -> %3.1f Ohms\n" , Z3 );
+	printf ( "\nBandwidth -> %3.1f MHz\n" , BW );
 }
 
-
-void V1V2( void )
+void V1V2 ( void )
 {
-	char buffer[80];
 	double v1 , v2 , o;
 	
-	printf( "Enter Voltage 1 (V): " );
-	sgets( buffer , sizeof buffer );
-	v1 = atof( buffer );
-	
-	printf( "Enter Voltage 2 (V): " );
-	sgets( buffer , sizeof buffer );
-	v2 = atof( buffer );
+	v1 = getdouble ( "Enter Voltage 1 (V): " );
+
+	v2 = getdouble ( "Enter Voltage 2 (V): " );
 	
 	if ( v1 <= 0 )
 	{
-		printf( "\nVoltage 1 must be >0!\n" );
+		printf ( "\nVoltage 1 must be >0!\n" );
 		return;
 	}
 	
 	if ( v2 <= 0 )
 	{
-		printf( "\nVoltage 2 must be >0!\n" );
+		printf ( "\nVoltage 2 must be >0!\n" );
 		return;
 	}
 	
-	o = 20.0 * log10(v2/v1);
+	o = 20.0 * log10 ( v2/v1 );
 	
-	printf( "\nDecibels -> %3.3f dB\n" , o );
+	printf ( "\nDecibels -> %3.3f dB\n" , o );
 	
 }
 
-
-void P1P2( void )
+void P1P2 ( void )
 {
-
-	char buffer[80];
 	double p1 , p2 , o;
 	
-	printf( "Enter Power 1 : " );
-	sgets( buffer , sizeof buffer );
-	p1 = atof( buffer );
-	
-	printf( "Enter Power 2 : " );
-	sgets( buffer , sizeof buffer );
-	p2 = atof( buffer );
-	
+	p1 = getdouble ( "Enter Power 1 : " );
+
+	p2 = getdouble ( "Enter Power 2 : " );
+
 	if ( p1 <= 0 )
 	{
-		printf( "\nPower 1 must be >0!\n" );
+		printf ( "\nPower 1 must be >0!\n" );
 		return;
 	}
 	
 	if ( p2 <= 0 )
 	{
-		printf( "\nPower 2 must be >0!\n" );
+		printf ( "\nPower 2 must be >0!\n" );
 		return;
 	}
 	
 	o = 10.0 * log10(p2/p1);
 	
-	printf( "\nDecibels -> %3.3f dB\n" , o );
+	printf ( "\nDecibels -> %3.3f dB\n" , o );
 }
 
-
-void dBmP( void )
+void dBmP ( void )
 {
-	char buffer[80];
 	double dBm , o;
 	
-	printf( "Enter dBm : " );
-	sgets( buffer , sizeof buffer );
-	dBm = atof( buffer );
-	
+	dBm = getdouble ( "Enter dBm : " );
+
 	o = pow( 10.0 , dBm/10 );
 	
 	if ( o < 0.01 )
 	{
-		printf( "\nPower -> %.3e mW\n" , o );
+		printf ( "\nPower -> %.3e mW\n" , o );
 	}
 	else
 	{	
-		printf( "\nPower -> %3.3f mW\n" , o );
+		printf ( "\nPower -> %3.3f mW\n" , o );
 	}
 }
 
-
-void PdBm( void )
+void PdBm ( void )
 {
-	char buffer[80];
 	double pwr , o;
 	
-	printf( "Enter Power (mW) : " );
-	sgets( buffer , sizeof buffer );
-	pwr = atof( buffer );
+	pwr = getdouble ( "Enter Power (mW) : " );
 	
 	if ( pwr <= 0)
 	{
-		printf( "\nPower must be >0!\n" );
+		printf ( "\nPower must be >0!\n" );
 		return;
 	}
 		
@@ -938,148 +782,120 @@ void PdBm( void )
 	
 	if ( o < 0.01)
 	{
-		printf( "\nDecibels -> %.3edBm\n" , o);
+		printf ( "\nDecibels -> %.3edBm\n" , o );
 	}
 	else
 	{	
-		printf( "\nDecibels -> %3.3fdBm\n" , o);
+		printf ( "\nDecibels -> %3.3fdBm\n" , o );
 	}
 }
 
-
-void dBmuV( void )
+void dBmuV ( void )
 {
-	char buffer[80];
 	double v1 , v2 , o;
 	
-	printf( "Enter dBm : " );
-	sgets( buffer , sizeof buffer );
-	v1 = atof( buffer );
-	
-	printf( "Enter Impedance (Ohms): " );
-	sgets( buffer , sizeof buffer );
-	v2 = atof( buffer );
+	v1 = getdouble ( "Enter dBm : " );
+
+	v2 = getdouble ( "Enter Impedance (Ohms): " );
 	
 	if ( v2 <= 0 )
 	{
-		printf( "\nImpedance must be >0!\n" );
+		printf ( "\nImpedance must be >0!\n" );
 		return;
 	}
 	
 	o = sqrt((pow(10 , (v1 + 30) / 10) * 1000000) * v2);
 	
-	printf( "\nVoltage -> %3.3f uV\n" , o );
+	printf ( "\nVoltage -> %3.3f uV\n" , o );
 }
 
-
-void uVdBm( void )
+void uVdBm ( void )
 {
-	char buffer[80];
 	double v1 , v2 , o;
 	
-	printf( "Enter Voltage (uV): " );
-	sgets( buffer , sizeof buffer );
-	v1 = atof( buffer );
+	v1 = getdouble ( "Enter Voltage (uV): " );
 	
-	printf( "Enter Impedance (Ohms): " );
-	sgets( buffer , sizeof buffer );
-	v2 = atof( buffer );
+	v2 = getdouble ( "Enter Impedance (Ohms): " );
 	
 	if ( v1 <= 0 )
 	{
-		printf( "\nVoltage must be >0!\n" );
+		printf ( "\nVoltage must be >0!\n" );
 		return;
 	}
 	
 	if ( v2 <= 0 )
 	{
-		printf( "\nImpedance must be >0!\n" );
+		printf ( "\nImpedance must be >0!\n" );
 		return;
 	}
 	
-	o = 10 * log10(pow(v1 * 0.000001 , 2) / v2) + 30;
+	o = 10 * log10 (pow (v1 * 0.000001 , 2) / v2) + 30;
 	
-	printf( "\nDecibels -> %3.3f dBm\n" , o );
+	printf ( "\nDecibels -> %3.3f dBm\n" , o );
 }
 
-
-void PdB( void )
+void PdB ( void )
 {
-	char buffer[80];
 	double v1 , v2 , o;
 	
-	printf( "Enter Power : " );
-	sgets( buffer , sizeof buffer );
-	v1 = atof( buffer );
-	
-	printf( "Enter Decibels : " );
-	sgets( buffer , sizeof buffer );
-	v2 = atof( buffer );
+	v1 = getdouble ( "Enter Power : " );
+
+	v2 = getdouble ( "Enter Decibels : " );
 	
 	if ( v1 <= 0 )
 	{
-		printf( "\nPower must be >0!\n" );
+		printf ( "\nPower must be >0!\n" );
 		return;
 	}
 	
-	o = v1 * (pow(10 , (v2 / 10)));
+	o = v1 * ( pow( 10 , (v2 / 10) ));
 	
-	printf( "\nPower -> %3.3f\n" , o );
+	printf ( "\nPower -> %3.3f\n" , o );
 }
 
-
-void VdB( void )
+void VdB ( void )
 {
-	char buffer[80];
 	double v1 , v2 , o;
 	
-	printf( "Enter Voltage : " );
-	sgets( buffer , sizeof buffer );
-	v1 = atof( buffer );
-	
-	printf( "Enter Decibels : " );
-	sgets( buffer , sizeof buffer );
-	v2 = atof( buffer );
+	v1 = getdouble ( "Enter Voltage : " );
+
+	v2 = getdouble ( "Enter Decibels : " );
 	
 	if ( v1 <= 0 )
 	{
-		printf( "\nVoltage must be >0!\n" );
+		printf ( "\nVoltage must be >0!\n" );
 		return;
 	}
 		
-	o = v1 * (pow(10 , (v2 / 20)));
+	o = v1 * (pow ( 10 , (v2 / 20) ));
 	
-	printf( "\nVoltage -> %3.3f\n" , o );
+	printf ( "\nVoltage -> %3.3f\n" , o );
 }
 
-
-void DecibelConversions( void )
+void DecibelConversions ( void )
 {
-	char buffer[3];
 	int selection , done;
 	done = 0;
 	
 	while (1)
 	{
-		printf( "\n\n   **** Decibel Conversion Menu ****\n\n" );
-		printf( " 1. Voltage 1 -> Voltage 2\n" );
-		printf( " 2. Power 1 -> Power 2\n" );
-		printf( " 3. dBm -> Power\n" );
-		printf( " 4. Power -> dBm\n" );
-		printf( " 5. dBm -> Voltage uV\n" );
-		printf( " 6. Voltage uV -> dBm\n" );
-		printf( " 7. Power +/- dB\n" );
-		printf( " 8. Voltage +/- dB\n" );
+		printf ( "\n\n   **** Decibel Conversion Menu ****\n\n" );
+		printf ( " 1. Voltage 1 -> Voltage 2\n" );
+		printf ( " 2. Power 1 -> Power 2\n" );
+		printf ( " 3. dBm -> Power\n" );
+		printf ( " 4. Power -> dBm\n" );
+		printf ( " 5. dBm -> Voltage uV\n" );
+		printf ( " 6. Voltage uV -> dBm\n" );
+		printf ( " 7. Power +/- dB\n" );
+		printf ( " 8. Voltage +/- dB\n" );
 		
-		printf( "\n 99. Exit\n\n" );
-		printf( "Enter Selection: " );
+		printf ( "\n 99. Exit\n\n" );
 		
-		sgets( buffer , sizeof buffer );
-		selection = atoi( buffer );
+		selection = getint ( "Enter Selection : " );
 		
-		printf( "\n\n" );
+		printf ( "\n\n" );
 		
-		switch (selection)
+		switch ( selection )
 		{
 			case 1:
 				V1V2();
@@ -1134,145 +950,135 @@ void DecibelConversions( void )
 				break;
 				
 			default:
-				printf( "Invalid Entry\n" );
+				printf ( "Invalid Entry\n" );
 				break;
 		}
-		if ( done == 1) break;
+		if ( done == 1 ) break;
 	}
 }
-
 
 void Resistors( void )
 {
 	double tresistance , nresistance;
-	char buffer[80] , buffer1[80];
+	char *str;
 	
-	printf( "Enter Initial Resistor : " );
-	sgets( buffer , sizeof buffer );
-	tresistance = atof( buffer );
+	tresistance = getdouble ( "Enter Initial Resistor : " );
 	
 	while(1)
 	{
-		printf( "Enter [S]eries , [P]arallel or [D]one: " );
-		sgets(buffer1 , sizeof buffer1);
+		str = getstring ( "Enter [S]eries , [P]arallel or [D]one: ", 1 );
 		
-		if ( tolower( buffer1[0] ) == 'd' )
+		if ( tolower( str[0] ) == 'd' )
 		{
-			printf( "\nTotal Resistance = %3.3f\n" , tresistance);
+			printf ( "\nTotal Resistance = %3.3f\n" , tresistance );
 			break;
 		}
 
-		printf( "Enter Next Resistor : " );
-		sgets( buffer , sizeof buffer );
-		nresistance = atof( buffer );
+		nresistance = getdouble ( "Enter Next Resistor : " );
 
-		if ( tolower( buffer1[0] ) == 's' )
+		if ( tolower( str[0] ) == 's' )
 		{
 			tresistance += nresistance;
 		}	
 
-		if ( tolower( buffer1[0] ) == 'p' )
+		if ( tolower( str[0] ) == 'p' )
 		{
 			if ( nresistance > 0 ) tresistance = 1.0 / (1.0 / tresistance + 1.0 / nresistance);
 		}
+
+		if ( str ) free ( str );
 	}
+
+	if ( str ) free ( str );
 }
 
-
-void Inductors( void )
+void Inductors ( void )
 {
 	double tinductance , ninductance;
-	char buffer[80] , buffer1[80];
+	char *str;
 	
-	printf( "Enter Initial Inductor : " );
-	sgets( buffer , sizeof buffer );
-	tinductance = atof( buffer );
+	tinductance = getdouble ( "Enter Initial Inductor : " );
 	
 	while(1)
 	{
-		printf( "Enter [S]eries , [P]arallel or [D]one: " );
-		sgets(buffer1 , sizeof buffer1);
+		str = getstring ( "Enter [S]eries , [P]arallel or [D]one: ", 1 );
 		
-		if ( tolower( buffer1[0] ) == 'd')
+		if ( tolower( str[0] ) == 'd')
 		{
-			printf( "\nTotal Inductance = %3.3f\n" , tinductance );
+			printf ( "\nTotal Inductance = %3.3f\n" , tinductance );
 			break;
 		}
 
-		printf( "Enter Next Inductor : " );
-		sgets( buffer , sizeof buffer );
-		ninductance = atof( buffer );
+		ninductance = getdouble ( "Enter Next Inductor : " );
 
-		if ( tolower( buffer1[0] ) == 's')
+		if ( tolower( str[0] ) == 's')
 		{
 			tinductance += ninductance;
 		}	
 
-		if ( tolower( buffer1[0] ) == 'p')
+		if ( tolower( str[0] ) == 'p')
 		{
 			if ( ninductance > 0 ) tinductance = 1.0 / (1.0 / tinductance + 1.0 / ninductance );
 		}
+
+		if ( str ) free ( str );
 	}
+
+	if ( str ) free ( str );
 }
 
-
-void Capacitors( void )
+void Capacitors ( void )
 {
 	double tcapacitance , ncapacitance;
-	char buffer[80] , buffer1[80];
+	char *str;
 	
-	printf( "Enter Initial Capacitor : " );
-	sgets( buffer , sizeof buffer );
-	tcapacitance = atof( buffer );
+	tcapacitance = getdouble ( "Enter Initial Capacitor : " );
 	
 	while(1)
 	{
-		printf( "Enter [S]eries , [P]arallel or [D]one: " );
-		sgets(buffer1 , sizeof buffer1 );
+		str = getstring ( "Enter [S]eries , [P]arallel or [D]one: ", 1 );
 		
-		if ( tolower( buffer1[0] ) == 'd')
+		if ( tolower( str[0] ) == 'd')
 		{
-			printf( "\nTotal Capacitance = %3.3f\n" , tcapacitance );
+			printf ( "\nTotal Capacitance = %3.3f\n" , tcapacitance );
 			break;
 		}
 
-		printf( "Enter Next Capacitor : " );
-		sgets( buffer , sizeof buffer );
-		ncapacitance = atof( buffer );
+		ncapacitance = getdouble ( "Enter Next Capacitor : " );
 
-		if ( tolower( buffer1[0] ) == 'p' )
+		if ( tolower( str[0] ) == 'p' )
 		{
 			tcapacitance += ncapacitance;
 		}	
 
-		if ( tolower( buffer1[0] ) == 's' )
+		if ( tolower( str[0] ) == 's' )
 		{
 			if ( ncapacitance > 0) tcapacitance = 1.0 / (1.0 / tcapacitance + 1.0 / ncapacitance);
 		}
+
+		if ( str ) free ( str );
 	}
+
+	if ( str ) free ( str );
 }
 
-
-void RCI( void )
+void RCI ( void )
 {
-	char buffer[3];
 	int selection , done;
 	done = 0;
 	
 	while (1)
 	{
-		printf( "\n\n   **** Resistors , Inductors , Capacitors Menu ****\n\n" );
-		printf( " 1. Resistors\n" );
-		printf( " 2. Inductors\n" );
-		printf( " 3. Capacitors\n" );
+		printf ( "\n\n   **** Resistors , Inductors , Capacitors Menu ****\n\n" );
+		printf ( " 1. Resistors\n" );
+		printf ( " 2. Inductors\n" );
+		printf ( " 3. Capacitors\n" );
 				
-		printf( "\n 99. Exit\n\n" );
-		printf( "Enter Selection: " );
+		printf ( "\n 99. Exit\n\n" );
 		
-		sgets( buffer , sizeof buffer );
-		selection = atoi( buffer );
+		selection = getint ( "Enter Selection: " );
 		
-		printf( "\n\n" );
+		printf ( "\n\n" );
 		
 		switch ( selection )
 		{
@@ -1299,7 +1105,7 @@ void RCI( void )
 				break;
 				
 			default:
-				printf( "Invalid Entry\n" );
+				printf ( "Invalid Entry\n" );
 				break;
 		}
 
@@ -1309,58 +1115,52 @@ void RCI( void )
 
 void ChebyshevFilter( void )
 {
-	char buffer[80] , inputtype , indcap[2] = { 'C' , 'L' };
+	char inputtype , indcap[2] = { 'C' , 'L' };
+	char *str;
 	int filterorder , filtertype ,x , component , n;
 	double fcl=0.0 , fch=0.0 , filterrippledb , c , l , r , b , *nelements = NULL , *aelements = NULL, *belements = NULL;
 
-	printf( "Enter Filter Type (1 = Low Pass , 2 = High Pass , 3 = Band Pass , 4 = Band Stop) : " );
-	sgets( buffer , sizeof buffer );
-	filtertype = atoi( buffer );
+	filtertype = getint ( "Enter Filter Type (1 = Low Pass , 2 = High Pass , 3 = Band Pass , 4 = Band Stop) : " );
 	
 	if ( filtertype < 1 || filtertype > 4 )
 	{
-		printf( "\nFilter Type must be 1 , 2 , 3 or 4\n" );
+		printf ( "\nFilter Type must be 1 , 2 , 3 or 4\n" );
 		return;
 	}
 
 	switch ( filtertype )
 	{
 		case 1:
-			printf( "Enter Lowpass Cut-off Frequency (MHz): " );
-			sgets( buffer , sizeof buffer );
-			fcl = atof( buffer );
+			fcl = getdouble ( "Enter Lowpass Cut-off Frequency (MHz): " );
+
 			break;
 
 		case 2:
-			printf( "Enter Highpass Cut-off Frequency (MHz): " );
-			sgets( buffer , sizeof buffer );
-			fch = atof( buffer );
+			fch = getdouble ( "Enter Highpass Cut-off Frequency (MHz): " );
+
 			break;
 
 		case 3:
-			printf( "Enter Bandpass Lower Cut-off Frequency (MHz): " );
-			sgets( buffer , sizeof buffer );
-			fcl = atof( buffer );
-			printf( "Enter Bandpass Upper Cut-off Frequency (MHz): " );
-			sgets( buffer , sizeof buffer );
-			fch = atof( buffer );
+			fcl = getdouble ( "Enter Bandpass Lower Cut-off Frequency (MHz): " );
+
+			fch = getdouble ( "Enter Bandpass Upper Cut-off Frequency (MHz): " );
+
 			if ( fch <= fcl )
 			{
-				printf( "\nHigher Cut-off frequency must be larger than Lower Cut-off frequency\n" );
+				printf ( "\nHigher Cut-off frequency must be larger than Lower Cut-off frequency\n" );
 				return;
 			}
+
 			break;
 
 		case 4:
-			printf( "Enter Bandstop Lower Cut-off Frequency (MHz): " );
-			sgets( buffer , sizeof buffer );
-			fcl = atof( buffer );
-			printf( "Enter Bandstop Upper Cut-off Frequency (MHz): " );
-			sgets( buffer , sizeof buffer );
-			fch = atof( buffer );
+			fcl = getdouble ( "Enter Bandstop Lower Cut-off Frequency (MHz): " );
+
+			fch = getdouble ( "Enter Bandstop Upper Cut-off Frequency (MHz): " );
+
 			if ( fch <= fcl )
 			{
-				printf( "\nHigher Cut-off frequency must be larger than Lower Cut-off frequency\n" );
+				printf ( "\nHigher Cut-off frequency must be larger than Lower Cut-off frequency\n" );
 				return;
 			}
 			break;
@@ -1369,53 +1169,49 @@ void ChebyshevFilter( void )
 	fcl *= 1e6;
 	fch *= 1e6;
 	
-	printf( "Enter Filter Order (Number of elements) : " );
-	sgets( buffer , sizeof buffer );
-	filterorder = atoi( buffer );
+	filterorder = getint ( "Enter Filter Order (Number of elements) : " );
 	
 	if ( filterorder < 1 )
 	{
-		printf( "\nFilter Order must be > 1\n" );
+		printf ( "\nFilter Order must be > 1\n" );
 		return;
 	}
 
-	nelements = malloc ( (filterorder + 1) * sizeof ( double ) );
-	aelements = malloc ( (filterorder + 1) * sizeof ( double ) );
-	belements = malloc ( (filterorder + 1) * sizeof ( double ) );
+	nelements = calloc ( (filterorder + 2) , sizeof ( double ) );
+	aelements = calloc ( (filterorder + 2) , sizeof ( double ) );
+	belements = calloc ( (filterorder + 2) , sizeof ( double ) );
 
-	if ( nelements == NULL || aelements == NULL || belements == NULL)
+	if ( !nelements || !aelements || !belements )
 	{
-		printf( "\nCould not allocate memory\n" );
+		printf ( "\nCould not allocate memory\n" );
 		return;
 	}
 
-	printf( "Enter Input Type [T]ee or [P]i : " );
-	sgets( buffer , sizeof buffer );
+	str = getstring ( "Enter Input Type [T]ee or [P]i : ", 1 );
 	
-	inputtype = tolower( buffer[0] );
+	inputtype = tolower( str[0] );
+
+	if ( str ) free ( str );
+
 	if ( inputtype != 't' && inputtype != 'p' ) 
 	{
-		printf( "\nFilter Input Type must be Tee or Pi\n" );
+		printf ( "\nFilter Input Type must be Tee or Pi\n" );
 		return;
 	}
 
-	printf( "Enter Filter Ripple dB : " );
-	sgets( buffer , sizeof buffer );
-	filterrippledb = atof( buffer );
+	filterrippledb = getdouble ( "Enter Filter Ripple dB : " );
 
 	if ( filterrippledb < 0.01 )
 	{
-		printf( "\nFilter Ripple db must be > 0.01\n" );
+		printf ( "\nFilter Ripple db must be > 0.01\n" );
 		return;
 	}
 
-	printf( "Enter Filter Impedance : " );
-	sgets( buffer , sizeof buffer );
-	r = atof( buffer );
+	r = getdouble ( "Enter Filter Impedance (Ohms) : " );
 
-	if ( r < 0.01 )
+	if ( r <= 0.0 )
 	{
-		printf( "\nFilter Impedance must be > 0.01\n" );
+		printf ( "\nFilter Impedance must be > 0\n" );
 		return;
 	}
 
@@ -1473,7 +1269,7 @@ void ChebyshevFilter( void )
 	switch( filtertype )
 	{
 		case 1:
-			printf( "\nR(input) -> %3.1f\n" , r );
+			printf ( "\nR(input) -> %3.1f\n" , r );
 
 			if ( inputtype == 'p' ) x = 0; else x = 1;
 
@@ -1482,13 +1278,13 @@ void ChebyshevFilter( void )
 				if ( indcap[x] == 'C' )
 				{
 					c = nelements[component];
-					printf( "\nC -> %3.1f pF" , (c / ( 2 * PI * fcl * r)) * 1e12 );
+					printf ( "\nC -> %3.1f pF" , (c / ( 2 * PI * fcl * r)) * 1e12 );
 				}
 
 				if ( indcap[x] == 'L' )
 				{
 					l = nelements[component];
-					printf( "\nL -> %3.3f uH" , ((l * r)/(2 * PI * fcl)) * 1e6 );
+					printf ( "\nL -> %3.3f uH" , ((l * r)/(2 * PI * fcl)) * 1e6 );
 				}
 
 				if ( inputtype == 'p' ) 
@@ -1504,12 +1300,12 @@ void ChebyshevFilter( void )
 				x = 1 - x;
 			}
 
-			printf( "\nR(output) -> %3.1f\n" , r / nelements[component] );
+			printf ( "\nR(output) -> %3.1f\n" , r / nelements[component] );
 
 			break;
 		
 		case 2:
-			printf( "\nR(input) -> %3.1f\n" , r );
+			printf ( "\nR(input) -> %3.1f\n" , r );
 
 			if ( inputtype == 't' ) x = 0; else x = 1;
 
@@ -1518,13 +1314,13 @@ void ChebyshevFilter( void )
 				if ( indcap[x] == 'C' )
 				{
 					l = nelements[component];
-					printf( "\nC -> %3.1f pF" , (1 / (2 * PI * fch * r * l)) * 1e12 );
+					printf ( "\nC -> %3.1f pF" , (1 / (2 * PI * fch * r * l)) * 1e12 );
 				}
 
 				if ( indcap[x] == 'L' )
 				{
 					c = nelements[component];
-					printf( "\nL -> %3.3f uH" , (r / (2 * PI * fch * c)) * 1e6 );
+					printf ( "\nL -> %3.3f uH" , (r / (2 * PI * fch * c)) * 1e6 );
 				}
 
 				if ( inputtype == 'p' ) 
@@ -1540,12 +1336,12 @@ void ChebyshevFilter( void )
 				x = 1 - x;
 			}
 
-			printf( "\nR(output) -> %3.1f\n" , r / nelements[component] );
+			printf ( "\nR(output) -> %3.1f\n" , r / nelements[component] );
 
 			break;	
 
 		case 3:
-			printf( "\nR(input) -> %3.1f\n" , r );
+			printf ( "\nR(input) -> %3.1f\n" , r );
 
 			if ( inputtype == 't' ) x = 0; else x = 1;
 
@@ -1555,16 +1351,16 @@ void ChebyshevFilter( void )
 				{
 					l = nelements[component];
 					c = nelements[component];
-					printf( "\n%c -> %3.3f uH" , indcap[1-x] , ((r * l) / (2 * PI * (fch - fcl))) * 1e6 );
-					printf( "\n%c -> %3.1f pF" , indcap[x] , ((fch - fcl)/(2 * PI * fch * fcl * r * l)) * 1e12 );
+					printf ( "\n%c -> %3.3f uH" , indcap[1-x] , ((r * l) / (2 * PI * (fch - fcl))) * 1e6 );
+					printf ( "\n%c -> %3.1f pF" , indcap[x] , ((fch - fcl)/(2 * PI * fch * fcl * r * l)) * 1e12 );
 				}
 
 				if ( indcap[x] == 'L' )
 				{
 					c = nelements[component];
 					l = nelements[component];
-					printf( "\n%c -> %3.1f pF" , indcap[1-x] , (c/(2 * PI * (fch -fcl) * r )) * 1e12 );
-					printf( "\n%c -> %3.3f uH" , indcap[x] , (((fch - fcl) * r)/(2 * PI * fch * fcl * c)) * 1e6 );
+					printf ( "\n%c -> %3.1f pF" , indcap[1-x] , (c/(2 * PI * (fch -fcl) * r )) * 1e12 );
+					printf ( "\n%c -> %3.3f uH" , indcap[x] , (((fch - fcl) * r)/(2 * PI * fch * fcl * c)) * 1e6 );
 					
 				}
 
@@ -1581,12 +1377,12 @@ void ChebyshevFilter( void )
 				x = 1 - x;
 			}
 
-			printf( "\nR(output) -> %3.1f\n" , r / nelements[component] );
+			printf ( "\nR(output) -> %3.1f\n" , r / nelements[component] );
 
 			break;	
 
 		case 4:
-			printf( "\nR(input) -> %3.1f\n" , r );
+			printf ( "\nR(input) -> %3.1f\n" , r );
 
 			if ( inputtype == 't' ) x = 0; else x = 1;
 
@@ -1596,16 +1392,16 @@ void ChebyshevFilter( void )
 				{
 					l = nelements[component];
 					c = nelements[component];
-					printf( "\n%c -> %3.3f uH" , indcap[1-x] , (((fch - fcl) * r * l)/(2 * PI * fch * fcl)) * 1e6 );
-					printf( "\n%c -> %3.1f pF" , indcap[x] , (1/(2 * PI * (fch - fcl) * r * l)) * 1e12 );
+					printf ( "\n%c -> %3.3f uH" , indcap[1-x] , (((fch - fcl) * r * l)/(2 * PI * fch * fcl)) * 1e6 );
+					printf ( "\n%c -> %3.1f pF" , indcap[x] , (1/(2 * PI * (fch - fcl) * r * l)) * 1e12 );
 				}
 
 				if ( indcap[x] == 'L' )
 				{
 					c = nelements[component];
 					l = nelements[component];
-					printf( "\n%c -> %3.1f pF" , indcap[1-x] , (((fch - fcl) * c) / (2 * PI * fch * fcl * r)) * 1e12 );
-					printf( "\n%c -> %3.3f uH" , indcap[x] , (r/(2 * PI * (fch - fcl) * c)) * 1e6 );
+					printf ( "\n%c -> %3.1f pF" , indcap[1-x] , (((fch - fcl) * c) / (2 * PI * fch * fcl * r)) * 1e12 );
+					printf ( "\n%c -> %3.3f uH" , indcap[x] , (r/(2 * PI * (fch - fcl) * c)) * 1e6 );
 				}
 
 				if ( inputtype == 'p' ) 
@@ -1621,72 +1417,65 @@ void ChebyshevFilter( void )
 				x = 1 - x;
 			}
 
-			printf( "\nR(output) -> %3.1f\n" , r / nelements[component] );
+			printf ( "\nR(output) -> %3.1f\n" , r / nelements[component] );
 
 			break;	
 	}
 
-	if ( nelements != NULL) free( nelements );
-	if ( aelements != NULL) free( aelements );
-	if ( belements != NULL) free( belements );
+	if ( nelements ) free( nelements );
+	if ( aelements ) free( aelements );
+	if ( belements ) free( belements );
 
 	return;
 }
 
-void ButterworthFilter( void )
+void ButterworthFilter ( void )
 {
-	char buffer[80] , inputtype , indcap[2] = { 'C' , 'L' };
-	int filterorder , filtertype ,x , component , n;
+	char inputtype, indcap[2] = { 'C' , 'L' };
+	char *str;
+	int filterorder, filtertype ,x ,component , n;
 	double fcl=0.0 , fch=0.0 , c , l , r , *nelements = NULL;
 
-	printf( "Enter Filter Type (1 = Low Pass , 2 = High Pass , 3 = Band Pass , 4 = Band Stop) : " );
-	sgets( buffer , sizeof buffer );
-	filtertype = atoi( buffer );
+	filtertype = getint ( "Enter Filter Type (1 = Low Pass , 2 = High Pass , 3 = Band Pass , 4 = Band Stop) : " );
 	
 	if ( filtertype < 1 || filtertype > 4 )
 	{
-		printf( "\nFilter Type must be 1 , 2 , 3 or 4\n" );
+		printf ( "\nFilter Type must be 1 , 2 , 3 or 4\n" );
 		return;
 	}
 
 	switch ( filtertype )
 	{
 		case 1:
-			printf( "Enter Lowpass Cut-off Frequency (MHz): " );
-			sgets( buffer , sizeof buffer );
-			fcl = atof( buffer );
+			fcl = getdouble ( "Enter Lowpass Cut-off Frequency (MHz): " );
+
 			break;
 
 		case 2:
-			printf( "Enter Highpass Cut-off Frequency (MHz): " );
-			sgets( buffer , sizeof buffer );
-			fch = atof( buffer );
+			fch = getdouble ( "Enter Highpass Cut-off Frequency (MHz): " );
+
 			break;
 
 		case 3:
-			printf( "Enter Bandpass Lower Cut-off Frequency (MHz): " );
-			sgets( buffer , sizeof buffer );
-			fcl = atof( buffer );
-			printf( "Enter Bandpass Upper Cut-off Frequency (MHz): " );
-			sgets( buffer , sizeof buffer );
-			fch = atof( buffer );
+			fcl = getdouble ( "Enter Bandpass Lower Cut-off Frequency (MHz): " );
+
+			fch = getdouble ( "Enter Bandpass Upper Cut-off Frequency (MHz): " );
+
 			if ( fch <= fcl )
 			{
-				printf( "\nHigher Cut-off frequency must be larger than Lower Cut-off frequency\n" );
+				printf ( "\nHigher Cut-off frequency must be larger than Lower Cut-off frequency\n" );
 				return;
 			}
 			break;
 
 		case 4:
-			printf( "Enter Bandstop Lower Cut-off Frequency (MHz): " );
-			sgets( buffer , sizeof buffer );
-			fcl = atof( buffer );
-			printf( "Enter Bandstop Upper Cut-off Frequency (MHz): " );
-			sgets( buffer , sizeof buffer );
-			fch = atof( buffer );
+			fcl = getdouble ( "Enter Bandstop Lower Cut-off Frequency (MHz): " );
+			
+			fch = getdouble ( "Enter Bandstop Upper Cut-off Frequency (MHz): " );
+
 			if ( fch <= fcl )
 			{
-				printf( "\nHigher Cut-off frequency must be larger than Lower Cut-off frequency\n" );
+				printf ( "\nHigher Cut-off frequency must be larger than Lower Cut-off frequency\n" );
 				return;
 			}
 			break;
@@ -1695,41 +1484,39 @@ void ButterworthFilter( void )
 	fcl *= 1e6;
 	fch *= 1e6;
 	
-	printf( "Enter Filter Order (Number of elements) : " );
-	sgets( buffer , sizeof buffer );
-	filterorder = atoi( buffer );
+	filterorder = getint ( "Enter Filter Order (Number of elements) : " );
 	
 	if ( filterorder < 1 )
 	{
-		printf( "\nFilter Order must be > 1\n" );
+		printf ( "\nFilter Order must be > 1\n" );
 		return;
 	}
 
-	nelements = malloc ( (filterorder + 2) * sizeof ( double ) );
+	nelements = calloc ( filterorder + 2 , sizeof ( double ) );
 	
-	if ( nelements == NULL )
+	if ( !nelements )
 	{
-		printf( "\nCould not allocate memory\n" );
+		printf ( "\nCould not allocate memory\n" );
 		return;
 	}
 
-	printf( "Enter Input Type [T]ee or [P]i : " );
-	sgets( buffer , sizeof buffer );
+	str = getstring ( "Enter Input Type [T]ee or [P]i : ", 1 );
 	
-	inputtype = tolower( buffer[0] );
+	inputtype = tolower( str[0] );
+
+	if ( str ) free ( str );
+
 	if ( inputtype != 't' && inputtype != 'p' ) 
 	{
-		printf( "\nFilter Input Type must be Tee or Pi\n" );
+		printf ( "\nFilter Input Type must be Tee or Pi\n" );
 		return;
 	}
 
-	printf( "Enter Filter Impedance : " );
-	sgets( buffer , sizeof buffer );
-	r = atof( buffer );
+	r = getdouble ( "Enter Filter Impedance : " );
 
-	if ( r < 0.01 )
+	if ( r <= 0.0 )
 	{
-		printf( "\nFilter Impedance must be > 0.01\n" );
+		printf ( "\nFilter Impedance must be > 0\n" );
 		return;
 	}
 
@@ -1737,12 +1524,13 @@ void ButterworthFilter( void )
 	{
 		nelements[n] = 2 * sin((2*n-1)*PI/2/filterorder);
 	}
+
 	nelements[n] = 1.0;
 
 	switch( filtertype )
 	{
 		case 1:
-			printf( "\nR(input) -> %3.1f\n" , r );
+			printf ( "\nR(input) -> %3.1f\n" , r );
 
 			if ( inputtype == 'p' ) x = 0; else x = 1;
 
@@ -1751,13 +1539,13 @@ void ButterworthFilter( void )
 				if ( indcap[x] == 'C' )
 				{
 					c = nelements[component];
-					printf( "\nC-> %3.1f pF" , (c / ( 2 * PI * fcl * r)) * 1e12 );
+					printf ( "\nC-> %3.1f pF" , (c / ( 2 * PI * fcl * r)) * 1e12 );
 				}
 
 				if ( indcap[x] == 'L' )
 				{
 					l = nelements[component];
-					printf( "\nL -> %3.3f uH" , ((l * r)/(2 * PI * fcl)) * 1e6 );
+					printf ( "\nL -> %3.3f uH" , ((l * r)/(2 * PI * fcl)) * 1e6 );
 				}
 
 				if ( inputtype == 'p' ) 
@@ -1773,12 +1561,12 @@ void ButterworthFilter( void )
 				x = 1 - x;
 			}
 
-			printf( "\nR(output) -> %3.1f\n" , r / nelements[component] );
+			printf ( "\nR(output) -> %3.1f\n" , r / nelements[component] );
 
 			break;
 		
 		case 2:
-			printf( "\nR(input) -> %3.1f\n" , r );
+			printf ( "\nR(input) -> %3.1f\n" , r );
 
 			if ( inputtype == 't' ) x = 0; else x = 1;
 
@@ -1787,13 +1575,13 @@ void ButterworthFilter( void )
 				if ( indcap[x] == 'C' )
 				{
 					l = nelements[component];
-					printf( "\nC -> %3.1f pF" , (1 / (2 * PI * fch * r * l)) * 1e12 );
+					printf ( "\nC -> %3.1f pF" , (1 / (2 * PI * fch * r * l)) * 1e12 );
 				}
 
 				if ( indcap[x] == 'L' )
 				{
 					c = nelements[component];
-					printf( "\nC -> %3.3f uH" , (r / (2 * PI * fch * c)) * 1e6 );
+					printf ( "\nC -> %3.3f uH" , (r / (2 * PI * fch * c)) * 1e6 );
 				}
 
 				if ( inputtype == 'p' ) 
@@ -1809,12 +1597,12 @@ void ButterworthFilter( void )
 				x = 1 - x;
 			}
 
-			printf( "\nR(output) -> %3.1f\n" , r / nelements[component] );
+			printf ( "\nR(output) -> %3.1f\n" , r / nelements[component] );
 
 			break;	
 
 		case 3:
-			printf( "\nR(input) -> %3.1f\n" , r );
+			printf ( "\nR(input) -> %3.1f\n" , r );
 
 			if ( inputtype == 't' ) x = 0; else x = 1;
 
@@ -1824,16 +1612,16 @@ void ButterworthFilter( void )
 				{
 					l = nelements[component];
 					c = nelements[component];
-					printf( "\n%c -> %3.3f uH" , indcap[1-x] , ((r * l) / (2 * PI * (fch - fcl))) * 1e6 );
-					printf( "\n%c -> %3.1f pF" , indcap[x] , ((fch - fcl)/(2 * PI * fch * fcl * r * l)) * 1e12 );
+					printf ( "\n%c -> %3.3f uH" , indcap[1-x] , ((r * l) / (2 * PI * (fch - fcl))) * 1e6 );
+					printf ( "\n%c -> %3.1f pF" , indcap[x] , ((fch - fcl)/(2 * PI * fch * fcl * r * l)) * 1e12 );
 				}
 
 				if ( indcap[x] == 'L' )
 				{
 					c = nelements[component];
 					l = nelements[component];
-					printf( "\n%c%d -> %3.1f pF" , indcap[1-x] , component , (c/(2 * PI * (fch -fcl) * r )) * 1e12 );
-					printf( "\n%c%d -> %3.3f uH" , indcap[x] , component , (((fch - fcl) * r)/(2 * PI * fch * fcl * c)) * 1e6 );
+					printf ( "\n%c%d -> %3.1f pF" , indcap[1-x] , component , (c/(2 * PI * (fch -fcl) * r )) * 1e12 );
+					printf ( "\n%c%d -> %3.3f uH" , indcap[x] , component , (((fch - fcl) * r)/(2 * PI * fch * fcl * c)) * 1e6 );
 					
 				}
 
@@ -1850,12 +1638,12 @@ void ButterworthFilter( void )
 				x = 1 - x;
 			}
 
-			printf( "\nR(output) -> %3.1f\n" , r / nelements[component] );
+			printf ( "\nR(output) -> %3.1f\n" , r / nelements[component] );
 
 			break;	
 
 		case 4:
-			printf( "\nR(input) -> %3.1f\n" , r );
+			printf ( "\nR(input) -> %3.1f\n" , r );
 
 			if ( inputtype == 't' ) x = 0; else x = 1;
 
@@ -1865,16 +1653,16 @@ void ButterworthFilter( void )
 				{
 					l = nelements[component];
 					c = nelements[component];
-					printf( "\n%c -> %3.3f uH" , indcap[1-x] , (((fch - fcl) * r * l)/(2 * PI * fch * fcl)) * 1e6 );
-					printf( "\n%c -> %3.1f pF" , indcap[x] , (1/(2 * PI * (fch - fcl) * r * l)) * 1e12 );
+					printf ( "\n%c -> %3.3f uH" , indcap[1-x] , (((fch - fcl) * r * l)/(2 * PI * fch * fcl)) * 1e6 );
+					printf ( "\n%c -> %3.1f pF" , indcap[x] , (1/(2 * PI * (fch - fcl) * r * l)) * 1e12 );
 				}
 
 				if ( indcap[x] == 'L' )
 				{
 					c = nelements[component];
 					l = nelements[component];
-					printf( "\n%c -> %3.1f pF" , indcap[1-x] , (((fch - fcl) * c) / (2 * PI * fch * fcl * r)) * 1e12 );
-					printf( "\n%c -> %3.3f uH" , indcap[x] , (r/(2 * PI * (fch - fcl) * c)) * 1e6 );
+					printf ( "\n%c -> %3.1f pF" , indcap[1-x] , (((fch - fcl) * c) / (2 * PI * fch * fcl * r)) * 1e12 );
+					printf ( "\n%c -> %3.3f uH" , indcap[x] , (r/(2 * PI * (fch - fcl) * c)) * 1e6 );
 				}
 
 				if ( inputtype == 'p' ) 
@@ -1890,41 +1678,37 @@ void ButterworthFilter( void )
 				x = 1 - x;
 			}
 
-			printf( "\nR(output) -> %3.1f\n" , r / nelements[component] );
+			printf ( "\nR(output) -> %3.1f\n" , r / nelements[component] );
 
 			break;	
 	}
 
-	if ( nelements != NULL) free( nelements );
+	if ( nelements ) free ( nelements );
 
 	return;
 }
 
-void Powers10( void )
+void Powers10 ( void )
 {
 	double number, number1;
-	char buffer[80];
 	char unitlabels[][6] = {"yotta","zetta","exa","peta","tera","giga","mega","kilo","unit","milli","micro","nano","pico","femto","atto","zepto","yotto"};
 	double unitvalues[] = {1e24,1e21,1e18,1e15,1e12,1e9,1e6,1e3,1,1e-3,1e-6,1e-9,1e-12,1e-15,1e-18,1e-21,1e-24};
 	int x , unit , s , e;
 
-	printf( "\nEnter value : " );
-	sgets( buffer , sizeof buffer );
-	number = atof( buffer );
+	number = getdouble ( "\nEnter value : " );
+
 	number1 = number;
 	
 	for ( x=1 ; x <= 17 ; x++ )
 	{
-		printf( "%d. %s\n" , x , unitlabels[x-1]);
+		printf ( "%d. %s\n" , x , unitlabels[x-1]);
 	}
 
-	printf ( "\nChoose Unit : \n" );
-	sgets( buffer , sizeof buffer );
-	unit = atoi( buffer );	
+	unit = getint ( "\nChoose Unit : " );
 
 	if ( unit < 1 || unit > 17 )
 	{
-		printf( "\nUnit must be 1-17\n" );
+		printf ( "\nUnit must be 1-17\n" );
 		return;
 	}
 
@@ -1936,28 +1720,31 @@ void Powers10( void )
 	if ( s < 1 ) s = 1;
 	if ( e > 17 ) e = 17;
 
-	printf( "\n%9.9g %s = \n" , number1 , unitlabels[unit-1] );
+	printf ( "\n%9.9g %s = \n" , number1 , unitlabels[unit-1] );
 
 	for ( x=s ; x <= e ; x++)
 	{
-		printf( "\n   %9.9g %s" , number / unitvalues[x-1] , unitlabels[x-1] );
+		printf ( "\n   %9.9g %s" , number / unitvalues[x-1] , unitlabels[x-1] );
 	}
 
-	printf( "\n" );
+	printf ( "\n" );
 }
 
-void LineOfSight(void)
+void LineOfSight ( void )
 {
-	char units , buffer[80] , ustringi[10] , ustringo[12];
+	char units , ustringi[10] , ustringo[12];
+	char *str;
 	double ah1 , ah2 , d1 , d2 , dr1 , dr2 , ag1 , ag2 , fspl , f , td;
 
-	printf( "\nEnter [M]etric or [E]nglish Units : " );
-	sgets( buffer , sizeof buffer );
+	str = getstring ( "\nEnter [M]etric or [E]nglish Units : ", 1);
 
-	units = tolower( buffer[0] );
+	units = tolower( str[0] );
+
+	if ( str ) free ( str );
+
 	if ( units != 'm' && units != 'e' ) 
 	{
-		printf( "\nUnits must be [M]etric or [E]nglish\n" );
+		printf ( "\nUnits must be [M]etric or [E]nglish\n" );
 		return;
 	}
 
@@ -1972,18 +1759,17 @@ void LineOfSight(void)
 		strcpy( ustringo , "miles" );
 	}
 
-	printf( "\nEnter Antenna 1 Height (%s) : " , ustringi );
-	sgets( buffer , sizeof buffer );
-	ah1 = atof( buffer );
+	printf ( "\nEnter Antenna 1 Height (%s) : " , ustringi );
+	ah1 = getdouble ( "" );
+
 	if ( ah1 <= 0 )
 	{
 		printf ( "\nHeight must be greater than 0\n" );
 		return;
 	}
 
-	printf( "\nEnter Antenna 1 Gain (db) : " );
-	sgets( buffer , sizeof buffer );
-	ag1 = atof( buffer );
+	printf ( "\nEnter Antenna 1 Gain (db) : " );
+	ag1 = getdouble ( "" );
 
 	if ( ag1 < 0 )
 	{
@@ -1991,36 +1777,34 @@ void LineOfSight(void)
 		return;
 	}
 
-	printf( "\nEnter Antenna 2 Height (%s) : " , ustringi );
-	sgets( buffer , sizeof buffer );
-	ah2 = atof( buffer );
+	printf ( "\nEnter Antenna 2 Height (%s) : " , ustringi );
+	ah2 = getdouble ( "" );
+
 	if ( ah2 <= 0 )
 	{
 		printf ( "\nHeight must be greater than 0\n" );
 		return;
 	}
 
-	printf( "\nEnter Antenna 2 Gain (db) : " );
-	sgets( buffer , sizeof buffer );
-	ag2 = atof( buffer );
+	printf ( "\nEnter Antenna 2 Gain (db) : " );
+	ag2 = getdouble ( "" );
+
 	if ( ag2 < 0 )
 	{
 		printf ( "\nGain must be >= 0\n" );
 		return;
 	}
 
-	printf( "\nEnter Frequency (MHz) : " );
-	sgets( buffer , sizeof buffer );
-	f = atof( buffer );
+	f = getdouble ( "\nEnter Frequency (MHz) : " );
 
 	if ( units == 'm' )
 	{
-		d1 = 3.57 * sqrt(ah1);
-		d2 = 3.57 * sqrt(ah2);
-		dr1 = 4.12 * sqrt(ah1);
-		dr2 = 4.12 * sqrt(ah2);
+		d1 = 3.57 * sqrt (ah1);
+		d2 = 3.57 * sqrt (ah2);
+		dr1 = 4.12 * sqrt (ah1);
+		dr2 = 4.12 * sqrt (ah2);
 		td = ((d1 + d2) + (dr1 + dr2))/2;
-		fspl = 20*log10(td) + 20*log10(f) + 32.45 - ag2 - ag1;
+		fspl = 20 * log10 ( td ) + 20 * log10 ( f ) + 32.45 - ag2 - ag1;
 	} 
 	else
 	{
@@ -2029,25 +1813,24 @@ void LineOfSight(void)
 		dr1 = 1.41 * sqrt(ah1);
 		dr2 = 1.41 * sqrt(ah2);
 		td = ((d1 + d2) + (dr1 + dr2))/2;
-		fspl = 20*log10(td/0.621371) + 20*log10(f) + 32.45 - ag2 - ag1;
+		fspl = 20 * log10 ( td/0.621371 ) + 20 * log10 ( f ) + 32.45 - ag2 - ag1;
 	}
 
 	printf ( "\n\nDistance to physical horizon for Antenna 1 : %3.1f %s\n" , d1 , ustringo );
 	printf ( "Distance to physical horizon for Antenna 2 : %3.1f %s\n" , d2 , ustringo );
-	printf ( "\nDistance to radio horizon for Antenna 1 : %3.1f %s\n" , dr1 , ustringo);
-	printf ( "Distance to radio horizon for Antenna 2 : %3.1f %s\n" , dr2 , ustringo);
-	printf ( "\nTypical communication distance  : %3.1f %s\n" , td , ustringo);
-	printf ( "\nFree Space Path Loss %3.1f dB\n" , fspl);
+	printf ( "\nDistance to radio horizon for Antenna 1 : %3.1f %s\n" , dr1 , ustringo );
+	printf ( "Distance to radio horizon for Antenna 2 : %3.1f %s\n" , dr2 , ustringo );
+	printf ( "\nTypical communication distance  : %3.1f %s\n" , td , ustringo );
+	printf ( "\nFree Space Path Loss %3.1f dB\n" , fspl );
 }
 
-void ResistorAttenuator( void )
+void ResistorAttenuator ( void )
 {
-	char buffer[80], type;
-	double attn , z , r1 , r2;
+	char type;
+	char *str;
+	double attn , zin, zout , r1 , r2 , r3, k;
 
-	printf( "\nEnter Attenuation (dB) : " );
-	sgets( buffer , sizeof buffer );
-	attn = atof( buffer );
+	attn = getdouble ( "\nEnter Attenuation (dB) : " );
 
 	if ( attn <= 0 )
 	{
@@ -2055,42 +1838,55 @@ void ResistorAttenuator( void )
 		return;
 	}
 
-	printf( "\nEnter Impedance (Ohms) : " );
-	sgets( buffer , sizeof buffer );
-	z = atof( buffer );
+	zin = getdouble ( "\nEnter Input Impedance (Ohms) : " );
 
-	if ( z <= 0 )
+	if ( zin <= 0 )
 	{
 		printf ( "\nImpedance must be greater than 0\n" );
 		return;
 	}
 
-	printf( "\nEnter [P]i or [T]ee : " );
-	sgets( buffer , sizeof buffer );
-
-	type = tolower( buffer[0] );
-	if ( type != 'p' && type != 't' ) 
+	zout = getdouble ( "\nEnter Input Impedance (Ohms) : " );
+	
+	if ( zout <= 0 )
 	{
-		printf( "\nUnits must be [P]i or [T]ee\n" );
+		printf ( "\nImpedance must be greater than 0\n" );
 		return;
 	}
 
+	str = getstring ( "\nEnter [P]i or [T]ee : ", 1 );
+
+	type = tolower( str[0] );
+
+	if ( str ) free ( str );
+
+	if ( type != 'p' && type != 't' ) 
+	{
+		printf ( "\nUnits must be [P]i or [T]ee\n" );
+		return;
+	}
+
+	k = pow ( 10, attn/20 );
+
 	if ( type == 'p' )
 	{
-		r1 = z*((pow(10,attn/20)+1)/(pow(10,attn/20)-1));
-		r2 = (z/2)*((pow(10,attn/10)-1)/pow(10,attn/20));
+		r1 = zin * (k*k-1)/(k*k - 2*k*sqrt(zin/zout)+1);
+		r2 = 0.5 * sqrt(zin * zout) * (k*k -1)/k;
+		r3 = zout * (k*k-1) / (k*k - 2*k/sqrt(zin/zout)+1);
 	}
 	else
 	{
-		r1 = z*((pow(10,attn/20)-1)/(pow(10,attn/20)+1));
-		r2 = 2*z*((pow(10,attn/20)/(pow(10,attn/10)-1)));
+		r2 = 2 * sqrt(zin * zout) * k / (k*k-1);
+		r1 = zin * ((k*k+1) / (k*k-1)) - r2;
+		r3 = zout * ((k*k+1) / (k*k-1)) - r2;
 	}
 
 	printf ( "\nR1 -> %3.2f\n", r1 );
 	printf ( "\nR2 -> %3.2f\n", r2 );
+	printf ( "\nR3 -> %3.2f\n", r3 );
 }
 
-void CoaxLoss( void )
+void CoaxLoss ( void )
 {
 	double k1[] = {0.26293,0.16925,0.12050,0.26904,0.11287,0.16925,0.34190,0.35364,0.38823,0.45322,0.29629,0.32074,0.26247,0.37381,0.76172,0.18993,0.14044,0.70501,0.32062,0.24271,0.12013,0.07563,0.05190,0.12102,0.14044,0.41009,0.45876,0.13757,0.31217,0.36305,0.28692,0.06432,0.03482,0.02397,0.04960,0.05100,0.06210,0.04140,0.05654,0.05557,0.07291,0.03083,0.10181,0.02713,0.01897,0.00000,0.00000};
 	double k2[] = {0.00159,0.00204,0.00066,0.00572,0.00160,0.00313,0.00377,0.00526,0.00566,0.00836,0.00147,0.00174,0.00039,0.00159,0.00955,0.00216,0.00032,0.00183,0.00034,0.00032,0.00031,0.00026,0.00015,0.00066,0.00032,0.00360,0.00837,0.00366,0.00313,0.00438,0.00060,0.00019,0.00015,0.00014,0.00120,
@@ -2099,82 +1895,78 @@ void CoaxLoss( void )
 	char types[][30] = {"Belden 8215 (RG-6A)","Belden 8237 (RG-8)","Belden 9913 (RG-8)","Belden 9258 (RG-8X)","Belden 8213 (RG-11)","Belden 8261 (RG-11A)","Belden 8240 (RG-58)","Belden 9201 (RG-58)","Belden 8219 (RG-58A)","Belden 8259 (RG-58C)","Belden 8212 (RG-59)","Belden 8263 (RG-59B)","Belden 9269 (RG-62A)","Belden 83241 (RG-141A)","Belden 8216 (RG-174)","Belden 8267 (RG-213)","Davis RF Bury-Flex","TMS LMR-100A","TMS LMR-200","TMS LMR-240","TMS LMR-400","TMS LMR-600","TMS LMR-900","Wireman CQ102 (RG-8)","Wireman CQ106 (RG-8)","Wireman CQ125 (RG-58)","Wireman CQ127 (RG-58C)","Wireman CQ110 (RG-213)","Tandy Cable RG-8X","Tandy Cable RG-58","Tandy Cable RG-59","Andrew Heliax LDF4-50A","Andrew Heliax LDF5-50A","Andrew Heliax LDF6-50A","Wireman 551 Ladder Line","Wireman 552 Ladder Line","Wireman 553 Ladder Line","Wireman 554 Ladder Line","Wireman 551 (wet)","Wireman 552 (wet)","Wireman 553 (wet)","Wireman 554 (wet)","Generic 300 ohm Tubular","Generic 450 ohm Window","Generic 600 ohm Open","Ideal (lossless) 50 ohm","Ideal (lossless) 75 ohm"};
 
 	int x , i , c;
+	char *str;
 	double freq , swr , len , pwrin , mldb , rho , alpha , totdb , swrdb , pwrout;
-	char buffer[80] , units;
+	char units;
 
-	printf( "\n" );
+	printf ( "\n" );
+
 	c = sizeof (types) / 30;
 
 	for ( x=0 ; x < c ; x++)
 	{
-		printf( "\n%d. %s" , x + 1 ,types[x]);
+		printf ( "\n%d. %s" , x + 1 ,types[x]);
 	}
 
-	printf( "\n\nEnter Coax Selection : " );
-	sgets( buffer , sizeof buffer );
-	i = atoi( buffer ) - 1;
+	i = getint ( "\n\nEnter Coax Selection : " );
+	i--;
 
 	if ( i < 0 || i > c )
 	{
-		printf( "\nSelection must be 1-%d\n" , c);
+		printf ( "\nSelection must be 1-%d\n" , c);
 		return;
 	}
 
-	printf( "\nEnter [M]etric or [E]nglish : " );
-	sgets( buffer , sizeof buffer );
+	str = getstring ( "\nEnter [M]etric or [E]nglish : ", 1 );
 
-	units = tolower( buffer[0] );
+	units = tolower( str[0] );
+
+	if ( str ) free ( str );
+
 	if ( units != 'm' && units != 'e' ) 
 	{
-		printf( "\nUnits must be [M]etric or [E]nglish\n" );
+		printf ( "\nUnits must be [M]etric or [E]nglish\n" );
 		return;
 	}
 
 	if ( units == 'm' ) 
 	{
-		printf( "\nEnter Line Length (Meters) : " );
+		printf ( "\nEnter Line Length (Meters) : " );
 	}
 	else
 	{
-		printf( "\nEnter Line Length (Feet) : " );
+		printf ( "\nEnter Line Length (Feet) : " );
 	}
 
-	sgets( buffer , sizeof buffer );
-	len = atof( buffer );
+	len = getdouble ( "" );
 
 	if ( len < 0 )
 	{
-		printf( "\nLength must be > 0\n" );
+		printf ( "\nLength must be > 0\n" );
 		return;
 	}
 
-	printf( "\nEnter Frequency (MHz) : " );
-	sgets( buffer , sizeof buffer );
-	freq = atof( buffer );
+	freq = getdouble ( "\nEnter Frequency (MHz) : " );
 
 	if ( freq < 0 )
 	{
-		printf( "\nFrequency must be > 0\n" );
+		printf ( "\nFrequency must be > 0\n" );
 		return;
 	}
 
-	printf( "\nEnter SWR (x:1) : " );
-	sgets( buffer , sizeof buffer );
-	swr = atof( buffer );
+	swr = getdouble ( "\nEnter SWR (x:1) : " );
 
 	if ( swr < 1 )
 	{
-		printf( "\nSWR must be >= 1\n" );
+		printf ( "\nSWR must be >= 1\n" );
 		return;
 	}
 
-	printf( "\nEnter Power Input (W) : " );
-	sgets( buffer , sizeof buffer );
-	pwrin = atof( buffer );
+	pwrin = getdouble ( "\nEnter Power Input (W) : " );
 
 	if ( pwrin <= 0 )
 	{
-		printf( "\nPower Input must be > 0\n" );
+		printf ( "\nPower Input must be > 0\n" );
 		return;
 	}
 
@@ -2193,24 +1985,25 @@ void CoaxLoss( void )
 	printf ( "\nPower Output %3.1f W\n" , pwrout);
 }
 
-void WireAntennaLength( void )
+void WireAntennaLength ( void )
 {
-	char buffer[80] , units;
+	char units;
+	char *str;
 	double f;
 
-	printf( "\nEnter [M]etric or [E]nglish : " );
-	sgets( buffer , sizeof buffer );
+	str = getstring ( "\nEnter [M]etric or [E]nglish : ", 1 );
 
-	units = tolower( buffer[0] );
+	units = tolower( str[0] );
+
+	if ( str ) free ( str );
+
 	if ( units != 'm' && units != 'e' ) 
 	{
-		printf( "\nUnits must be [M]etric or [E]nglish\n" );
+		printf ( "\nUnits must be [M]etric or [E]nglish\n" );
 		return;
 	}
 
-	printf( "\nEnter Frequency (MHz) : " );
-	sgets( buffer , sizeof buffer );
-	f = atof( buffer );
+	f = getdouble ( "\nEnter Frequency (MHz) : " );
 
 	if ( units == 'm' )
 	{
@@ -2228,23 +2021,18 @@ void WireAntennaLength( void )
 	}
 }
 
-void ImageFrequency( void )
+void ImageFrequency ( void )
 {
-	char buffer[80];
 	double rf, intf, im1,im2,lo1,lo2;
 	
-	printf ( "\nEnter Reception Frequency : " );
-	sgets( buffer , sizeof buffer );
-	rf = atof ( buffer );
+	rf = getdouble ( "\nEnter Reception Frequency : " );
 
-	printf ( "\nEnter Intermediate Frequency : " );
-	sgets( buffer , sizeof buffer );
-	intf = atof ( buffer );
+	intf = getdouble ( "\nEnter Intermediate Frequency : " );
 
-	im1 = fabs(intf * 2 - rf);
-	im2 = fabs(intf * 2 + rf);
-	lo1 = fabs(intf - rf);
-	lo2 = fabs(intf + rf);
+	im1 = fabs (intf * 2 - rf);
+	im2 = fabs (intf * 2 + rf);
+	lo1 = fabs (intf - rf);
+	lo2 = fabs (intf + rf);
 
 	printf ( "\nImage Frequencies: %3.3f & %3.3f", im1, im2);
 	printf ( "\nLocal Oscillator Frequencies: %3.3f & %3.3f\n", lo1, lo2);
@@ -2252,44 +2040,41 @@ void ImageFrequency( void )
 
 int main ( void )
 {
-	char buffer[4];
 	int selection , done;
 	done = 0;
 	
 	while (1)
 	{
-		printf( "\n\n   **** RF Calculator Main Menu ****\n\n" );
-		printf( " 1. Turns to Inductance for Toroid Coil\n" );
-		printf( " 2. Turns to Inductance for Air Core Coil\n" );
-		printf( " 3. Capacitance vs Frequency for Tank Circuit\n" );
-		printf( " 4. Inductance vs Frequency for Tank Circuit\n" );
-		printf( " 5. Capacitive Reactance @ Frequency\n" );
-		printf( " 6. Inductive Reactance @ Frequency\n" );
-		printf( " 7. SWR for Input Z vs Output Z\n" );
-		printf( " 8. Power Radiated and Lost for SWR @ TX Power\n" );
-		printf( " 9. SWR for Power Forward vs Power Reflected\n" );
-		printf( "10. Variable Capacitor Scaling\n" );
-		printf( "11. Coax Stub Notch & Pass\n" );
-		printf( "12. Transmitter Output Matching PI Network\n" );
-		printf( "13. Impedance Matching PI Network\n" );
-		printf( "14. Decibel Conversions\n" );
-		printf( "15. Resistors , Inductors , Capacitors - Series & Parallel\n" );
-		printf( "16. Torroid Al Value from Inductance and Turns\n" );
-		printf( "17. Chebyshev Filters\n" );
-		printf( "18. Butterworth Filters\n" );
-		printf( "19. Nearby Powers of 10 Conversion\n" );
-		printf( "20. Line of Sight Distance / Free Space Path Loss\n" );
-		printf( "21. Resistor Attenuators\n" );
-		printf( "22. Coax Loss\n" );
-		printf( "23. Wire Antenna Length\n" );
-		printf( "24. Image Frequency and Local Oscillator\n" );
-		printf( "\n 99. Exit\n\n" );
-		printf( "Enter Selection: " );
+		printf ( "\n\n   **** RF Calculator Main Menu ****\n\n" );
+		printf ( " 1. Turns to Inductance for Toroid Coil\n" );
+		printf ( " 2. Turns to Inductance for Air Core Coil\n" );
+		printf ( " 3. Capacitance vs Frequency for Tank Circuit\n" );
+		printf ( " 4. Inductance vs Frequency for Tank Circuit\n" );
+		printf ( " 5. Capacitive Reactance @ Frequency\n" );
+		printf ( " 6. Inductive Reactance @ Frequency\n" );
+		printf ( " 7. SWR for Input Z vs Output Z\n" );
+		printf ( " 8. Power Radiated and Lost for SWR @ TX Power\n" );
+		printf ( " 9. SWR for Power Forward vs Power Reflected\n" );
+		printf ( "10. Variable Capacitor Scaling\n" );
+		printf ( "11. Coax Stub Notch & Pass\n" );
+		printf ( "12. Transmitter Output Matching PI Network\n" );
+		printf ( "13. Impedance Matching PI Network\n" );
+		printf ( "14. Decibel Conversions\n" );
+		printf ( "15. Resistors , Inductors , Capacitors - Series & Parallel\n" );
+		printf ( "16. Torroid Al Value from Inductance and Turns\n" );
+		printf ( "17. Chebyshev Filters\n" );
+		printf ( "18. Butterworth Filters\n" );
+		printf ( "19. Nearby Powers of 10 Conversion\n" );
+		printf ( "20. Line of Sight Distance / Free Space Path Loss\n" );
+		printf ( "21. Resistor Attenuators\n" );
+		printf ( "22. Coax Loss\n" );
+		printf ( "23. Wire Antenna Length\n" );
+		printf ( "24. Image Frequency and Local Oscillator\n" );
+		printf ( "\n 99. Exit\n\n" );
 		
-		sgets( buffer , sizeof buffer );
-		selection = atoi( buffer );
+		selection = getint ( "Enter Selection : " );
 		
-		printf( "\n\n" );
+		printf ( "\n\n" );
 		
 		switch ( selection )
 		{
@@ -2416,7 +2201,7 @@ int main ( void )
 				break;
 
 			default:
-				printf( "Invalid Entry\n" );
+				printf ( "Invalid Entry\n" );
 				break;
 		}
 
