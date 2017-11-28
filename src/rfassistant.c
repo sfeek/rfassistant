@@ -526,11 +526,11 @@ void CoaxStub ( void )
 
 	if ( units == 'm' ) 
 	{
-		printf ( "\nCoax Stub Length -> %3.1f cm\n" , o);
+		printf ( "\nCoax Stub Length -> %3.1f cm\n" , o );
 	}
 	else
 	{
-		printf ( "\nCoax Stub Length -> %3.1f in\n" , o / 2.54);
+		printf ( "\nCoax Stub Length -> %3.1f in\n" , o / 2.54 );
 	}
 }
 
@@ -1981,8 +1981,8 @@ void CoaxLoss ( void )
 
 	printf ( "\n\nMatched Loss %3.2f dB\n" , mldb );
 	printf ( "\nSWR Loss %3.2f dB\n" , swrdb );
-	printf ( "\nTotal Loss %3.2f dB\n" , totdb);
-	printf ( "\nPower Output %3.1f W\n" , pwrout);
+	printf ( "\nTotal Loss %3.2f dB\n" , totdb );
+	printf ( "\nPower Output %3.1f W\n" , pwrout );
 }
 
 void WireAntennaLength ( void )
