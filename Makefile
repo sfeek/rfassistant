@@ -64,6 +64,7 @@ $(MAIN): $(OBJS)
 
 clean:
 	rm `find ./ -name '*.o'` -rf
+	rm rfassistant
 
 depend: $(SRCS)
 	makedepend $(INCLUDES) $^
