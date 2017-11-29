@@ -1135,14 +1135,14 @@ void ChebyshevFilter(void)
 
 	while (1)
 	{
-		str = getstring("Enter Input Type [T]ee or [P]i : ", 1);
+		str = getstring("Enter Type [T]ee or [P]i : ", 1);
 	
 		inputtype = tolower(str[0]);
 
 		if (str) free(str);
 
 		if (inputtype == 't' || inputtype == 'p') break;
-		printf("\nFilter Input Type must be Tee or Pi\n");
+		printf("\nFilter Type must be Tee or Pi\n");
 	}
 
 	while (1)
@@ -1462,14 +1462,14 @@ void ButterworthFilter(void)
 
 	while (1)
 	{
-		str = getstring("Enter Input Type [T]ee or [P]i : ", 1);
+		str = getstring("Enter Type [T]ee or [P]i : ", 1);
 	
 		inputtype = tolower(str[0]);
 
 		if (str) free(str);
 
 		if (inputtype == 't' || inputtype == 'p') break;
-		printf("\nFilter Input Type must be Tee or Pi\n");
+		printf("\nFilter Type must be Tee or Pi\n");
 	}
 
 	while (1)
@@ -1815,7 +1815,7 @@ void ResistorAttenuator(void)
 
 	while (1)
 	{
-		zout = getdouble("\nEnter Input Impedance (Ohms) : ");
+		zout = getdouble("\nEnter Output Impedance (Ohms) : ");
 
 		if (zout > 0.0) break;
 		printf("\nImpedance must be > 0\n");
@@ -1823,14 +1823,14 @@ void ResistorAttenuator(void)
 
 	while (1)
 	{
-		str = getstring("Enter Input Type [T]ee or [P]i : ", 1);
+		str = getstring("Enter Type [T]ee or [P]i : ", 1);
 	
 		type = tolower(str[0]);
 
 		if (str) free(str);
 
 		if (type == 't' || type == 'p') break;
-		printf("\nFilter Input Type must be Tee or Pi\n");
+		printf("\nType must be Tee or Pi\n");
 	}
 
 	k = pow(10, attn/20);
