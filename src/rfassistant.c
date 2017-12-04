@@ -7,6 +7,21 @@
 
 #define PI 3.14159265
 
+void PauseForEnterKey (void)
+{
+	char ch;
+
+	printf("\n*** Press [ENTER] For Main Menu ***\n");
+
+	while (1)
+	{
+		ch=fgetc (stdin);
+		if (ch == '\n') break;
+	}
+
+	return;
+}
+
 /* Used with FOR loops to properly handle fractional step values */
 int floatlessthan(double f1,double f2,double step)
 {
@@ -419,7 +434,7 @@ void CoaxStub(void)
 
 	while (1)
 	{
-		str = getstring("\nEnter [M]etric or [E]nglish : ", 1);
+		str = getstring("\nEnter [M]etric or [E]nglish : ");
 	
 		units = tolower(str[0]);
 
@@ -868,7 +883,7 @@ void Resistors(void)
 	
 	while(1)
 	{
-		str = getstring("Enter [S]eries,[P]arallel or [D]one: ", 1);
+		str = getstring("Enter [S]eries,[P]arallel or [D]one: ");
 		
 		if (tolower(str[0])== 'd')
 		{
@@ -916,7 +931,7 @@ void Inductors(void)
 	
 	while(1)
 	{
-		str = getstring("Enter [S]eries,[P]arallel or [D]one: ", 1);
+		str = getstring("Enter [S]eries,[P]arallel or [D]one: ");
 		
 		if (tolower(str[0])== 'd')
 		{
@@ -963,7 +978,7 @@ void Capacitors(void)
 
 	while(1)
 	{
-		str = getstring("Enter [S]eries,[P]arallel or [D]one: ", 1);
+		str = getstring("Enter [S]eries,[P]arallel or [D]one: ");
 		
 		if (tolower(str[0])== 'd')
 		{
@@ -1135,7 +1150,7 @@ void ChebyshevFilter(void)
 
 	while (1)
 	{
-		str = getstring("Enter Type [T]ee or [P]i : ", 1);
+		str = getstring("Enter Type [T]ee or [P]i : ");
 	
 		inputtype = tolower(str[0]);
 
@@ -1462,7 +1477,7 @@ void ButterworthFilter(void)
 
 	while (1)
 	{
-		str = getstring("Enter Type [T]ee or [P]i : ", 1);
+		str = getstring("Enter Type [T]ee or [P]i : ");
 	
 		inputtype = tolower(str[0]);
 
@@ -1698,7 +1713,7 @@ void LineOfSight(void)
 
 	while (1)
 	{
-		str = getstring("\nEnter [M]etric or [E]nglish : ", 1);
+		str = getstring("\nEnter [M]etric or [E]nglish : ");
 	
 		units = tolower(str[0]);
 
@@ -1823,7 +1838,7 @@ void ResistorAttenuator(void)
 
 	while (1)
 	{
-		str = getstring("Enter Type [T]ee or [P]i : ", 1);
+		str = getstring("Enter Type [T]ee or [P]i : ");
 	
 		type = tolower(str[0]);
 
@@ -1886,7 +1901,7 @@ void CoaxLoss(void)
 
 	while (1)
 	{
-		str = getstring("\nEnter [M]etric or [E]nglish : ", 1);
+		str = getstring("\nEnter [M]etric or [E]nglish : ");
 	
 		units = tolower(str[0]);
 
@@ -1960,7 +1975,7 @@ void WireAntennaLength(void)
 
 	while (1)
 	{
-		str = getstring("\nEnter [M]etric or [E]nglish : ", 1);
+		str = getstring("\nEnter [M]etric or [E]nglish : ");
 	
 		units = tolower(str[0]);
 
