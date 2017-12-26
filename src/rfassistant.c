@@ -34,15 +34,23 @@ int floatlessthan(double f1,double f2,double step)
 
 void TurnsToInductanceToroid(void)
 {
-	double al,l;
+	double al,perturns,l;
 	int turns,i;
 	
 	while(1)
 	{
-		al = getdouble("Enter Al Value (uH/100 Turns): ");
+		al = getdouble("Enter Al Value (uH): ");
 
 		if (al > 0) break;
 		printf("\nAl must be > 0!\n");
+	}
+	
+	while(1)
+	{
+		perturns = getdouble("Enter Per # of Turns: ");
+
+		if (perturns > 0) break;
+		printf("\nPer # of Turns must be > 0!\n");
 	}
 
 	while(1)
@@ -57,7 +65,7 @@ void TurnsToInductanceToroid(void)
 
 	for (i = 1; i < turns+1; i++)
 	{
-		l = (al*i*i)/10000.0;
+		l = (al*i*i)/((1000.0/perturns)*1000.0);
 		
 		printf("%d -> %3.3f uH\n",i ,l);
 	}
