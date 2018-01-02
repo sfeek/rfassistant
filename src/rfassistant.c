@@ -73,7 +73,7 @@ void TurnsToInductanceToroid(void)
 
 void IndToAlToroid(void)
 {
-	double al,l;
+	double al1,al2,l;
 	int turns;
 	
 	while(1)
@@ -94,9 +94,11 @@ void IndToAlToroid(void)
 	
 	printf("\n");
 
-	al = (l*10000.0)/(turns*turns);
-		
-	printf("Al = %3.1f uH/100\n",al);
+	al1 = (l*10000.0)/(turns*turns);
+	al2 = (l*1000.0)/(turns*turns);
+	
+	printf("Al = %3.1f uH/100\n",al1);
+	printf("Al = %3.1f uH/1000\n",al2);
 }
 
 void TurnsToInductanceAirCore(void)
