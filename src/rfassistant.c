@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
+#include <complex.h>
 #include <ctype.h>
 #include "../include/iolibrary.h"
 
@@ -11,7 +12,7 @@ void PauseForEnterKey (void)
 {
 	char ch;
 
-	printf("\n*** Press [ENTER] For Main Menu ***\n");
+	printf("\n\n*** Press [ENTER] For Main Menu ***\n");
 
 	while (1)
 	{
@@ -25,8 +26,8 @@ void PauseForEnterKey (void)
 /* Used with FOR loops to properly handle fractional step values */
 int floatlessthan(double f1,double f2,double step)
 {
-	if (f1 > f2 + 1e-4) return 0;
-	if ((f2+step)-f1 > 1e-4)
+	if (f1 > f2 + 1e-14) return 0;
+	if ((f2+step)-f1 > 1e-14)
 		return 1;
 	else
 		return 0;
@@ -39,7 +40,10 @@ void TurnsToInductanceToroid(void)
 	
 	while(1)
 	{
-		al = getdouble("Enter Al Value (uH): ");
+		printf ("\nAl Value");
+		al = getinductance();
+
+		al = al * 1e6;
 
 		if (al > 0) break;
 		printf("\nAl must be > 0!\n");
@@ -47,7 +51,7 @@ void TurnsToInductanceToroid(void)
 	
 	while(1)
 	{
-		perturns = getdouble("Enter Per # of Turns: ");
+		perturns = getdouble("\nEnter Per # of Turns: ");
 
 		if (perturns > 0) break;
 		printf("\nPer # of Turns must be > 0!\n");
@@ -55,7 +59,7 @@ void TurnsToInductanceToroid(void)
 
 	while(1)
 	{
-		turns = getint("Enter Number of Turns: ");
+		turns = getint("\nEnter Number of Turns: ");
 
 		if (turns > 0) break;
 		printf("\nNumber of turns must be > 0!\n");
@@ -65,9 +69,10 @@ void TurnsToInductanceToroid(void)
 
 	for (i = 1; i < turns+1; i++)
 	{
-		l = (al*i*i)/((1000.0/perturns)*1000.0);
+		l = (al*i*i)/((1000.0/perturns)*1000.0)*1e-6;
 		
-		printf("%d -> %3.3f uH\n",i ,l);
+		printf("\n%d -> ",i);
+		showinductance (l);
 	}
 }
 
@@ -78,7 +83,10 @@ void IndToAlToroid(void)
 	
 	while(1)
 	{
-		l = getdouble("Enter Toroid Inductance (uH): ");
+		printf ("\nToroid");
+		l = getinductance ();
+
+		l = l * 1e6;
 
 		if (l > 0.0) break;
 		printf("\nInductance must be > 0!\n");
@@ -86,7 +94,7 @@ void IndToAlToroid(void)
 
 	while(1)
 	{
-		turns = getint("Enter Number of Turns: ");
+		turns = getint("\nEnter Number of Turns: ");
 
 		if (turns > 0) break;
 		printf("\nNumber of turns must be > 0!\n");
@@ -134,9 +142,11 @@ void TurnsToInductanceAirCore(void)
 
 	for (i = 1; i < turns+1; i++)
 	{
-		l = (0.2*pow(cd/25.4,2)*pow(i,2))/(3*(cd/25.4)+9*((i*ww)/25.4));
+		l = (0.2*pow(cd/25.4,2)*pow(i,2))/(3*(cd/25.4)+9*((i*ww)/25.4))*1e-6;
 		
-		printf("%d -> %3.3f uH   Coil Length = %3.1f mm\n",i,l,i*ww);
+		printf("\n%d -> ",i);
+		showinductance(l);	
+		printf("  Coil Length = %3.1f mm",i*ww);
 	}
 }
 
@@ -146,7 +156,7 @@ void CapacitanceFrequency(void)
 	
 	while (1)
 	{
-		ind = getdouble("Enter Inductance (uH): ");
+		ind = getinductance ();
 
 		if (ind > 0.0) break;
 		printf("\nInductance must be > 0!\n");
@@ -154,8 +164,10 @@ void CapacitanceFrequency(void)
 	
 	while (1)
 	{
-		scap = getdouble("Enter Start Capacitance (pF): ");
-		ecap = getdouble("Enter End Capacitance (pF): ");
+		printf("\nStart");
+		scap = getcapacitance ();
+		printf("\nEnd");
+		ecap = getcapacitance ();
 
 		if (scap > 0.0 && ecap > 0.0 && ecap > scap) break;
 		printf("\nValues must be > 0 and Start < End!\n");
@@ -163,19 +175,23 @@ void CapacitanceFrequency(void)
 
 	while (1)
 	{
-		icap = getdouble("Enter Capacitance Step (pF): ");	
+		printf ("\nStep");
+		icap = getcapacitance ();	
 	
 		if (icap > 0.0 && icap < (ecap-scap)) break;
-		printf("\nStep Value must be > 0 and < %3.2f!\n", (ecap-scap));
+		printf ("\nStep Value must be > 0 and < %3.2f!\n", (ecap-scap));
 	}
 	
 	printf("\n");
 
 	for (c = scap; floatlessthan(c,ecap,icap); c += icap)
 	{
-		f = (1/(2*PI*(sqrt(ind*1e-6*c*1e-12))))/1e6;
+		f = 1/(2*PI*(sqrt(ind*c)));
 
-		printf("%3.2f pF -> %3.3f MHz\n",c,f);
+		printf("\n");
+		showcapacitance(c);
+		printf(" -> ");
+		showfrequency(f);
 	}
 }
 
@@ -185,16 +201,18 @@ void InductanceFrequency(void)
 	
 	while (1)
 	{
-		cap = getdouble("Enter Capacitance (pF): ");
+		cap = getcapacitance ();
 
 		if (cap > 0.0) break;
-		printf("\nCapacitance must be > 0!\n");
+		printf ("\nCapacitance must be > 0!\n");
 	}
 
 	while (1)
 	{
-		sind = getdouble("Enter Start Inductance (uH): ");
-		eind = getdouble("Enter End Inductance (uH): ");
+		printf ("\nStart");
+		sind = getinductance ();
+		printf ("\nEnd");
+		eind = getinductance ();
 
 		if (sind > 0.0 && eind > 0.0 && eind > sind) break;
 		printf("\nValues must be > 0 and Start < End!\n");
@@ -202,19 +220,22 @@ void InductanceFrequency(void)
 
 	while (1)
 	{
-		iind = getdouble("Enter Inductance Step (uH): ");
+		printf ("\nStep");
+		iind = getinductance ();
 
 		if (iind > 0.0 && iind < (eind-sind)) break;
-		printf("\nStep Value must be > 0 and < %3.3f!\n", (eind-sind));
+		printf ("\nStep Value must be > 0 and < %3.3f!\n", (eind-sind));
 	}
 
 	printf("\n");
 
 	for (i = sind; floatlessthan(i,eind,iind); i += iind)
 	{
-		f = (1/(2*PI*(sqrt(i*1e-6*cap*1e-12))))/1e6;
-
-		printf("%3.3f uH -> %3.3f MHz\n",i,f);
+		f = 1/(2*PI*(sqrt(i*cap)));
+		printf ("\n");
+		showinductance (i);
+		printf (" ->  ");
+		showfrequency (f);
 	}
 }
 
@@ -224,7 +245,7 @@ void ReactanceCapacitance(void)
 	
 	while (1)
 	{
-		f = getdouble("Enter Frequency (MHz): ");
+		f = getfrequency ();
 
 		if (f > 0) break;
 		printf("\nFrequency must be > 0!\n");
@@ -232,8 +253,10 @@ void ReactanceCapacitance(void)
 	
 	while (1)
 	{
-		scap = getdouble("Enter Start Capacitance (pF): ");
-		ecap = getdouble("Enter End Capacitance (pF): ");
+		printf ("\nStart");
+		scap = getcapacitance ();
+		printf ("\nEnd");
+		ecap = getcapacitance ();
 
 		if (scap > 0.0 && ecap > 0.0 && ecap > scap) break;
 		printf("\nValues must be > 0 and Start < End!\n");
@@ -241,19 +264,23 @@ void ReactanceCapacitance(void)
 
 	while (1)
 	{
-		icap = getdouble("Enter Capacitance Step (pF): ");	
+		printf ("\nStep");
+		icap = getcapacitance ();	
 	
 		if (icap > 0.0 && icap < (ecap-scap)) break;
 		printf("\nStep Value must be > 0 and < %3.2f!\n", (ecap-scap));
 	}
 	
-	printf("\n");
+	printf ("\n");
 
 	for (i = scap; floatlessthan(i,ecap,icap); i += icap)
 	{
-		r = 1/(2*PI*(f*1e6)*(i*1e-12));
+		r = 1/(2*PI*f*i);
 
-		printf("%3.2f pF -> %3.1f Ohms\n",i,r);
+		printf ("\n");
+		showcapacitance (i);
+		printf (" -> ");
+		showresistance (r);
 	}
 }
 
@@ -263,7 +290,7 @@ void ReactanceInductance(void)
 	
 	while (1)
 	{
-		f = getdouble("Enter Frequency (MHz): ");
+		f = getfrequency ();
 
 		if (f > 0) break;
 		printf("\nFrequency must be > 0!\n");
@@ -271,8 +298,10 @@ void ReactanceInductance(void)
 
 	while (1)
 	{
-		sind = getdouble("Enter Start Inductance (uH): ");
-		eind = getdouble("Enter End Inductance (uH): ");
+		printf ("\nStart");
+		sind = getinductance ();
+		printf ("\nEnd");
+		eind = getinductance ();
 
 		if (sind > 0.0 && eind > 0.0 && eind > sind) break;
 		printf("\nValues must be > 0 and Start < End!\n");
@@ -280,7 +309,8 @@ void ReactanceInductance(void)
 
 	while (1)
 	{
-		iind = getdouble("Enter Inductance Step (uH): ");
+		printf ("\nEnd");
+		iind = getinductance ();
 
 		if (iind > 0.0 && iind < (eind-sind)) break;
 		printf("\nStep Value must be > 0 and < %3.3f!\n", (eind-sind));
@@ -290,34 +320,40 @@ void ReactanceInductance(void)
 
 	for (l = sind; floatlessthan(l,eind,iind); l += iind)
 	{
-		r = 2*PI*(f*1e6)*(l*1e-6);
+		r = 2*PI*f*l;
 
-		printf("%3.3f uH -> %3.1f Ohms\n",l,r);
+		printf ("\n");
+		showinductance (l);
+		printf (" -> ");
+		showresistance (r);
 	}
 }
 
 void SWRioZ(void)
 {
-	double z0,z1,SWR,t;
+	double complex z0,z1,t;
+	double SWR;
 	
 	while (1)
 	{
-		z0 = getdouble("Enter Input Z (Ohms): ");
+		printf ("\nInput Impedance");
+		z0 = getimpedance ();
 
-		z1 = getdouble("Enter Output Z (Ohms): ");
+		printf ("\nOutput Impedance");
+		z1 = getimpedance ();
 
-		if (z0 > 0.0 && z1 > 0.0) break;
+		if (cabs(z0) > 0.0 && cabs(z1) > 0.0) break;
 		printf("\nValues must be > 0!\n");
 	}
 
-	if (z1 < z0)
+	if (cabs(z1) < cabs(z0))
 	{
 		t = z1;
 		z1 = z0;
 		z0 = t;
 	}
 
-	SWR = (1+(z1-z0)/(z1+z0))/(1-(z1-z0)/(z1+z0));
+	SWR = (1+cabs((z1-z0)/(z1+z0)))/(1-cabs((z1-z0)/(z1+z0)));
 
 	printf("\nSWR -> %3.1f\n",SWR);
 	
@@ -374,50 +410,50 @@ void SWRfr(void)
 
 void VarCapScaling(void)
 {
-	double I,X,Y,A,B;
-	
-	while (1)
-	{
-		A = getdouble("Enter Start Capacitance (pF): ");
-	
-		B = getdouble("Enter End Capacitance (pF): ");
+        double i,x,y,a,b;
 
-		if (A > 0.0 && B > 0.0 && B > A) break;
-		printf("\nValues must be > 0 and Start < End!\n");
-	}
+        while (1)
+        {
+                a = getdouble("Enter Start Capacitance (pF): ");
 
-	while (1)
-	{
-		X = getdouble("Enter Variable Capacitor Start (pF): ");
+                b = getdouble("Enter End Capacitance (pF): ");
 
-		Y = getdouble("Enter Variable Capacitor End (pF): ");
+                if (a > 0.0 && b > 0.0 && b > a) break;
+                printf("\nValues must be > 0 and Start < End!\n");
+        }
 
-		if (X > 0.0 && Y > 0.0 && Y > X) break;
-		printf("\nValues must be > 0 and Start < End!\n");
-	}
+        while (1)
+        {
+                x = getdouble("Enter Variable Capacitor Start (pF): ");
 
-	if (Y <= X+A)
-	{
-		printf("\nVariable Capacitor End Too Small!\n");
-		return;
-	}
-	
-	if (X >= (1.0/(1.0/Y+1.0/B)))
-	{
-		printf("\nVariable Capacitor Start Too Large!\n");
-		return;
-	}
-	
-	if ((Y-X) <= (B-A))
-	{
-		printf("\nVariable Capacitor Capacitance Span too small!\n");
-		return;
-	}
-	
-	I = -0.5*((-B*Y-B*X+A*Y+A*X-sqrt((-Y+X)*(X*B*B+X*A*A-2*X*A*B-4*B*Y*X+4*A*Y*X-B*B*Y+2*B*Y*A-A*A*Y)))/(-B+A+Y-X));	
-	
-	printf("\nSeries Capacitor -> %3.2f pF\n",I);
-	printf("\nParallel Capacitor -> %3.2f pF\n",fabs(A-(X*I)/(X+I)));
+                y = getdouble("Enter Variable Capacitor End (pF): ");
+
+                if (x > 0.0 && y > 0.0 && y > x) break;
+                printf("\nValues must be > 0 and Start < End!\n");
+        }
+
+        if (y <= x+a)
+        {
+                printf("\nVariable Capacitor End Too Small!\n");
+                return;
+        }
+
+        if (x >= (1.0/(1.0/y+1.0/b)))
+        {
+                printf("\nVariable Capacitor Start Too Large!\n");
+                return;
+        }
+
+        if ((y-x) <= (b-a))
+        {
+                printf("\nVariable Capacitor Capacitance Span too small!\n");
+                return;
+        }
+
+        i = -0.5*((-b*y-b*x+a*y+a*x-sqrt((-y+x)*(x*b*b+x*a*a-2*x*a*b-4*b*y*x+4*a*y*x-b*b*y+2*b*y*a-a*a*y)))/(-b+a+y-x));
+
+        printf("\nSeries Capacitor -> %3.2f pF\n",i);
+        printf("\nParallel Capacitor -> %3.2f pF\n",fabs(a-(x*i)/(x+i)));
 }
 
 void CoaxStub(void)
@@ -1118,7 +1154,7 @@ void ChebyshevFilter(void)
 				fch = getdouble("Enter Bandpass Upper Cut-off Frequency (MHz): ");
 
 				if (fcl > 0.0 && fch > 0.0 && fcl < fch) break;
-				printf("\nFrequencies must be > 0 and Upper Cut-off frequency > Lower Cut-off frequency\n");
+				printf("\nFrequencies must be > 0 and Upper Cut-off Frequency > Lower Cut-off Frequency\n");
 			}
 
 			break;
@@ -1132,7 +1168,7 @@ void ChebyshevFilter(void)
 				fch = getdouble("Enter Bandstop Upper Cut-off Frequency (MHz): ");
 
 				if (fcl > 0.0 && fch > 0.0 && fcl < fch) break;
-				printf("\nFrequencies must be > 0 and Upper Cut-off frequency > Lower Cut-off frequency\n");
+				printf("\nFrequencies must be > 0 and Upper Cut-off Frequency > Lower Cut-off Frequency\n");
 			}
 			break;
 	}

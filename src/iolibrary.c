@@ -5,6 +5,8 @@
 #include <ctype.h>
 #include <errno.h>
 #include <limits.h>
+#include <complex.h>
+
 
 /* Gracefully get a string - *** Remember to free() the returned string when finished with it! *** */
 char *getstring (const char *display)
@@ -138,3 +140,218 @@ int getint (const char *display)
 
 	return value;
 }
+
+/* Show frequency */
+void showfrequency(double v)
+{
+	double a = fabs(v);
+	
+	if (a >= 1e9) { printf ("%3.3f GHz",v / 1e9); return; }
+	if (a >= 1e6) { printf ("%3.3f MHz",v / 1e6); return; }
+	if (a >= 1e3) { printf ("%3.3f KHz",v / 1e3); return; }
+	printf ("%3.3f Hz", v);
+	return;
+}
+
+/* Show Capacitance */
+void showcapacitance(double v)
+{
+	double a = fabs(v);
+
+	if (a >= 1e0) { printf ("%3.3f F",v); return; }
+	if (a >= 1e-3) { printf ("%3.3f mF",v / 1e-3); return; }
+	if (a >= 1e-6) { printf ("%3.3f μF",v / 1e-6); return; }
+	if (a >= 1e-9) { printf ("%3.3f nF",v / 1e-9); return; }
+	if (a >= 1e-12) { printf ("%3.3f pF", v / 1e-12); return; }
+	return;
+}
+
+/* Show Inductance */
+void showinductance(double v)
+{	
+	double a = fabs(v);
+
+	if (a >= 1e0) { printf ("%3.3f H",v); return; }
+	if (a >= 1e-3) { printf ("%3.3f mH",v / 1e-3); return; }
+	if (a >= 1e-6) { printf ("%3.3f μH",v / 1e-6); return; }
+	if (a >= 1e-9) { printf ("%3.3f nH",v / 1e-9); return; }
+	if (a >= 1e-12) { printf ("%3.3f pH", v / 1e-12); return; }
+	return;
+}
+
+/* Show Resistance */
+void showresistance(double v)
+{	
+	double a = fabs(v);
+
+	if (a >= 1e9) { printf ("%3.3f GΩ",v / 1e9); return; }
+	if (a >= 1e6) { printf ("%3.3f MΩ",v / 1e6); return; }
+	if (a >= 1e3) { printf ("%3.3f KΩ",v / 1e3); return; }
+	if (a >= 1e0) { printf ("%3.3f Ω ", v); return; }
+	if (a >= 1e-3) { printf ("%3.3f mΩ", v / 1e-3); return; }
+	return;
+}
+
+/* Show Power */
+void showpower(double v)
+{
+	double a = fabs(v);
+
+	if (a >= 1e9) { printf ("%3.3f GW",v / 1e9); return; }
+	if (a >= 1e6) { printf ("%3.3f MW",v / 1e6); return; }
+	if (a >= 1e3) { printf ("%3.3f KW", v / 1e3); return; }
+	if (a >= 1e0) { printf ("%3.3f W",v); return; }
+	if (a >= 1e-3) { printf ("%3.3f mW",v / 1e-3); return; }
+	if (a >= 1e-6) { printf ("%3.3f μW",v / 1e-6); return; }
+	if (a >= 1e-9) { printf ("%3.3f nW",v / 1e-9); return; }
+	if (a >= 1e-12) { printf ("%3.3f pW", v / 1e-12); return; }
+	return;
+}
+
+/* Get frequency in Hz*/
+double getfrequency ()
+{
+	double v;
+	int i;
+
+	while (1)
+	{
+		v = getdouble ("\nEnter Frequency : ");
+		i = getint ("\n1)Hz  2)KHz  3)MHz  4)GHz : ");
+	
+		switch (i)
+		{
+			case 1:
+				return v;
+			case 2:
+				return v*1e3;
+			case 3:
+				return v*1e6;
+			case 4:
+				return v*1e9;
+		}
+	}		
+}
+
+/* Get capacitance in F */
+double getcapacitance ()
+{
+	double v;
+	int i;
+
+	while (1)
+	{
+		v = getdouble ("\nEnter Capacitance : "); 
+		i = getint ("\n1)F  2)mF  3)μF  4)nF  5)pF : ");
+	
+		switch (i)
+		{
+			case 1:
+				return v;
+			case 2:
+				return v*1e-3;
+			case 3:
+				return v*1e-6;
+			case 4:
+				return v*1e-9;
+			case 5:
+				return v*1e-12;
+		}
+	}		
+}
+
+/* Get inductance in H */
+double getinductance ()
+{
+	double v;
+	int i;
+
+	while (1)
+	{
+		v = getdouble ("\nEnter Inductance : "); 
+		i = getint ("\n1)H  2)mH  3)μH  4)nH  5)pH : ");
+	
+		switch (i)
+		{
+			case 1:
+				return v;
+			case 2:
+				return v*1e-3;
+			case 3:
+				return v*1e-6;
+			case 4:
+				return v*1e-9;
+			case 5:
+				return v*1e-12;
+		}
+	}		
+}
+
+/* Get resistance in Ω */
+double getresistance ()
+{
+	double v;
+	int i;
+
+	while (1)
+	{
+		v = getdouble ("\nEnter Resistance : "); 
+		i = getint ("\n1)MΩ  2)KΩ  3)Ω  4)mΩ : ");
+	
+		switch (i)
+		{
+			case 1:
+				return v*1e6;
+			case 2:
+				return v*1e3;
+			case 3:
+				return v;
+			case 4:
+				return v*1e-3;
+		}
+	}		
+}
+
+/* Get power in W */
+double getpower ()
+{
+	double v;
+	int i;
+
+	while (1)
+	{
+		v = getdouble ("\nEnter Power : "); 
+		i = getint ("\n1)MW  2)KW  3)W  4)mW  5)μW : ");
+	
+		switch (i)
+		{
+			case 1:
+				return v*1e6;
+			case 2:
+				return v*1e3;
+			case 3:
+				return v;
+			case 4:
+				return v*1e-3;
+			case 5:
+				return v*1e-6;
+		}
+	}		
+}
+
+/* Get impedance r + jx */
+double complex getimpedance ()
+{
+	double complex v;
+	double r;
+	double x;
+
+	r = getdouble ("\nEnter r : ");
+	x = getdouble ("\nEnter jx : ");
+
+	v = r + x * I;
+
+	return v;
+}
+	
+
