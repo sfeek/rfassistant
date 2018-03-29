@@ -189,6 +189,7 @@ void showresistance(double v)
 	if (a >= 1e3) { printf ("%3.3f KΩ",v / 1e3); return; }
 	if (a >= 1e0) { printf ("%3.3f Ω ", v); return; }
 	if (a >= 1e-3) { printf ("%3.3f mΩ", v / 1e-3); return; }
+	if (a >= 1e-6) { printf ("%3.3f μΩ", v / 1e-6); return; }
 	return;
 }
 
@@ -208,15 +209,43 @@ void showpower(double v)
 	return;
 }
 
+/* Show Voltage */
+void showvoltage(double v)
+{
+	double a = fabs(v);
+
+	if (a >= 1e6) { printf ("%3.3f MV",v / 1e6); return; }
+	if (a >= 1e3) { printf ("%3.3f KV", v / 1e3); return; }
+	if (a >= 1e0) { printf ("%3.3f V",v); return; }
+	if (a >= 1e-3) { printf ("%3.3f mV",v / 1e-3); return; }
+	if (a >= 1e-6) { printf ("%3.3f μV",v / 1e-6); return; }
+	if (a >= 1e-9) { printf ("%3.3f nV",v / 1e-9); return; }
+	return;
+}
+
+/* Show Amperage */
+void showamperage(double v)
+{
+	double a = fabs(v);
+
+	if (a >= 1e3) { printf ("%3.3f KA", v / 1e3); return; }
+	if (a >= 1e0) { printf ("%3.3f A",v); return; }
+	if (a >= 1e-3) { printf ("%3.3f mA",v / 1e-3); return; }
+	if (a >= 1e-6) { printf ("%3.3f μA",v / 1e-6); return; }
+	if (a >= 1e-9) { printf ("%3.3f nA",v / 1e-9); return; }
+	return;
+}
+
+
 /* Get frequency in Hz*/
-double getfrequency ()
+double getfrequency (const char *display)
 {
 	double v;
 	int i;
 
 	while (1)
 	{
-		v = getdouble ("\nEnter Frequency : ");
+		v = getdouble (display);
 		i = getint ("\n1)Hz  2)KHz  3)MHz  4)GHz : ");
 	
 		switch (i)
@@ -234,14 +263,14 @@ double getfrequency ()
 }
 
 /* Get capacitance in F */
-double getcapacitance ()
+double getcapacitance (const char *display)
 {
 	double v;
 	int i;
 
 	while (1)
 	{
-		v = getdouble ("\nEnter Capacitance : "); 
+		v = getdouble (display); 
 		i = getint ("\n1)F  2)mF  3)μF  4)nF  5)pF : ");
 	
 		switch (i)
@@ -261,14 +290,14 @@ double getcapacitance ()
 }
 
 /* Get inductance in H */
-double getinductance ()
+double getinductance (const char *display)
 {
 	double v;
 	int i;
 
 	while (1)
 	{
-		v = getdouble ("\nEnter Inductance : "); 
+		v = getdouble (display); 
 		i = getint ("\n1)H  2)mH  3)μH  4)nH  5)pH : ");
 	
 		switch (i)
@@ -288,14 +317,14 @@ double getinductance ()
 }
 
 /* Get resistance in Ω */
-double getresistance ()
+double getresistance (const char *display)
 {
 	double v;
 	int i;
 
 	while (1)
 	{
-		v = getdouble ("\nEnter Resistance : "); 
+		v = getdouble (display); 
 		i = getint ("\n1)MΩ  2)KΩ  3)Ω  4)mΩ : ");
 	
 		switch (i)
@@ -313,14 +342,14 @@ double getresistance ()
 }
 
 /* Get power in W */
-double getpower ()
+double getpower (const char *display)
 {
 	double v;
 	int i;
 
 	while (1)
 	{
-		v = getdouble ("\nEnter Power : "); 
+		v = getdouble (display); 
 		i = getint ("\n1)MW  2)KW  3)W  4)mW  5)μW : ");
 	
 		switch (i)
@@ -339,17 +368,86 @@ double getpower ()
 	}		
 }
 
+/* Get voltage in V */
+double getvoltage (const char *display)
+{
+	double v;
+	int i;
+
+	while (1)
+	{
+		v = getdouble (display); 
+		i = getint ("\n1)MV  2)KV  3)V  4)mV  5)μV  6)nV: ");
+	
+		switch (i)
+		{
+			case 1:
+				return v*1e6;
+			case 2:
+				return v*1e3;
+			case 3:
+				return v;
+			case 4:
+				return v*1e-3;
+			case 5:
+				return v*1e-6;
+			case 6:
+				return v*1e-9;
+		}
+	}		
+}
+
+/* Get amperage in A */
+double getamperage (const char *display)
+{
+	double v;
+	int i;
+
+	while (1)
+	{
+		v = getdouble (display); 
+		i = getint ("\n1)KA  2)A  3)mA  4)μA  5)nA: ");
+	
+		switch (i)
+		{
+			case 1:
+				return v*1e3;
+			case 2:
+				return v;
+			case 3:
+				return v*1e-3;
+			case 4:
+				return v*1e-6;
+			case 5:
+				return v*1e-9;
+		}
+	}		
+}
+
+
 /* Get impedance r + jx */
-double complex getimpedance ()
+double complex getimpedance (const char *display)
 {
 	double complex v;
 	double r;
 	double x;
+	char *rs,*rx;
 
-	r = getdouble ("\nEnter r : ");
-	x = getdouble ("\nEnter jx : ");
+	rs = malloc (strlen (display) + 10);
+	rx = malloc (strlen (display) + 10);
+	
+	strcpy (rs,display);
+	strcpy (rx,display);
+	strcat (rs," - r : ");
+	strcat (rx," - jx : ");
+	
+	r = getdouble (rs);
+	x = getdouble (rx);
 
 	v = r + x * I;
+
+	if (rs) free (rs);
+	if (rx) free (rx);
 
 	return v;
 }
