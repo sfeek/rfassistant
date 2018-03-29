@@ -610,76 +610,72 @@ void TXOutputMatch(void)
 
 void ImpedanceMatch(void)
 {
-	double rs,xs,rl,xl,Q,f,tq,w,rv,ql,rps,rpl,cps,q,qs,ls,ll;
-	double cpl,cs,cspi,cl,clpi,l,lpi;
-	double complex R1,R2;
+	double DTOR,R1,R2,F,RA,Z1,ZC1,Z2,ZC2,Z3,ZL1,r,Qn,BW,Qn1,Eff,QCoil;
 	
 	while (1)
 	{
-		printf ("\nSource");
-		R1 = getimpedance ();
-		rs = creal(R1);
-		xs = cimag(R1);
-		
-		printf ("\nLoad");
-		R2 = getimpedance ();
-		rl = creal(R2);
-		xl = cimag(R2);
+		R1 = getdouble("Source Resistance (Ohms): ");
 
-		if (cabs(R1) > 0.0 && cabs(R2) > 0.0) break;
+		R2 = getdouble("Load Resistance (Ohms): ");
+
+		if (R1 > 0.0 && R2 > 0.0) break;
 		printf("\nSource and Load Resistance must be > 0!\n");
 	}
 
 	while (1)
 	{
-		f = getfrequency ();
+		F = getdouble("Enter TX Center Frequency (MHz): ");
 
-		if (f > 0.1 && f < 2500e6) break;
-		printf("\nFrequency must be > 0.1 and < 2500!\n");
+		if (F > 0.1 && F < 2500) break;
+		printf("\nCenter Frequency must be > 0.1 and < 2500!\n");
 	}
 
 	while (1)
 	{
-		tq = sqrt(fmax(rs,rl)/fmin(rs,rl)-1);
-		
-		Q = getdouble("\nEnter Q : ");
+		QCoil = getdouble("Enter Unloaded Q of Coil : ");
 	
-		if (Q >= tq) break;
-
-		printf("\nQ must be >  %3.2f!\n", tq);
+		if (QCoil > 0.1) break;
+		printf("\nUnloaded Q of Coil must be > 0.1!\n");
 	}
-	
-	rv=fmax(rs,rl)/(Q*Q+1);
-	w=2*PI*f;
-	qs=-xs/rs;
-	ql=-xl/rl;
-	rps=rs*(1+qs*qs);  
-	rpl=rl*(1+ql*ql);
-        
-	/* cs-l-cl pi network matching */
-	cps=qs/rps/w;
-	cpl=ql/rpl/w;
-	q=sqrt(rps/rv-1);
-	cs=q/w/rps-cps;
-	cspi=cs; 
-	ls=q*rv/w;
-	q=sqrt(rpl/rv-1);
-	cl=q/w/rpl-cpl;
-	clpi=cl;
-	ll=q*rv/w;
-	l=ls+ll;
-	lpi=l;
-        
-	printf("\nSource Impedance -> %3.2f + j%3.2f Ohms\n",creal(R1),cimag(R1));
-	printf("\nLoad Impedance -> %3.2f + j%3.2f Ohms\n",creal(R2),cimag(R2));
 
-	printf("\n\n CS - L - CL Pi Match");
-	printf("\nSource Side Parallel Capacitor -> ");
-	showcapacitance (cspi);
-	printf("\nLoad Side Parallel Capacitor -> ");
-	showcapacitance (clpi);
-	printf("\nSeries Inductor -> ");
-	showinductance (lpi);
+	while (1)
+	{
+		r = getdouble("Enter Phase Shift Angle (90-180 Deg): ");
+	
+		if (r >=90 && r <= 180) break;
+		printf("\nPhase Shift Angle must be >= 90 and <= 180!\n");
+	}
+
+	DTOR = PI/180;
+
+	RA = r*DTOR;
+
+	Z1 = (R1*R2*sin (RA))/(R2*cos (RA)-sqrt (R1*R2));
+	ZC1 = fabs (1000000/(2*PI*F*Z1));
+
+	Z2 = (R1*R2*sin (RA))/(R1*cos (RA)-sqrt (R1*R2));
+	ZC2 = fabs (1000000/(2*PI*F*Z2));
+
+	Z3 = sqrt (R1*R2)*sin (RA);
+	ZL1 = Z3/(2*PI*F);
+
+	Qn = fabs (R1/Z1+R2/Z2);
+	Qn1 = (Qn*QCoil)/(Qn+QCoil);
+
+	BW = F/Qn;
+	Eff = (Z3/Qn)/(Z3/Qn1)*100;
+	
+	printf("\n\nLoad Resistance -> %3.2f Ohms\n",R2);
+	printf("\nSource Resistance -> %3.2f Ohms\n",R1);
+	printf("\nSource Side Parallel Capacitor -> %3.1f pF\n",ZC1);
+	printf("\nLoad Side Parallel Capacitor -> %3.1f pF\n",ZC2);
+	printf("\nSeries Inductor -> %3.3f uH\n",ZL1);
+	printf("\nLoaded Q of Coil -> %3.1f\n",Qn1);
+	printf("\nCircuit Efficiency -> %3.1f %%\n",Eff);
+	printf("\nSource Side Parallel Capacitor Reactance -> %3.1f Ohms\n",Z1);
+	printf("\nLoad Side Parallel Capacitor Reactance -> %3.1f Ohms\n",Z2);
+	printf("\nSeries Inductor Reactance -> %3.1f Ohms\n",Z3);
+	printf("\nBandwidth -> %3.1f MHz\n",BW);
 }
 
 void V1V2(void)
