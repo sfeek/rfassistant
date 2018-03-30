@@ -795,7 +795,7 @@ void ImpedanceMatch(void)
 	} 
 
 
-	/* Lowpass - Hi-Low L Match */
+	/* Lowpass - Hi-Low Low-Hi L Match */
 	if (creal(R1) > creal(R2))
 	{
 		rs = creal(R1);
@@ -2040,7 +2040,8 @@ void LineOfSight(void)
 
 	while (1)
 	{
-		f = getdouble ("\nEnter Frequency (MHz) : ");
+		f = getfrequency ("\nEnter Frequency : ");
+		f = f/1e6;
 
 		if (f > 0.0) break;
 		printf ("\nFrequency must be > 0!\n");
