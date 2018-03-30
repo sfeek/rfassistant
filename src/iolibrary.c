@@ -163,6 +163,7 @@ void showcapacitance(double v)
 	if (a >= 1e-6) { printf ("%3.3f μF",v / 1e-6); return; }
 	if (a >= 1e-9) { printf ("%3.3f nF",v / 1e-9); return; }
 	if (a >= 1e-12) { printf ("%3.3f pF", v / 1e-12); return; }
+	printf ("%e F",v);
 	return;
 }
 
@@ -176,8 +177,8 @@ void showinductance(double v)
 	if (a >= 1e-6) { printf ("%3.3f μH",v / 1e-6); return; }
 	if (a >= 1e-9) { printf ("%3.3f nH",v / 1e-9); return; }
 	if (a >= 1e-12) { printf ("%3.3f pH", v / 1e-12); return; }
-	return;
-}
+	printf ("%e H",v);
+	return;}
 
 /* Show Resistance */
 void showresistance(double v)
@@ -190,6 +191,7 @@ void showresistance(double v)
 	if (a >= 1e0) { printf ("%3.3f Ω ", v); return; }
 	if (a >= 1e-3) { printf ("%3.3f mΩ", v / 1e-3); return; }
 	if (a >= 1e-6) { printf ("%3.3f μΩ", v / 1e-6); return; }
+	printf ("%e Ω",v);
 	return;
 }
 
@@ -206,6 +208,7 @@ void showpower(double v)
 	if (a >= 1e-6) { printf ("%3.3f μW",v / 1e-6); return; }
 	if (a >= 1e-9) { printf ("%3.3f nW",v / 1e-9); return; }
 	if (a >= 1e-12) { printf ("%3.3f pW", v / 1e-12); return; }
+	printf ("%e W",v);
 	return;
 }
 
@@ -220,6 +223,7 @@ void showvoltage(double v)
 	if (a >= 1e-3) { printf ("%3.3f mV",v / 1e-3); return; }
 	if (a >= 1e-6) { printf ("%3.3f μV",v / 1e-6); return; }
 	if (a >= 1e-9) { printf ("%3.3f nV",v / 1e-9); return; }
+	printf ("%e V",v);
 	return;
 }
 
@@ -233,6 +237,7 @@ void showamperage(double v)
 	if (a >= 1e-3) { printf ("%3.3f mA",v / 1e-3); return; }
 	if (a >= 1e-6) { printf ("%3.3f μA",v / 1e-6); return; }
 	if (a >= 1e-9) { printf ("%3.3f nA",v / 1e-9); return; }
+	printf ("%e A",v);
 	return;
 }
 

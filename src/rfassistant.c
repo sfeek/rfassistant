@@ -600,7 +600,8 @@ void TXOutputMatch(void)
 void ImpedanceMatch(void)
 {
 	double rs,xs,rl,xl,Q,f,tq,w,rv,ql,rps,rpl,cps,q,qs,ls,ll;
-	double cpl,cs,rcs,rcl,bw,cl,l,newq;
+	double cpl,cs,rcs,rcl,bw,cl,l,newq,lpl,c,lps,l1,rp,lp,c1;
+	double cp;
 	double complex R1,R2;
 	
 	while (1)
@@ -635,7 +636,15 @@ void ImpedanceMatch(void)
 
 		printf ("\nQ must be >  %3.2f!\n", tq);
 	}
-	
+
+	/* PI Matching */	
+
+	/* CS -L -CL */
+	rs = creal(R1);
+	xs = cimag(R1);
+	rl = creal(R2);
+	xl = cimag(R2);
+
 	rv=fmax(rs,rl)/(Q*Q+1);
 	w=2*PI*f;
 	qs=-xs/rs;
@@ -656,17 +665,193 @@ void ImpedanceMatch(void)
 	newq = 0.5*(rs/fabs(rcs)+rl/fabs(rcl));
 	bw = f/newq;
 
- 
-	printf ("\nSource Impedance -> %3.2f + j%3.2f Ohms",creal(R1),cimag(R1));
-	printf ("\nLoad Impedance -> %3.2f + j%3.2f Ohms",creal(R2),cimag(R2));
-	printf ("\nSource Side Parallel Capacitor -> ");
-	showcapacitance (cs);
-	printf ("\nLoad Side Parallel Capacitor -> ");
-	showcapacitance (cl);
-	printf ("\nSeries Inductor -> ");
-	showinductance (l);
-	printf ("\nBandwidth -> ");
-	showfrequency (bw);
+	if (cs > 0 && cl > 0 && l > 0)
+	{
+ 		printf ("\n\n  **** Low Pass PI Match ****  ");
+		printf ("\nSource Impedance -> %3.2f + j%3.2f Ohms",creal(R1),cimag(R1));
+		printf ("\nLoad Impedance -> %3.2f + j%3.2f Ohms",creal(R2),cimag(R2));
+		printf ("\nSource Side Parallel Capacitor -> ");
+		showcapacitance (cs);
+		printf ("\nLoad Side Parallel Capacitor -> ");
+		showcapacitance (cl);
+		printf ("\nSeries Inductor -> ");
+		showinductance (l);
+		printf ("\nBandwidth -> ");
+		showfrequency (bw);
+	}
+
+	/* LS -C -LL */	
+	rs = creal(R1);
+	xs = cimag(R1);
+	rl = creal(R2);
+	xl = cimag(R2);
+
+	q=sqrt(rps/rv-1);
+	ls=rps/w/q;
+	if (qs!=0) 
+	{
+		lps=rps/qs/w;
+		ls=ls*lps/(ls-lps);
+	}
+	cs=1/w/q/rv;
+	q=sqrt(rpl/rv-1);
+	ll=rpl/w/q;
+	if (ql!=0) 
+	{
+		lpl=rpl/ql/w;
+		ll=ll*lpl/(ll-lpl);
+	}
+	cl=1/w/q/rv;
+	c=cl*cs/(cl+cs);
+	
+
+	if (ll > 0 && c > 0 && ls >0)
+	{
+ 		printf ("\n\n  **** High Pass PI Match ****  ");
+		printf ("\nSource Impedance -> %3.2f + j%3.2f Ohms",creal(R1),cimag(R1));
+		printf ("\nLoad Impedance -> %3.2f + j%3.2f Ohms",creal(R2),cimag(R2));
+		printf ("\nSource Side Parallel Inductor -> ");
+		showinductance (ls);
+		printf ("\nLoad Side Parallel Inductor -> ");
+		showinductance (ll);
+		printf ("\nSeries Capacitor -> ");
+		showcapacitance (c);
+		printf ("\nBandwidth -> ");
+		showfrequency (bw);
+	}
+
+	/* Highpass - Hi-Low Low-Hi L Match */
+	if (creal(R1) > creal(R2))
+	{
+		rs = creal(R1);
+		xs = cimag(R1);
+		rl = creal(R2);
+		xl = cimag(R2);
+	}
+	else
+	{
+		rl = creal(R1);
+		xl = cimag(R1);
+		rs = creal(R2);
+		xs = cimag(R2);
+	}
+
+        w=2*PI*f;
+	ql=-xl/rl;
+	qs=xs/rs;
+	c1=-1/w/xl;
+	l1=(1+qs*qs)*xs/w/qs/qs;
+	rp=(1+qs*qs)*rs;
+	rs=rl;
+	if (rs<rp) 
+	{
+		Q=sqrt(rp/rs-1);
+		lp=rp/w/Q;
+		cs=1/Q/w/rs;
+		if (xl==0) 
+		{
+			c=cs;
+                } 
+		else 
+		{
+			if (c1==cs) { c=INFINITY; } else { c=c1*cs/(c1-cs); }
+		}
+                if (xs==0) 
+		{
+			l=lp;
+                } 
+		else 
+		{
+			if (l1==lp) { l=INFINITY; } else { l=lp*l1/(l1-lp); }
+		}
+  		
+		if (creal(R1) > creal(R2))
+		{
+			if (l > 0 && c > 0)
+			{
+				printf ("\n\n  **** High Pass Hi-Low L Match ****  ");
+				printf ("\nSource Impedance -> %3.2f + j%3.2f Ohms",creal(R1),cimag(R1));
+				printf ("\nLoad Impedance -> %3.2f + j%3.2f Ohms",creal(R2),cimag(R2));
+				printf ("\nSource Side Parallel Inductor -> ");
+				showinductance (l);
+				printf ("\nLoad Side Series Capacitor -> ");
+				showcapacitance (c);
+			}
+		} 
+		else
+		{
+			if (l > 0 && c > 0)
+			{
+				printf ("\n\n  **** High Pass Low-Hi L Match ****  ");
+				printf ("\nSource Impedance -> %3.2f + j%3.2f Ohms",creal(R1),cimag(R1));
+				printf ("\nLoad Impedance -> %3.2f + j%3.2f Ohms",creal(R2),cimag(R2));
+				printf ("\nSource Side Series Capacitor -> ");
+				showcapacitance (c);
+				printf ("\nLoad Side Parallel Inductor -> ");
+				showinductance (l);
+			}
+		}
+		
+	} 
+
+
+	/* Lowpass - Hi-Low L Match */
+	if (creal(R1) > creal(R2))
+	{
+		rs = creal(R1);
+		xs = cimag(R1);
+		rl = creal(R2);
+		xl = cimag(R2);
+	}
+	else
+	{
+		rl = creal(R1);
+		xl = cimag(R1);
+		rs = creal(R2);
+		xs = cimag(R2);
+	}
+
+	w=2*PI*f;
+	qs=-xs/rs;
+	ql=xl/rl;
+	rp=rs*(1+qs*qs);
+	c1=qs/rp/w;
+	l1=xl/w;
+        if (rl<rp) 
+	{
+		Q=sqrt(rp/rl-1);
+		cp=Q/rp/w;
+		c=(cp-c1);
+		ls=Q*rl/w;
+		l=(ls-l1);
+
+		if (creal(R1) > creal(R2))
+		{
+			if (l > 0 && c > 0)
+			{
+				printf ("\n\n  **** Low Pass Hi-Low L Match ****  ");
+				printf ("\nSource Impedance -> %3.2f + j%3.2f Ohms",creal(R1),cimag(R1));
+				printf ("\nLoad Impedance -> %3.2f + j%3.2f Ohms",creal(R2),cimag(R2));
+				printf ("\nSource Side Parallel Capacitor -> ");
+				showcapacitance (c);
+				printf ("\nLoad Side Series Inductor -> ");
+				showinductance (l);
+			}
+		}
+		else
+		{
+			if (l > 0 && c > 0)
+			{
+				printf ("\n\n  **** Low Pass Low-Hi L Match ****  ");
+				printf ("\nSource Impedance -> %3.2f + j%3.2f Ohms",creal(R1),cimag(R1));
+				printf ("\nLoad Impedance -> %3.2f + j%3.2f Ohms",creal(R2),cimag(R2));
+				printf ("\nSource Side Series Inductor -> ");
+				showinductance (l);
+				printf ("\nLoad Side Parallel Capacitor -> ");
+				showcapacitance (c);
+			}
+		}
+	}
 }
 
 void V1V2(void)
@@ -2146,7 +2331,7 @@ int main(void)
 		printf ("10. Variable Capacitor Scaling\n");
 		printf ("11. Coax Stub Notch & Pass\n");
 		printf ("12. Transmitter Output Matching PI Network\n");
-		printf ("13. Impedance Matching PI Network\n");
+		printf ("13. Complex Impedance Matching Networks\n");
 		printf ("14. Decibel Conversions\n");
 		printf ("15. Resistors,Inductors,Capacitors - Series & Parallel\n");
 		printf ("16. Torroid Al Value from Inductance and Turns\n");
