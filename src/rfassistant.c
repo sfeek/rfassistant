@@ -2335,7 +2335,7 @@ int main(void)
 		printf ("13. Complex Impedance Matching Networks\n");
 		printf ("14. Decibel Conversions\n");
 		printf ("15. Resistors,Inductors,Capacitors - Series & Parallel\n");
-		printf ("16. Torroid Al Value from Inductance and Turns\n");
+		printf ("16. Toroid Al Value from Inductance and Turns\n");
 		printf ("17. Chebyshev Filters\n");
 		printf ("18. Butterworth Filters\n");
 		printf ("19. Nearby Powers of 10 Conversion\n");
