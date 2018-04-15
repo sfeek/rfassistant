@@ -2316,6 +2316,8 @@ int main(void)
 {
 	int selection,done;
 	done = 0;
+	setbuf(stdout, NULL);
+	setbuf(stderr, NULL);
 	
 	while (1)
 	{
