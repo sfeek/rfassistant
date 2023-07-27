@@ -6,129 +6,9 @@
 #include <errno.h>
 #include <limits.h>
 #include <complex.h>
+#include "../include/helperfunctions.h"
+#include "../include/ghcommon.h"
 
-
-/* Gracefully get a string - *** Remember to free() the returned string when finished with it! *** */
-char *getstring (const char *display)
-{
-	char c;
-	size_t len = 2;
-	size_t i = 0;
-	printf ("%s", display);
-	char *strData = malloc (2);
-
-	if (strData == NULL)
-	{
-		printf ("\nOut of Memory Error!\n");
-		return NULL;
-	}
-
-	while ((c = fgetc (stdin)) != '\n')
-	{
-		strData[i++] = c;
-
-		if (i > INT_MAX)
-		{
-			printf ("\nString Overflow Error!\n");
-			return NULL;
-		}
-
-		if (i >= len)
-		{
-			len *= 2;
-			strData = realloc (strData, len);
-
-			if (strData == NULL)
-			{
-				printf ("\nOut of Memory Error!\n");
-				return NULL;
-			}
-		}
-	}
-
-	strData[i] = 0;
-	return strData;
-}
-
-/* Make sure string is really a double */
-int stringtodouble (const char *str, double *v)
-{
-	char *ptr;
-	errno = 0;
-	*v = strtod (str, &ptr);
-
-	if (errno == ERANGE)
-	{
-		printf ("\nNumber Overflow/Underflow Error!\n");
-		return EXIT_FAILURE;
-	}
-
-	if (str == ptr)
-	{
-		printf ("\nInvalid Number Conversion Error!\n");
-		return EXIT_FAILURE;
-	}
-
-	return EXIT_SUCCESS;
-}
-
-/* Make sure string is really an integer */
-int stringtoint (const char *str, int *v)
-{
-	char *ptr;
-	errno = 0;
-	*v = (int) strtol (str, &ptr, 10);
-
-	if (errno == ERANGE)
-	{
-		printf ("\nNumber Overflow/Underflow Error!\n");
-		return EXIT_FAILURE;
-	}
-
-	if (str == ptr)
-	{
-		printf ("\nInvalid Number Conversion Error!\n");
-		return EXIT_FAILURE;
-	}
-
-	return EXIT_SUCCESS;
-}
-
-/* Gracefully get a double or decimal value */
-double getdouble (const char *display)
-{
-	char *buffer;
-	double value;
-	int rtn;
-
-	while (1)
-	{
-		buffer = getstring (display);
-		rtn = stringtodouble (buffer, &value);
-		free (buffer);
-
-		if (rtn == EXIT_SUCCESS)
-			return value;
-	}
-}
-
-/* Gracefully get an integer value */
-int getint (const char *display)
-{
-	char *buffer;
-	int value;
-	int rtn;
-
-	while (1)
-	{
-		buffer = getstring (display);
-		rtn = stringtoint (buffer, &value);
-		free (buffer);
-
-		if (rtn == EXIT_SUCCESS)
-			return value;
-	}
-}
 
 /* Show frequency */
 void showfrequency (double v)
@@ -430,8 +310,8 @@ double getfrequency (const char *display)
 
 	while (1)
 	{
-		v = getdouble (display);
-		i = getint ("\n1)Hz  2)KHz  3)MHz  4)GHz : ");
+		v = get_double (display);
+		i = get_int ("\n1)Hz  2)KHz  3)MHz  4)GHz : ");
 
 		switch (i)
 		{
@@ -458,8 +338,8 @@ double getcapacitance (const char *display)
 
 	while (1)
 	{
-		v = getdouble (display);
-		i = getint ("\n1)F  2)mF  3)μF  4)nF  5)pF : ");
+		v = get_double (display);
+		i = get_int ("\n1)F  2)mF  3)μF  4)nF  5)pF : ");
 
 		switch (i)
 		{
@@ -489,8 +369,8 @@ double getinductance (const char *display)
 
 	while (1)
 	{
-		v = getdouble (display);
-		i = getint ("\n1)H  2)mH  3)μH  4)nH  5)pH : ");
+		v = get_double (display);
+		i = get_int ("\n1)H  2)mH  3)μH  4)nH  5)pH : ");
 
 		switch (i)
 		{
@@ -520,8 +400,8 @@ double getresistance (const char *display)
 
 	while (1)
 	{
-		v = getdouble (display);
-		i = getint ("\n1)MΩ  2)KΩ  3)Ω  4)mΩ : ");
+		v = get_double (display);
+		i = get_int ("\n1)MΩ  2)KΩ  3)Ω  4)mΩ : ");
 
 		switch (i)
 		{
@@ -548,8 +428,8 @@ double getpower (const char *display)
 
 	while (1)
 	{
-		v = getdouble (display);
-		i = getint ("\n1)MW  2)KW  3)W  4)mW  5)μW : ");
+		v = get_double (display);
+		i = get_int ("\n1)MW  2)KW  3)W  4)mW  5)μW : ");
 
 		switch (i)
 		{
@@ -579,8 +459,8 @@ double getvoltage (const char *display)
 
 	while (1)
 	{
-		v = getdouble (display);
-		i = getint ("\n1)MV  2)KV  3)V  4)mV  5)μV  6)nV: ");
+		v = get_double (display);
+		i = get_int ("\n1)MV  2)KV  3)V  4)mV  5)μV  6)nV: ");
 
 		switch (i)
 		{
@@ -613,8 +493,8 @@ double getamperage (const char *display)
 
 	while (1)
 	{
-		v = getdouble (display);
-		i = getint ("\n1)KA  2)A  3)mA  4)μA  5)nA: ");
+		v = get_double (display);
+		i = get_int ("\n1)KA  2)A  3)mA  4)μA  5)nA: ");
 
 		switch (i)
 		{
@@ -650,8 +530,8 @@ double complex getimpedance (const char *display)
 	strcpy (rx, display);
 	strcat (rs, " - r : ");
 	strcat (rx, " - jx : ");
-	r = getdouble (rs);
-	x = getdouble (rx);
+	r = get_double (rs);
+	x = get_double (rx);
 	v = r + x * I;
 
 	if (rs)

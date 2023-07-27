@@ -4,37 +4,8 @@
 #include <math.h>
 #include <complex.h>
 #include <ctype.h>
-#include "../include/iolibrary.h"
-
-#define PI 3.14159265
-
-void PauseForEnterKey (void)
-{
-	char ch;
-	printf ("\n\n*** Press [ENTER] For Main Menu ***\n");
-
-	while (1)
-	{
-		ch = fgetc (stdin);
-
-		if (ch == '\n')
-			break;
-	}
-
-	return;
-}
-
-/* Used with FOR loops to properly handle fractional step values */
-int floatlessthan (double f1, double f2, double step)
-{
-	if (f1 > f2 + 1e-14)
-		return 0;
-
-	if ((f2 + step) - f1 > 1e-14)
-		return 1;
-	else
-		return 0;
-}
+#include "../include/helperfunctions.h"
+#include "../include/ghcommon.h"
 
 void TurnsToInductanceToroid (void)
 {
@@ -54,7 +25,7 @@ void TurnsToInductanceToroid (void)
 
 	while (1)
 	{
-		perturns = getdouble ("\nEnter Per # of Turns: ");
+		perturns = get_double ("\nEnter Per # of Turns: ");
 
 		if (perturns > 0)
 			break;
@@ -64,7 +35,7 @@ void TurnsToInductanceToroid (void)
 
 	while (1)
 	{
-		turns = getint ("\nEnter Number of Turns: ");
+		turns = get_int ("\nEnter Number of Turns: ");
 
 		if (turns > 0)
 			break;
@@ -100,7 +71,7 @@ void IndToAlToroid (void)
 
 	while (1)
 	{
-		turns = getint ("\nEnter Number of Turns: ");
+		turns = get_int ("\nEnter Number of Turns: ");
 
 		if (turns > 0)
 			break;
@@ -122,7 +93,7 @@ void TurnsToInductanceAirCore (void)
 
 	while (1)
 	{
-		ww = getdouble ("\nEnter Wire Width (mm): ");
+		ww = get_double ("\nEnter Wire Width (mm): ");
 
 		if (ww > 0.0)
 			break;
@@ -132,7 +103,7 @@ void TurnsToInductanceAirCore (void)
 
 	while (1)
 	{
-		cd = getdouble ("\nEnter Coil Diameter (mm): ");
+		cd = get_double ("\nEnter Coil Diameter (mm): ");
 
 		if (cd > ww * 2)
 			break;
@@ -142,7 +113,7 @@ void TurnsToInductanceAirCore (void)
 
 	while (1)
 	{
-		turns = getint ("\nEnter Number of Turns: ");
+		turns = get_int ("\nEnter Number of Turns: ");
 
 		if (turns > 1)
 			break;
@@ -200,7 +171,7 @@ void CapacitanceFrequency (void)
 
 	printf ("\n");
 
-	for (c = scap; floatlessthan (c, ecap, icap); c += icap)
+	for (c = scap; float_less_than (c, ecap, icap); c += icap)
 	{
 		f = 1 / (2 * PI * (sqrt (ind * c)));
 		printf ("\n");
@@ -249,7 +220,7 @@ void InductanceFrequency (void)
 
 	printf ("\n");
 
-	for (i = sind; floatlessthan (i, eind, iind); i += iind)
+	for (i = sind; float_less_than (i, eind, iind); i += iind)
 	{
 		f = 1 / (2 * PI * (sqrt (i * cap)));
 		printf ("\n");
@@ -298,7 +269,7 @@ void ReactanceCapacitance (void)
 
 	printf ("\n");
 
-	for (i = scap; floatlessthan (i, ecap, icap); i += icap)
+	for (i = scap; float_less_than (i, ecap, icap); i += icap)
 	{
 		r = 1 / (2 * PI * f * i);
 		printf ("\n");
@@ -347,7 +318,7 @@ void ReactanceInductance (void)
 
 	printf ("\n");
 
-	for (l = sind; floatlessthan (l, eind, iind); l += iind)
+	for (l = sind; float_less_than (l, eind, iind); l += iind)
 	{
 		r = 2 * PI * f * l;
 		printf ("\n");
@@ -407,7 +378,7 @@ void SWRf (void)
 
 	while (1)
 	{
-		SWR = getdouble ("\nEnter SWR: ");
+		SWR = get_double ("\nEnter SWR: ");
 
 		if (SWR >= 1.0)
 			break;
@@ -494,7 +465,7 @@ void VarCapScaling (void)
 
 void CoaxStub (void)
 {
-	char *str;
+	char *str = NULL;
 	char units;
 	double f, vf, o;
 
@@ -511,7 +482,7 @@ void CoaxStub (void)
 
 	while (1)
 	{
-		vf = getdouble ("\nEnter Velocity Factor : ");
+		vf = get_double ("\nEnter Velocity Factor : ");
 
 		if (vf > 0.0 && vf < 1.00)
 			break;
@@ -521,7 +492,7 @@ void CoaxStub (void)
 
 	while (1)
 	{
-		str = getstring ("\nEnter [M]etric or [E]nglish : ");
+		get_string (&str,"\nEnter [M]etric or [E]nglish : ");
 		units = tolower (str[0]);
 
 		if (str)
@@ -593,7 +564,7 @@ void TXOutputMatch (void)
 
 	while (1)
 	{
-		QCoil = getdouble ("\nEnter Unloaded Q of Coil : ");
+		QCoil = get_double ("\nEnter Unloaded Q of Coil : ");
 
 		if (QCoil > 0.1)
 			break;
@@ -603,7 +574,7 @@ void TXOutputMatch (void)
 
 	while (1)
 	{
-		r = getdouble ("\nEnter Phase Shift Angle (90-180 Deg): ");
+		r = get_double ("\nEnter Phase Shift Angle (90-180 Deg): ");
 
 		if (r >= 90 && r <= 180)
 			break;
@@ -675,7 +646,7 @@ void ImpedanceMatch (void)
 
 	while (1)
 	{
-		Q = getdouble ("\nEnter Q : ");
+		Q = get_double ("\nEnter Q : ");
 
 		if (Q >= tq)
 			break;
@@ -960,7 +931,7 @@ void dBmP (void)
 
 	while (1)
 	{
-		dBm = getdouble ("\nEnter dBm : ");
+		dBm = get_double ("\nEnter dBm : ");
 
 		if (dBm > 0.0)
 			break;
@@ -995,7 +966,7 @@ void PdBm (void)
 void dBmuV (void)
 {
 	double v1, v2, o;
-	v1 = getdouble ("\nEnter dBm : ");
+	v1 = get_double ("\nEnter dBm : ");
 
 	while (1)
 	{
@@ -1055,7 +1026,7 @@ void PdB (void)
 		printf ("\nPower must be > 0!\n");
 	}
 
-	v2 = getdouble ("Enter Decibels : ");
+	v2 = get_double ("Enter Decibels : ");
 	o = v1 * (pow (10, (v2 / 10)));
 	printf ("\nPower -> ");
 	showpower (o);
@@ -1075,7 +1046,7 @@ void VdB (void)
 		printf ("\nVoltage must be > 0!\n");
 	}
 
-	v2 = getdouble ("\nEnter Decibels : ");
+	v2 = get_double ("\nEnter Decibels : ");
 	o = v1 * (pow (10, (v2 / 20)));
 	printf ("\nVoltage -> ");
 	showvoltage (o);
@@ -1098,56 +1069,56 @@ void DecibelConversions (void)
 		printf (" 7. Power +/- dB\n");
 		printf (" 8. Voltage +/- dB\n");
 		printf ("\n 99. Exit\n\n");
-		selection = getint ("Enter Selection : ");
+		selection = get_int ("Enter Selection : ");
 		printf ("\n\n");
 
 		switch (selection)
 		{
 			case 1:
 				V1V2();
-				PauseForEnterKey();
+				pause_for_enter("\nEnter to return to main menu\n");
 				done = 1;
 				break;
 
 			case 2:
 				P1P2();
-				PauseForEnterKey();
+				pause_for_enter("\nEnter to return to main menu\n");
 				done = 1;
 				break;
 
 			case 3:
 				dBmP();
-				PauseForEnterKey();
+				pause_for_enter("\nEnter to return to main menu\n");
 				done = 1;
 				break;
 
 			case 4:
 				PdBm();
-				PauseForEnterKey();
+				pause_for_enter("\nEnter to return to main menu\n");
 				done = 1;
 				break;
 
 			case 5:
 				dBmuV();
-				PauseForEnterKey();
+				pause_for_enter("\nEnter to return to main menu\n");
 				done = 1;
 				break;
 
 			case 6:
 				uVdBm();
-				PauseForEnterKey();
+				pause_for_enter("\nEnter to return to main menu\n");
 				done = 1;
 				break;
 
 			case 7:
 				PdB();
-				PauseForEnterKey();
+				pause_for_enter("\nEnter to return to main menu\n");
 				done = 1;
 				break;
 
 			case 8:
 				VdB();
-				PauseForEnterKey();
+				pause_for_enter("\nEnter to return to main menu\n");
 				done = 1;
 				break;
 
@@ -1168,7 +1139,7 @@ void DecibelConversions (void)
 void Resistors (void)
 {
 	double tresistance, nresistance;
-	char *str;
+	char *str = NULL;
 
 	while (1)
 	{
@@ -1182,7 +1153,7 @@ void Resistors (void)
 
 	while (1)
 	{
-		str = getstring ("\nEnter [S]eries,[P]arallel or [D]one: ");
+		get_string (&str,"\nEnter [S]eries,[P]arallel or [D]one: ");
 
 		if (tolower (str[0]) == 'd')
 		{
@@ -1223,7 +1194,7 @@ void Resistors (void)
 void Inductors (void)
 {
 	double tinductance, ninductance;
-	char *str;
+	char *str = NULL;
 
 	while (1)
 	{
@@ -1237,7 +1208,7 @@ void Inductors (void)
 
 	while (1)
 	{
-		str = getstring ("\nEnter [S]eries,[P]arallel or [D]one: ");
+		get_string (&str,"\nEnter [S]eries,[P]arallel or [D]one: ");
 
 		if (tolower (str[0]) == 'd')
 		{
@@ -1278,7 +1249,7 @@ void Inductors (void)
 void Capacitors (void)
 {
 	double tcapacitance, ncapacitance;
-	char *str;
+	char *str = NULL;
 
 	while (1)
 	{
@@ -1292,7 +1263,7 @@ void Capacitors (void)
 
 	while (1)
 	{
-		str = getstring ("\nEnter [S]eries,[P]arallel or [D]one: ");
+		get_string(&str,"\nEnter [S]eries,[P]arallel or [D]one: ");
 
 		if (tolower (str[0]) == 'd')
 		{
@@ -1342,26 +1313,26 @@ void RCI (void)
 		printf (" 2. Inductors\n");
 		printf (" 3. Capacitors\n");
 		printf ("\n 99. Exit\n\n");
-		selection = getint ("Enter Selection: ");
+		selection = get_int ("Enter Selection: ");
 		printf ("\n\n");
 
 		switch (selection)
 		{
 			case 1:
 				Resistors();
-				PauseForEnterKey();
+				pause_for_enter("\nEnter to return to main menu\n");
 				done = 1;
 				break;
 
 			case 2:
 				Inductors();
-				PauseForEnterKey();
+				pause_for_enter("\nEnter to return to main menu\n");
 				done = 1;
 				break;
 
 			case 3:
 				Capacitors();
-				PauseForEnterKey();
+				pause_for_enter("\nEnter to return to main menu\n");
 				done = 1;
 				break;
 
@@ -1382,13 +1353,13 @@ void RCI (void)
 void ChebyshevFilter (void)
 {
 	char inputtype, indcap[2] = { 'C', 'L' };
-	char *str;
+	char *str = NULL;
 	int filterorder, filtertype, x, component, n;
 	double fcl = 0.0, fch = 0.0, filterrippledb, c, l, r, b, *nelements = NULL, *aelements = NULL, *belements = NULL;
 
 	while (1)
 	{
-		filtertype = getint ("\nEnter Filter Type (1 = Low Pass,2 = High Pass,3 = Band Pass,4 = Band Stop) : ");
+		filtertype = get_int ("\nEnter Filter Type (1 = Low Pass,2 = High Pass,3 = Band Pass,4 = Band Stop) : ");
 
 		if (filtertype > 0 && filtertype < 5 )
 			break;
@@ -1455,7 +1426,7 @@ void ChebyshevFilter (void)
 
 	while (1)
 	{
-		filterorder = getint ("\nEnter Filter Order (Number of elements) : ");
+		filterorder = get_int ("\nEnter Filter Order (Number of elements) : ");
 
 		if (filterorder > 1)
 			break;
@@ -1475,7 +1446,7 @@ void ChebyshevFilter (void)
 
 	while (1)
 	{
-		str = getstring ("\nEnter Type [T]ee or [P]i : ");
+		get_string(&str,"\nEnter Type [T]ee or [P]i : ");
 		inputtype = tolower (str[0]);
 
 		if (str)
@@ -1489,7 +1460,7 @@ void ChebyshevFilter (void)
 
 	while (1)
 	{
-		filterrippledb = getdouble ("\nEnter Filter Ripple dB : ");
+		filterrippledb = get_double ("\nEnter Filter Ripple dB : ");
 
 		if (filterrippledb > 0.01)
 			break;
@@ -1779,13 +1750,13 @@ void ChebyshevFilter (void)
 void ButterworthFilter (void)
 {
 	char inputtype, indcap[2] = { 'C', 'L' };
-	char *str;
+	char *str = NULL;
 	int filterorder, filtertype, x, component, n;
 	double fcl = 0.0, fch = 0.0, c, l, r, *nelements = NULL;
 
 	while (1)
 	{
-		filtertype = getint ("\nEnter Filter Type (1 = Low Pass,2 = High Pass,3 = Band Pass,4 = Band Stop) : ");
+		filtertype = get_int ("\nEnter Filter Type (1 = Low Pass,2 = High Pass,3 = Band Pass,4 = Band Stop) : ");
 
 		if (filtertype > 0 && filtertype < 5)
 			break;
@@ -1852,7 +1823,7 @@ void ButterworthFilter (void)
 
 	while (1)
 	{
-		filterorder = getint ("\nEnter Filter Order (Number of elements) : ");
+		filterorder = get_int ("\nEnter Filter Order (Number of elements) : ");
 
 		if (filterorder > 1)
 			break;
@@ -1870,7 +1841,7 @@ void ButterworthFilter (void)
 
 	while (1)
 	{
-		str = getstring ("\nEnter Type [T]ee or [P]i : ");
+		get_string(&str,"\nEnter Type [T]ee or [P]i : ");
 		inputtype = tolower (str[0]);
 
 		if (str)
@@ -2118,7 +2089,7 @@ void Powers10 (void)
 	char unitlabels[][6] = {"yotta", "zetta", "exa", "peta", "tera", "giga", "mega", "kilo", "unit", "milli", "micro", "nano", "pico", "femto", "atto", "zepto", "yotto"};
 	double unitvalues[] = {1e24, 1e21, 1e18, 1e15, 1e12, 1e9, 1e6, 1e3, 1, 1e-3, 1e-6, 1e-9, 1e-12, 1e-15, 1e-18, 1e-21, 1e-24};
 	int x, unit, s, e;
-	number = getdouble ("\nEnter value : ");
+	number = get_double ("\nEnter value : ");
 	number1 = number;
 
 	for (x = 1; x <= 17; x++)
@@ -2128,7 +2099,7 @@ void Powers10 (void)
 
 	while (1)
 	{
-		unit = getint ("\nChoose Unit : ");
+		unit = get_int ("\nChoose Unit : ");
 
 		if (unit > 0 && unit < 18)
 			break;
@@ -2159,12 +2130,12 @@ void Powers10 (void)
 void LineOfSight (void)
 {
 	char units, ustringi[10], ustringo[12];
-	char *str;
+	char *str = NULL;
 	double ah1, ah2, d1, d2, dr1, dr2, ag1, ag2, fspl, f, td;
 
 	while (1)
 	{
-		str = getstring ("\nEnter [M]etric or [E]nglish : ");
+		get_string(&str,"\nEnter [M]etric or [E]nglish : ");
 		units = tolower (str[0]);
 
 		if (str)
@@ -2190,7 +2161,7 @@ void LineOfSight (void)
 	while (1)
 	{
 		printf ("\nEnter Antenna 1 Height (%s) : ", ustringi);
-		ah1 = getdouble ("");
+		ah1 = get_double ("");
 
 		if (ah1 > 0.0)
 			break;
@@ -2201,7 +2172,7 @@ void LineOfSight (void)
 	while (1)
 	{
 		printf ("\nEnter Antenna 1 Gain (db) : ");
-		ag1 = getdouble ("");
+		ag1 = get_double ("");
 
 		if (ag1 >= 0.0)
 			break;
@@ -2212,7 +2183,7 @@ void LineOfSight (void)
 	while (1)
 	{
 		printf ("\nEnter Antenna 2 Height (%s) : ", ustringi);
-		ah2 = getdouble ("");
+		ah2 = get_double ("");
 
 		if (ah2 > 0.0)
 			break;
@@ -2223,7 +2194,7 @@ void LineOfSight (void)
 	while (1)
 	{
 		printf ("\nEnter Antenna 2 Gain (db) : ");
-		ag2 = getdouble ("");
+		ag2 = get_double ("");
 
 		if (ag2 >= 0.0)
 			break;
@@ -2272,12 +2243,12 @@ void LineOfSight (void)
 void ResistorAttenuator (void)
 {
 	char type;
-	char *str;
+	char *str = NULL;
 	double attn, zin, zout, r1, r2, r3, k;
 
 	while (1)
 	{
-		attn = getdouble ("\nEnter Attenuation (dB) : ");
+		attn = get_double ("\nEnter Attenuation (dB) : ");
 
 		if (attn > 0.0)
 			break;
@@ -2307,7 +2278,7 @@ void ResistorAttenuator (void)
 
 	while (1)
 	{
-		str = getstring ("Enter Type [T]ee or [P]i : ");
+		get_string(&str,"Enter Type [T]ee or [P]i : ");
 		type = tolower (str[0]);
 
 		if (str)
@@ -2350,7 +2321,7 @@ void CoaxLoss (void)
 	              };
 	char types[][30] = {"Belden 8215 (RG-6A)", "Belden 8237 (RG-8)", "Belden 9913 (RG-8)", "Belden 9258 (RG-8X)", "Belden 8213 (RG-11)", "Belden 8261 (RG-11A)", "Belden 8240 (RG-58)", "Belden 9201 (RG-58)", "Belden 8219 (RG-58A)", "Belden 8259 (RG-58C)", "Belden 8212 (RG-59)", "Belden 8263 (RG-59B)", "Belden 9269 (RG-62A)", "Belden 83241 (RG-141A)", "Belden 8216 (RG-174)", "Belden 8267 (RG-213)", "Davis RF Bury-Flex", "TMS LMR-100A", "TMS LMR-200", "TMS LMR-240", "TMS LMR-400", "TMS LMR-600", "TMS LMR-900", "Wireman CQ102 (RG-8)", "Wireman CQ106 (RG-8)", "Wireman CQ125 (RG-58)", "Wireman CQ127 (RG-58C)", "Wireman CQ110 (RG-213)", "Tandy Cable RG-8X", "Tandy Cable RG-58", "Tandy Cable RG-59", "Andrew Heliax LDF4-50A", "Andrew Heliax LDF5-50A", "Andrew Heliax LDF6-50A", "Wireman 551 Ladder Line", "Wireman 552 Ladder Line", "Wireman 553 Ladder Line", "Wireman 554 Ladder Line", "Wireman 551 (wet)", "Wireman 552 (wet)", "Wireman 553 (wet)", "Wireman 554 (wet)", "Generic 300 ohm Tubular", "Generic 450 ohm Window", "Generic 600 ohm Open", "Ideal (lossless) 50 ohm", "Ideal (lossless) 75 ohm"};
 	int x, i, c;
-	char *str;
+	char *str = NULL;
 	double freq, swr, len, pwrin, mldb, rho, alpha, totdb, swrdb, pwrout;
 	char units;
 	printf ("\n");
@@ -2363,7 +2334,7 @@ void CoaxLoss (void)
 
 	while (1)
 	{
-		i = getint ("\n\nEnter Coax Selection : ");
+		i = get_int ("\n\nEnter Coax Selection : ");
 		i--;
 
 		if (i > 0 && i < c)
@@ -2374,7 +2345,7 @@ void CoaxLoss (void)
 
 	while (1)
 	{
-		str = getstring ("\nEnter [M]etric or [E]nglish : ");
+		get_string(&str,"\nEnter [M]etric or [E]nglish : ");
 		units = tolower (str[0]);
 
 		if (str)
@@ -2397,7 +2368,7 @@ void CoaxLoss (void)
 			printf ("\nEnter Line Length (Feet) : ");
 		}
 
-		len = getdouble ("");
+		len = get_double ("");
 
 		if (len > 0.0)
 			break;
@@ -2418,7 +2389,7 @@ void CoaxLoss (void)
 
 	while (1)
 	{
-		swr = getdouble ("\nEnter SWR (x:1) : ");
+		swr = get_double ("\nEnter SWR (x:1) : ");
 
 		if (swr >= 1)
 			break;
@@ -2456,12 +2427,12 @@ void CoaxLoss (void)
 void WireAntennaLength (void)
 {
 	char units;
-	char *str;
+	char *str = NULL;
 	double f;
 
 	while (1)
 	{
-		str = getstring ("\nEnter [M]etric or [E]nglish : ");
+		get_string(&str,"\nEnter [M]etric or [E]nglish : ");
 		units = tolower (str[0]);
 
 		if (str)
@@ -2564,74 +2535,74 @@ int main (void)
 		printf ("23. Wire Antenna Length\n");
 		printf ("24. Image Frequency and Local Oscillator\n");
 		printf ("\n 99. Exit\n\n");
-		selection = getint ("Enter Selection : ");
+		selection = get_int ("Enter Selection : ");
 		printf ("\n\n");
 
 		switch (selection)
 		{
 			case 1:
 				TurnsToInductanceToroid();
-				PauseForEnterKey();
+				pause_for_enter("\nEnter to return to main menu\n");
 				break;
 
 			case 2:
 				TurnsToInductanceAirCore();
-				PauseForEnterKey();
+				pause_for_enter("\nEnter to return to main menu\n");
 				break;
 
 			case 3:
 				CapacitanceFrequency();
-				PauseForEnterKey();
+				pause_for_enter("\nEnter to return to main menu\n");
 				break;
 
 			case 4:
 				InductanceFrequency();
-				PauseForEnterKey();
+				pause_for_enter("\nEnter to return to main menu\n");
 				break;
 
 			case 5:
 				ReactanceCapacitance();
-				PauseForEnterKey();
+				pause_for_enter("\nEnter to return to main menu\n");
 				break;
 
 			case 6:
 				ReactanceInductance();
-				PauseForEnterKey();
+				pause_for_enter("\nEnter to return to main menu\n");
 				break;
 
 			case 7:
 				SWRioZ();
-				PauseForEnterKey();
+				pause_for_enter("\nEnter to return to main menu\n");
 				break;
 
 			case 8:
 				SWRf();
-				PauseForEnterKey();
+				pause_for_enter("\nEnter to return to main menu\n");
 				break;
 
 			case 9:
 				SWRfr();
-				PauseForEnterKey();
+				pause_for_enter("\nEnter to return to main menu\n");
 				break;
 
 			case 10:
 				VarCapScaling();
-				PauseForEnterKey();
+				pause_for_enter("\nEnter to return to main menu\n");
 				break;
 
 			case 11:
 				CoaxStub();
-				PauseForEnterKey();
+				pause_for_enter("\nEnter to return to main menu\n");
 				break;
 
 			case 12:
 				TXOutputMatch();
-				PauseForEnterKey();
+				pause_for_enter("\nEnter to return to main menu\n");
 				break;
 
 			case 13:
 				ImpedanceMatch();
-				PauseForEnterKey();
+				pause_for_enter("\nEnter to return to main menu\n");
 				break;
 
 			case 14:
@@ -2644,47 +2615,47 @@ int main (void)
 
 			case 16:
 				IndToAlToroid();
-				PauseForEnterKey();
+				pause_for_enter("\nEnter to return to main menu\n");
 				break;
 
 			case 17:
 				ChebyshevFilter();
-				PauseForEnterKey();
+				pause_for_enter("\nEnter to return to main menu\n");
 				break;
 
 			case 18:
 				ButterworthFilter();
-				PauseForEnterKey();
+				pause_for_enter("\nEnter to return to main menu\n");
 				break;
 
 			case 19:
 				Powers10();
-				PauseForEnterKey();
+				pause_for_enter("\nEnter to return to main menu\n");
 				break;
 
 			case 20:
 				LineOfSight();
-				PauseForEnterKey();
+				pause_for_enter("\nEnter to return to main menu\n");
 				break;
 
 			case 21:
 				ResistorAttenuator();
-				PauseForEnterKey();
+				pause_for_enter("\nEnter to return to main menu\n");
 				break;
 
 			case 22:
 				CoaxLoss();
-				PauseForEnterKey();
+				pause_for_enter("\nEnter to return to main menu\n");
 				break;
 
 			case 23:
 				WireAntennaLength();
-				PauseForEnterKey();
+				pause_for_enter("\nEnter to return to main menu\n");
 				break;
 
 			case 24:
 				ImageFrequency();
-				PauseForEnterKey();
+				pause_for_enter("\nEnter to return to main menu\n");
 				break;
 
 			case 99:
