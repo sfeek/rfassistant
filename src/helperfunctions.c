@@ -516,7 +516,7 @@ double getamperage (const char *display)
 	}
 }
 
-
+#ifdef __linux__
 /* Get impedance r + jx */
 double complex getimpedance (const char *display)
 {
@@ -542,5 +542,31 @@ double complex getimpedance (const char *display)
 
 	return v;
 }
+#endif
 
+#ifdef _WIN32
+/* Get impedance r + jx */
+_Dcomplex getimpedance (const char *display)
+{
+	_Dcomplex v;
+	double r;
+	double x;
+	char *rs, *rx;
+	rs = malloc (strlen (display) + 10);
+	rx = malloc (strlen (display) + 10);
+	strcpy (rs, display);
+	strcpy (rx, display);
+	strcat (rs, " - r : ");
+	strcat (rx, " - jx : ");
+	v._Val[0] = get_double (rs);
+	v._Val[1] = get_double (rx);
 
+	if (rs)
+		free (rs);
+
+	if (rx)
+		free (rx);
+
+	return v;
+}
+#endif

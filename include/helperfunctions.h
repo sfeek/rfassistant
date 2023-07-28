@@ -16,4 +16,15 @@ void showdistance (double);
 void showresistance (double);
 void showvoltage (double);
 void showamperage (double);
-double complex getimpedance (const char *display);
+
+#ifdef __linux__
+    double complex getimpedance (const char *display);
+#endif
+
+#ifdef _WIN32
+    _Dcomplex getimpedance (const char *display);
+    _Dcomplex add_complex (_Dcomplex, _Dcomplex);
+    _Dcomplex sub_complex (_Dcomplex, _Dcomplex);
+    _Dcomplex div_complex (_Dcomplex, _Dcomplex);
+    _Dcomplex mult_complex (_Dcomplex, _Dcomplex);
+#endif

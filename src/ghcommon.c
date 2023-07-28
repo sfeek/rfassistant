@@ -1,5 +1,10 @@
 #include "../include/ghcommon.h"
 
+#ifdef _WIN32
+	#include <complex.h>
+	#include <math.h>
+#endif
+
 int append_string(char **s1, char *s2)
 {
 	char *t;
@@ -680,3 +685,52 @@ void cleanup_csv_strings(char **strArray, size_t numberOfStrings)
 		free(strArray);
 	strArray = NULL;
 }
+
+
+#ifdef _WIN32
+  	_Dcomplex add_complex (_Dcomplex n1, _Dcomplex n2)
+	{
+		_Dcomplex num;
+		num._Val[0] = n1._Val[0] + n2._Val[0];
+		num._Val[1] = n1._Val[1] + n2._Val[1];
+
+		return num;
+	}
+
+	_Dcomplex sub_complex (_Dcomplex n1, _Dcomplex n2)
+	{
+		_Dcomplex num;
+		num._Val[0] = n1._Val[0] - n2._Val[0];
+		num._Val[1] = n1._Val[1] - n2._Val[1];
+	
+		return num;
+	}
+
+	_Dcomplex div_complex (_Dcomplex n1, _Dcomplex n2)
+    {
+        _Dcomplex num;
+        
+		if (n2._Val[0] * n2._Val[0] + n2._Val[1] * n2._Val[1] == 0.0 || n2._Val[0] * n2._Val[0] + n2._Val[1] * n2._Val[1] == 0.0 ) 
+		{
+			num._Val[0] = NAN;
+			num._Val[1] = NAN;
+
+			return num;
+		}
+				
+		num._Val[0] = (n1._Val[0] * n2._Val[0] + n1._Val[1] * n2._Val[1]) / (n2._Val[0] * n2._Val[0] + n2._Val[1] * n2._Val[1]);
+        num._Val[1] = (n1._Val[1] * n2._Val[0] - n1._Val[0] * n2._Val[1]) / (n2._Val[0] * n2._Val[0] + n2._Val[1] * n2._Val[1]);
+        
+		return num;
+	}
+
+	_Dcomplex mult_complex (_Dcomplex n1, _Dcomplex n2)
+	{
+		_Dcomplex num;
+
+		num._Val[0] = n1._Val[0] * n1._Val[1] - n2._Val[0] * n2._Val[1];
+		num._Val[1] = n1._Val[0] * n2._Val[1] + n2._Val[0] * n1._Val[1];
+
+		return num;
+	}
+#endif
