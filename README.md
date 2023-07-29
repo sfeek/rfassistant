@@ -4,11 +4,19 @@ This program provides assistance with common formulas used in RF circuit design.
 
 Written in C using Standard Libraries.
 
-To build make sure that gcc and make are installed, then
+Liux:
+  To build make sure that gcc and make are installed, then
 
-make
+  make
 
-To run use ./rfassistant
+  To run use ./rfassistant
+
+Windows:
+  To build make sure that VS C++ build tools are install, then
+
+  cl src/rfassistant.c src/ghcommon.c src/helperfunctions.c
+
+  To run use rfassistant
 
 
    **** RF Calculator Main Menu ****
