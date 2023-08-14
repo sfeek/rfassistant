@@ -483,41 +483,105 @@ double rad_to_deg(double rad)
 	return rad * 180.0 / PI;
 }
 
-void array_sort_double(double *array, size_t n)
+void d_swap(double *a, double *b)
 {
-	int i, j;
-	double temp;
+	double t = *a;
+	*a = *b;
+	*b = t;
+}
 
-	for (i = 0; i < n; i++)
+int d_partition(double arr[], int low, int high)
+{
+	double pivot = arr[high];
+
+	int i = (low - 1);
+
+	for (int j = low; j <= high - 1; j++)
 	{
-		for (j = 0; j < n - 1; j++)
+
+		if (arr[j] < pivot)
 		{
-			if (array[j] > array[j + 1])
-			{
-				temp = array[j];
-				array[j] = array[j + 1];
-				array[j + 1] = temp;
-			}
+			i++;
+			d_swap(&arr[i], &arr[j]);
 		}
+	}
+	d_swap(&arr[i + 1], &arr[high]);
+
+	return (i + 1);
+}
+
+void d_sort(double arr[], int low, int high)
+{
+	if (low < high)
+	{
+
+		int pi = d_partition(arr, low, high);
+
+		d_sort(arr, low, pi - 1);
+		d_sort(arr, pi + 1, high);
 	}
 }
 
-void array_sort_int(int *array, size_t n)
+int array_sort_double(double arr[], int count)
 {
-	int i, j, temp;
+	if (arr == NULL)
+		return FAIL_PARAMETER;
+	if (count < 2)
+		return FAIL_PARAMETER;
 
-	for (i = 0; i < n; i++)
+	d_sort(arr, 0, count - 1);
+
+	return SUCCESS;
+}
+
+void i_swap(int *a, int *b)
+{
+	int t = *a;
+	*a = *b;
+	*b = t;
+}
+
+int i_partition(int arr[], int low, int high)
+{
+	int pivot = arr[high];
+
+	int i = (low - 1);
+
+	for (int j = low; j <= high - 1; j++)
 	{
-		for (j = 0; j < n - 1; j++)
+
+		if (arr[j] < pivot)
 		{
-			if (array[j] > array[j + 1])
-			{
-				temp = array[j];
-				array[j] = array[j + 1];
-				array[j + 1] = temp;
-			}
+			i++;
+			i_swap(&arr[i], &arr[j]);
 		}
 	}
+	i_swap(&arr[i + 1], &arr[high]);
+	return (i + 1);
+}
+
+void i_sort(int arr[], int low, int high)
+{
+	if (low < high)
+	{
+
+		int pi = i_partition(arr, low, high);
+
+		i_sort(arr, low, pi - 1);
+		i_sort(arr, pi + 1, high);
+	}
+}
+
+int array_sort_int(int arr[], int count)
+{
+	if (arr == NULL)
+		return FAIL_PARAMETER;
+	if (count < 2)
+		return FAIL_PARAMETER;
+
+	i_sort(arr, 0, count - 1);
+
+	return SUCCESS;
 }
 
 /* CSV Functions*/

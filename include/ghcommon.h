@@ -42,5 +42,13 @@ double get_double (const char *);
 int get_int (const char *);
 double deg_to_rad(double);
 double rad_to_deg(double);
-void array_sort_int(int *, size_t);
-void array_sort_double(double *, size_t);
+
+void d_swap(double *, double *);
+int d_partition(double[], int, int);
+void d_sort(double [], int, int);
+int array_sort_double(double[], int);
+
+void i_swap(int *, int *);
+int i_partition(int [], int, int);
+void i_sort(int [], int, int);
+int array_sort_int(int [], int);
