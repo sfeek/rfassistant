@@ -7,6 +7,10 @@
 #include "../include/helperfunctions.h"
 #include "../include/ghcommon.h"
 
+#ifdef _WIN32
+	#include <windows.h>
+#endif
+
 void TurnsToInductanceToroid(void)
 {
 	double al, perturns, l;
@@ -1123,49 +1127,49 @@ void DecibelConversions(void)
 		{
 		case 1:
 			V1V2();
-			pause_for_enter("\nEnter to return to main menu\n");
+			pause_for_enter("\n\nEnter to return to main menu\n");
 			done = 1;
 			break;
 
 		case 2:
 			P1P2();
-			pause_for_enter("\nEnter to return to main menu\n");
+			pause_for_enter("\n\nEnter to return to main menu\n");
 			done = 1;
 			break;
 
 		case 3:
 			dBmP();
-			pause_for_enter("\nEnter to return to main menu\n");
+			pause_for_enter("\n\nEnter to return to main menu\n");
 			done = 1;
 			break;
 
 		case 4:
 			PdBm();
-			pause_for_enter("\nEnter to return to main menu\n");
+			pause_for_enter("\n\nEnter to return to main menu\n");
 			done = 1;
 			break;
 
 		case 5:
 			dBmuV();
-			pause_for_enter("\nEnter to return to main menu\n");
+			pause_for_enter("\n\nEnter to return to main menu\n");
 			done = 1;
 			break;
 
 		case 6:
 			uVdBm();
-			pause_for_enter("\nEnter to return to main menu\n");
+			pause_for_enter("\n\nEnter to return to main menu\n");
 			done = 1;
 			break;
 
 		case 7:
 			PdB();
-			pause_for_enter("\nEnter to return to main menu\n");
+			pause_for_enter("\n\nEnter to return to main menu\n");
 			done = 1;
 			break;
 
 		case 8:
 			VdB();
-			pause_for_enter("\nEnter to return to main menu\n");
+			pause_for_enter("\n\nEnter to return to main menu\n");
 			done = 1;
 			break;
 
@@ -1367,19 +1371,19 @@ void RCI(void)
 		{
 		case 1:
 			Resistors();
-			pause_for_enter("\nEnter to return to main menu\n");
+			pause_for_enter("\n\nEnter to return to main menu\n");
 			done = 1;
 			break;
 
 		case 2:
 			Inductors();
-			pause_for_enter("\nEnter to return to main menu\n");
+			pause_for_enter("\n\nEnter to return to main menu\n");
 			done = 1;
 			break;
 
 		case 3:
 			Capacitors();
-			pause_for_enter("\nEnter to return to main menu\n");
+			pause_for_enter("\n\nEnter to return to main menu\n");
 			done = 1;
 			break;
 
@@ -2554,6 +2558,8 @@ int main(void)
 	setbuf(stdout, NULL);
 	setbuf(stderr, NULL);
 
+	SetConsoleOutputCP(CP_UTF8);
+
 	while (TRUE)
 	{
 		printf("\n\n   **** RF Calculator Main Menu ****\n\n");
@@ -2582,129 +2588,131 @@ int main(void)
 		printf("23. Wire Antenna Length\n");
 		printf("24. Image Frequency and Local Oscillator\n");
 		printf("\n 99. Exit\n\n");
+
 		selection = get_int("Enter Selection : ");
+
 		printf("\n\n");
 
 		switch (selection)
 		{
 		case 1:
 			TurnsToInductanceToroid();
-			pause_for_enter("\nEnter to return to main menu\n");
+			pause_for_enter("\n\nEnter to return to main menu\n");
 			break;
 
 		case 2:
 			TurnsToInductanceAirCore();
-			pause_for_enter("\nEnter to return to main menu\n");
+			pause_for_enter("\n\nEnter to return to main menu\n");
 			break;
 
 		case 3:
 			CapacitanceFrequency();
-			pause_for_enter("\nEnter to return to main menu\n");
+			pause_for_enter("\n\nEnter to return to main menu\n");
 			break;
 
 		case 4:
 			InductanceFrequency();
-			pause_for_enter("\nEnter to return to main menu\n");
+			pause_for_enter("\n\nEnter to return to main menu\n");
 			break;
 
 		case 5:
 			ReactanceCapacitance();
-			pause_for_enter("\nEnter to return to main menu\n");
+			pause_for_enter("\n\nEnter to return to main menu\n");
 			break;
 
 		case 6:
 			ReactanceInductance();
-			pause_for_enter("\nEnter to return to main menu\n");
+			pause_for_enter("\n\nEnter to return to main menu\n");
 			break;
 
 		case 7:
 			SWRioZ();
-			pause_for_enter("\nEnter to return to main menu\n");
+			pause_for_enter("\n\nEnter to return to main menu\n");
 			break;
 
 		case 8:
 			SWRf();
-			pause_for_enter("\nEnter to return to main menu\n");
+			pause_for_enter("\n\nEnter to return to main menu\n");
 			break;
 
 		case 9:
 			SWRfr();
-			pause_for_enter("\nEnter to return to main menu\n");
+			pause_for_enter("\n\nEnter to return to main menu\n");
 			break;
 
 		case 10:
 			VarCapScaling();
-			pause_for_enter("\nEnter to return to main menu\n");
+			pause_for_enter("\n\nEnter to return to main menu\n");
 			break;
 
 		case 11:
 			CoaxStub();
-			pause_for_enter("\nEnter to return to main menu\n");
+			pause_for_enter("\n\nEnter to return to main menu\n");
 			break;
 
 		case 12:
 			TXOutputMatch();
-			pause_for_enter("\nEnter to return to main menu\n");
+			pause_for_enter("\n\nEnter to return to main menu\n");
 			break;
 
 		case 13:
 			ImpedanceMatch();
-			pause_for_enter("\nEnter to return to main menu\n");
+			pause_for_enter("\n\nEnter to return to main menu\n");
 			break;
 
 		case 14:
 			DecibelConversions();
-			pause_for_enter("\nEnter to return to main menu\n");
+			pause_for_enter("\n\nEnter to return to main menu\n");
 			break;
 
 		case 15:
 			RCI();
-			pause_for_enter("\nEnter to return to main menu\n");
+			pause_for_enter("\n\nEnter to return to main menu\n");
 			break;
 
 		case 16:
 			IndToAlToroid();
-			pause_for_enter("\nEnter to return to main menu\n");
+			pause_for_enter("\n\nEnter to return to main menu\n");
 			break;
 
 		case 17:
 			ChebyshevFilter();
-			pause_for_enter("\nEnter to return to main menu\n");
+			pause_for_enter("\n\nEnter to return to main menu\n");
 			break;
 
 		case 18:
 			ButterworthFilter();
-			pause_for_enter("\nEnter to return to main menu\n");
+			pause_for_enter("\n\nEnter to return to main menu\n");
 			break;
 
 		case 19:
 			Powers10();
-			pause_for_enter("\nEnter to return to main menu\n");
+			pause_for_enter("\n\nEnter to return to main menu\n");
 			break;
 
 		case 20:
 			LineOfSight();
-			pause_for_enter("\nEnter to return to main menu\n");
+			pause_for_enter("\n\nEnter to return to main menu\n");
 			break;
 
 		case 21:
 			ResistorAttenuator();
-			pause_for_enter("\nEnter to return to main menu\n");
+			pause_for_enter("\n\nEnter to return to main menu\n");
 			break;
 
 		case 22:
 			CoaxLoss();
-			pause_for_enter("\nEnter to return to main menu\n");
+			pause_for_enter("\n\nEnter to return to main menu\n");
 			break;
 
 		case 23:
 			WireAntennaLength();
-			pause_for_enter("\nEnter to return to main menu\n");
+			pause_for_enter("\n\nEnter to return to main menu\n");
 			break;
 
 		case 24:
 			ImageFrequency();
-			pause_for_enter("\nEnter to return to main menu\n");
+			pause_for_enter("\n\nEnter to return to main menu\n");
 			break;
 
 		case 99:
