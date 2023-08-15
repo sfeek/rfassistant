@@ -27,9 +27,8 @@ int append_string(char **s1, char *s2)
 		len_s1 = strlen(*s1);
 		if (!(t = realloc(*s1, (len_s1 + len_s2 + 1) * sizeof(char))))
 		{
-			if (*s1)
-				free(*s1);
-			*s1 = NULL;
+			free_malloc(*s1);
+
 			return FAIL_MEMORY;
 		}
 		else
@@ -90,9 +89,8 @@ int copy_string(char **s, char *s1)
 	{
 		if (!(t = realloc(*s, (len + 1) * sizeof(char))))
 		{
-			if (*s)
-				free(*s);
-			*s = NULL;
+			free_malloc(*s);
+
 			return FAIL_MEMORY;
 		}
 		else
@@ -116,9 +114,8 @@ int truncate_string(char **s, size_t len)
 
 	if (!(t = realloc(*s, (len + 2) * sizeof(char))))
 	{
-		if (*s)
-			free(*s);
-		*s = NULL;
+		free_malloc(*s);
+
 		return FAIL_MEMORY;
 	}
 	else
@@ -148,9 +145,8 @@ int sprintf_string(char **s, char *fmt, ...)
 	{
 		if (!(t = realloc(*s, (len + 1) * sizeof(char))))
 		{
-			if (*s)
-				free(*s);
-			*s = NULL;
+			free_malloc(*s);
+
 			return FAIL_MEMORY;
 		}
 		else
@@ -189,9 +185,8 @@ int replace_string(char **s, const char *oldW, const char *newW)
 
 	if (!(r = realloc(*s, (i + cnt * (newWlen - oldWlen) + 1) * sizeof(char))))
 	{
-		if (*s)
-			free(*s);
-		*s = NULL;
+		free_malloc(*s);
+
 		return FAIL_MEMORY;
 	}
 
@@ -213,9 +208,7 @@ int replace_string(char **s, const char *oldW, const char *newW)
 
 	r[j] = '\0';
 
-	if (str)
-		free(str);
-	str = NULL;
+	free_malloc(str);
 
 	*s = r;
 
@@ -236,9 +229,8 @@ int wrap_string(char **s, size_t columns)
 
 	if (!(t = realloc(*s, (l + 1) * sizeof(char))))
 	{
-		if (*s)
-			free(*s);
-		*s = NULL;
+		free_malloc(*s);
+
 		return FAIL_MEMORY;
 	}
 
@@ -356,11 +348,8 @@ void pause_for_enter(const char *display)
 
 void free_malloc(void *m)
 {
-	if (m)
-	{
-		free (m);
-		m = NULL;
-	}
+	if (m) free(m);
+	m = NULL;
 }
 
 /* Math Functions */
@@ -451,9 +440,7 @@ double get_double(const char *display)
 
 		rtn = string_to_double(buffer, &value);
 
-		if (buffer)
-			free(buffer);
-		buffer = NULL;
+		free_malloc(buffer);
 
 		if (rtn == SUCCESS)
 			return value;
@@ -473,9 +460,7 @@ int get_int(const char *display)
 
 		rtn = string_to_int(buffer, &value);
 
-		if (buffer)
-			free(buffer);
-		buffer = NULL;
+		free_malloc(buffer);
 
 		if (rtn == EXIT_SUCCESS)
 			return value;
@@ -722,13 +707,8 @@ int csv_parse(char ***array, char *str, size_t *number_of_fields)
 	}
 
 	/* Clean up the dynamic arrays */
-	if (comma_positions)
-		free(comma_positions);
-	comma_positions = NULL;
-
-	if (new_str)
-		free(new_str);
-	new_str = NULL;
+	free_malloc(comma_positions);
+	free_malloc(new_str);
 
 	*array = str_array;
 	/* Return the new array back to the calling function */
@@ -748,15 +728,11 @@ void cleanup_csv_strings(char **strArray, size_t numberOfStrings)
 	/* Free the individual strings */
 	for (i = 0; i < numberOfStrings; i++)
 	{
-		if (strArray[i])
-			free(strArray[i]);
-		strArray[i] = NULL;
+		free_malloc(strArray[i]);
 	}
 
 	/* Once the strings themselves are freed, free the actual array itself */
-	if (strArray)
-		free(strArray);
-	strArray = NULL;
+	free_malloc(strArray);
 }
 
 
