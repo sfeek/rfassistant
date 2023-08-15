@@ -8,7 +8,7 @@
 #include "../include/ghcommon.h"
 
 #ifdef _WIN32
-	#include <windows.h>
+#include <windows.h>
 #endif
 
 void TurnsToInductanceToroid(void)
@@ -538,8 +538,7 @@ void CoaxStub(void)
 		get_string(&str, "\nEnter [M]etric or [E]nglish : ");
 		units = tolower(str[0]);
 
-		if (str)
-			free(str);
+		free_malloc(str);
 
 		if (units == 'm' || units == 'e')
 			break;
@@ -639,7 +638,7 @@ void TXOutputMatch(void)
 	BW = F / Qn;
 	Eff = (Z3 / Qn) / (Z3 / Qn1) * 100;
 	Pd = P - P * (Eff / 100);
-	
+
 	printf("\n\nLoad Resistance -> %3.2f Ohms", R2);
 	printf("\nSource Resistance -> %3.2f Ohms", R1);
 	printf("\nSource Side Parallel Capacitor -> %3.1f pF", ZC1);
@@ -660,13 +659,13 @@ void ImpedanceMatch(void)
 	double cpl, cs, rcs, rcl, bw, cl, l, newq, lpl, c, lps, l1, rp, lp, c1;
 	double cp;
 
-	#ifdef __linux__
-		double complex R1, R2;
-	#endif
+#ifdef __linux__
+	double complex R1, R2;
+#endif
 
-	#ifdef _WIN32
-		_Dcomplex R1, R2;
-	#endif
+#ifdef _WIN32
+	_Dcomplex R1, R2;
+#endif
 
 	while (TRUE)
 	{
@@ -1234,12 +1233,10 @@ void Resistors(void)
 				tresistance = 1.0 / (1.0 / tresistance + 1.0 / nresistance);
 		}
 
-		if (str)
-			free(str);
+		free_malloc(str);
 	}
 
-	if (str)
-		free(str);
+	free_malloc(str);
 }
 
 void Inductors(void)
@@ -1289,12 +1286,10 @@ void Inductors(void)
 				tinductance = 1.0 / (1.0 / tinductance + 1.0 / ninductance);
 		}
 
-		if (str)
-			free(str);
+		free_malloc(str);
 	}
 
-	if (str)
-		free(str);
+	free_malloc(str);
 }
 
 void Capacitors(void)
@@ -1344,12 +1339,10 @@ void Capacitors(void)
 				tcapacitance = 1.0 / (1.0 / tcapacitance + 1.0 / ncapacitance);
 		}
 
-		if (str)
-			free(str);
+		free_malloc(str);
 	}
 
-	if (str)
-		free(str);
+	free_malloc(str);
 }
 
 void RCI(void)
@@ -1500,8 +1493,7 @@ void ChebyshevFilter(void)
 		get_string(&str, "\nEnter Type [T]ee or [P]i : ");
 		inputtype = tolower(str[0]);
 
-		if (str)
-			free(str);
+		free_malloc(str);
 
 		if (inputtype == 't' || inputtype == 'p')
 			break;
@@ -1786,14 +1778,9 @@ void ChebyshevFilter(void)
 		break;
 	}
 
-	if (nelements)
-		free(nelements);
-
-	if (aelements)
-		free(aelements);
-
-	if (belements)
-		free(belements);
+	free_malloc(nelements);
+	free_malloc(aelements);
+	free_malloc(belements);
 
 	return;
 }
@@ -1895,8 +1882,7 @@ void ButterworthFilter(void)
 		get_string(&str, "\nEnter Type [T]ee or [P]i : ");
 		inputtype = tolower(str[0]);
 
-		if (str)
-			free(str);
+		free_malloc(str);
 
 		if (inputtype == 't' || inputtype == 'p')
 			break;
@@ -2128,8 +2114,7 @@ void ButterworthFilter(void)
 		break;
 	}
 
-	if (nelements)
-		free(nelements);
+	free_malloc(nelements);
 
 	return;
 }
@@ -2189,8 +2174,7 @@ void LineOfSight(void)
 		get_string(&str, "\nEnter [M]etric or [E]nglish : ");
 		units = tolower(str[0]);
 
-		if (str)
-			free(str);
+		free_malloc(str);
 
 		if (units == 'm' || units == 'e')
 			break;
@@ -2332,8 +2316,7 @@ void ResistorAttenuator(void)
 		get_string(&str, "Enter Type [T]ee or [P]i : ");
 		type = tolower(str[0]);
 
-		if (str)
-			free(str);
+		free_malloc(str);
 
 		if (type == 't' || type == 'p')
 			break;
@@ -2398,8 +2381,7 @@ void CoaxLoss(void)
 		get_string(&str, "\nEnter [M]etric or [E]nglish : ");
 		units = tolower(str[0]);
 
-		if (str)
-			free(str);
+		free_malloc(str);
 
 		if (units == 'm' || units == 'e')
 			break;
@@ -2467,6 +2449,7 @@ void CoaxLoss(void)
 	totdb = 10 * (log((pow(alpha, 2) - pow(rho, 2)) / (alpha * (1 - pow(rho, 2)))) / 2.302585092994046);
 	swrdb = totdb - mldb;
 	pwrout = pwrin * pow(10, (-totdb / 10));
+
 	printf("\n\nMatched Loss -> %3.2f dB", mldb);
 	printf("\nSWR Loss -> %3.2f dB", swrdb);
 	printf("\nTotal Loss -> %3.2f dB", totdb);
@@ -2485,8 +2468,7 @@ void WireAntennaLength(void)
 		get_string(&str, "\nEnter [M]etric or [E]nglish : ");
 		units = tolower(str[0]);
 
-		if (str)
-			free(str);
+		free_malloc(str);
 
 		if (units == 'm' || units == 'e')
 			break;
@@ -2540,7 +2522,7 @@ void ImageFrequency(void)
 	im2 = fabs(intf * 2 + rf);
 	lo1 = fabs(intf - rf);
 	lo2 = fabs(intf + rf);
-	
+
 	printf("\nImage Frequencies: ");
 	showfrequency(im1);
 	printf(" & ");

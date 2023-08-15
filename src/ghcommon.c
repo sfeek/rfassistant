@@ -354,6 +354,15 @@ void pause_for_enter(const char *display)
 	return;
 }
 
+void free_malloc(void *m)
+{
+	if (m)
+	{
+		free (m);
+		m = NULL;
+	}
+}
+
 /* Math Functions */
 
 /* Used with FOR loops to properly handle fractional step values */
