@@ -15,6 +15,12 @@
 #define PI 3.14159265358979323846
 #define E 2.71828182845904523536
 
+#define free_malloc(p) (free(p),p=NULL)
+
+typedef struct Fraction {
+    int n;
+    int d;
+} fraction;
 
 int append_string (char **, char *);
 int copy_string (char **, char *);
@@ -43,6 +49,9 @@ int get_int (const char *);
 double deg_to_rad(double);
 double rad_to_deg(double);
 
+fraction decimal_to_fraction(double, double);
+double fraction_to_decimal(fraction);
+
 void d_swap(double *, double *);
 int d_partition(double[], int, int);
 void d_sort(double [], int, int);
@@ -52,5 +61,3 @@ void i_swap(int *, int *);
 int i_partition(int [], int, int);
 void i_sort(int [], int, int);
 int array_sort_int(int [], int);
-
-void free_malloc(void *);
