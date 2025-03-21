@@ -2569,7 +2569,7 @@ int main(void)
 		printf("22. Coax Loss\n");
 		printf("23. Wire Antenna Length\n");
 		printf("24. Image Frequency and Local Oscillator\n");
-		printf("\n 99. Exit\n\n");
+		printf("\n 0. Exit\n\n");
 
 		selection = get_int("Enter Selection : ");
 
@@ -2697,7 +2697,7 @@ int main(void)
 			pause_for_enter("\n\nEnter to return to main menu\n");
 			break;
 
-		case 99:
+		case 0:
 			done = 1;
 			break;
 
