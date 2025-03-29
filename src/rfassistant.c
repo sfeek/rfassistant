@@ -1118,7 +1118,7 @@ void DecibelConversions(void)
 		printf(" 6. Voltage -> dBm\n");
 		printf(" 7. Power +/- dB\n");
 		printf(" 8. Voltage +/- dB\n");
-		printf("\n 99. Exit\n\n");
+		printf("\n 0. Exit\n\n");
 		selection = get_int("Enter Selection : ");
 		printf("\n\n");
 
@@ -1126,53 +1126,37 @@ void DecibelConversions(void)
 		{
 		case 1:
 			V1V2();
-			pause_for_enter("\n\nEnter to return to main menu\n");
-			done = 1;
 			break;
 
 		case 2:
 			P1P2();
-			pause_for_enter("\n\nEnter to return to main menu\n");
-			done = 1;
 			break;
 
 		case 3:
 			dBmP();
-			pause_for_enter("\n\nEnter to return to main menu\n");
-			done = 1;
 			break;
 
 		case 4:
 			PdBm();
-			pause_for_enter("\n\nEnter to return to main menu\n");
-			done = 1;
 			break;
 
 		case 5:
 			dBmuV();
-			pause_for_enter("\n\nEnter to return to main menu\n");
-			done = 1;
 			break;
 
 		case 6:
 			uVdBm();
-			pause_for_enter("\n\nEnter to return to main menu\n");
-			done = 1;
 			break;
 
 		case 7:
 			PdB();
-			pause_for_enter("\n\nEnter to return to main menu\n");
-			done = 1;
 			break;
 
 		case 8:
 			VdB();
-			pause_for_enter("\n\nEnter to return to main menu\n");
-			done = 1;
 			break;
 
-		case 99:
+		case 0:
 			done = 1;
 			break;
 
@@ -1183,6 +1167,8 @@ void DecibelConversions(void)
 
 		if (done == 1)
 			break;
+
+		pause_for_enter("\n\n<Enter> to return to the Decibel Conversion Menu");
 	}
 }
 
@@ -1356,7 +1342,8 @@ void RCI(void)
 		printf(" 1. Resistors\n");
 		printf(" 2. Inductors\n");
 		printf(" 3. Capacitors\n");
-		printf("\n 99. Exit\n\n");
+		printf("\n 0. Exit\n\n");
+
 		selection = get_int("Enter Selection: ");
 		printf("\n\n");
 
@@ -1364,23 +1351,17 @@ void RCI(void)
 		{
 		case 1:
 			Resistors();
-			pause_for_enter("\n\nEnter to return to main menu\n");
-			done = 1;
 			break;
 
 		case 2:
 			Inductors();
-			pause_for_enter("\n\nEnter to return to main menu\n");
-			done = 1;
 			break;
 
 		case 3:
 			Capacitors();
-			pause_for_enter("\n\nEnter to return to main menu\n");
-			done = 1;
 			break;
 
-		case 99:
+		case 0:
 			done = 1;
 			break;
 
@@ -1391,6 +1372,8 @@ void RCI(void)
 
 		if (done == 1)
 			break;
+		
+		pause_for_enter("\n\n<Enter> to return to the Resistors,Inductors,Capacitors Menu");
 	}
 }
 
