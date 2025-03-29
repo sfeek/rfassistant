@@ -2368,10 +2368,11 @@ void CoaxLoss(void)
 	while (TRUE)
 	{
 		i = get_int("\n\nEnter Coax Selection : ");
-		i--;
-
-		if (i > 0 && i < c)
+		if (i > 0 && i <= c)
+		{
+			i--;
 			break;
+		}
 
 		printf("\nSelection must be 1-%d\n", c);
 	}
@@ -2450,6 +2451,7 @@ void CoaxLoss(void)
 	swrdb = totdb - mldb;
 	pwrout = pwrin * pow(10, (-totdb / 10));
 
+	printf("\n\nCoax Type -> %s",types[i]);
 	printf("\n\nMatched Loss -> %3.2f dB", mldb);
 	printf("\nSWR Loss -> %3.2f dB", swrdb);
 	printf("\nTotal Loss -> %3.2f dB", totdb);
@@ -2579,122 +2581,98 @@ int main(void)
 		{
 		case 1:
 			TurnsToInductanceToroid();
-			pause_for_enter("\n\nEnter to return to main menu\n");
 			break;
 
 		case 2:
 			TurnsToInductanceAirCore();
-			pause_for_enter("\n\nEnter to return to main menu\n");
 			break;
 
 		case 3:
 			CapacitanceFrequency();
-			pause_for_enter("\n\nEnter to return to main menu\n");
 			break;
 
 		case 4:
 			InductanceFrequency();
-			pause_for_enter("\n\nEnter to return to main menu\n");
 			break;
 
 		case 5:
 			ReactanceCapacitance();
-			pause_for_enter("\n\nEnter to return to main menu\n");
 			break;
 
 		case 6:
 			ReactanceInductance();
-			pause_for_enter("\n\nEnter to return to main menu\n");
 			break;
 
 		case 7:
 			SWRioZ();
-			pause_for_enter("\n\nEnter to return to main menu\n");
 			break;
 
 		case 8:
 			SWRf();
-			pause_for_enter("\n\nEnter to return to main menu\n");
 			break;
 
 		case 9:
 			SWRfr();
-			pause_for_enter("\n\nEnter to return to main menu\n");
 			break;
 
 		case 10:
 			VarCapScaling();
-			pause_for_enter("\n\nEnter to return to main menu\n");
 			break;
 
 		case 11:
 			CoaxStub();
-			pause_for_enter("\n\nEnter to return to main menu\n");
 			break;
 
 		case 12:
 			TXOutputMatch();
-			pause_for_enter("\n\nEnter to return to main menu\n");
 			break;
 
 		case 13:
 			ImpedanceMatch();
-			pause_for_enter("\n\nEnter to return to main menu\n");
 			break;
 
 		case 14:
 			DecibelConversions();
-			pause_for_enter("\n\nEnter to return to main menu\n");
 			break;
 
 		case 15:
 			RCI();
-			pause_for_enter("\n\nEnter to return to main menu\n");
 			break;
 
 		case 16:
 			IndToAlToroid();
-			pause_for_enter("\n\nEnter to return to main menu\n");
 			break;
 
 		case 17:
 			ChebyshevFilter();
-			pause_for_enter("\n\nEnter to return to main menu\n");
 			break;
 
 		case 18:
 			ButterworthFilter();
-			pause_for_enter("\n\nEnter to return to main menu\n");
 			break;
 
 		case 19:
 			Powers10();
-			pause_for_enter("\n\nEnter to return to main menu\n");
 			break;
 
 		case 20:
 			LineOfSight();
-			pause_for_enter("\n\nEnter to return to main menu\n");
 			break;
 
 		case 21:
 			ResistorAttenuator();
-			pause_for_enter("\n\nEnter to return to main menu\n");
 			break;
 
 		case 22:
 			CoaxLoss();
-			pause_for_enter("\n\nEnter to return to main menu\n");
 			break;
 
 		case 23:
 			WireAntennaLength();
-			pause_for_enter("\n\nEnter to return to main menu\n");
 			break;
 
 		case 24:
 			ImageFrequency();
-			pause_for_enter("\n\nEnter to return to main menu\n");
 			break;
 
 		case 0:
@@ -2708,6 +2686,8 @@ int main(void)
 
 		if (done == 1)
 			break;
+
+		pause_for_enter("\n\n<Enter> to return to the Main Menu");
 	}
 
 	return 0;
