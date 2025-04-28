@@ -527,9 +527,6 @@ double complex getimpedance(const char *display)
 	sprintf_string(&rs, "%s - r : ", display);
 	sprintf_string(&rx, "%s - jx : ", display);
 
-	v._Val[0] = get_double(rs);
-	v._Val[1] = get_double(rx);
-
 	r = get_double(rs);
 	x = get_double(rx);
 	v = r + x * I;

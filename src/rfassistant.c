@@ -2525,8 +2525,6 @@ int main(void)
 	setbuf(stdout, NULL);
 	setbuf(stderr, NULL);
 
-	SetConsoleOutputCP(CP_UTF8);
-
 	while (TRUE)
 	{
 		printf("\n\n   **** RF Calculator Main Menu ****\n\n");
